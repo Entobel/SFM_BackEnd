@@ -4,7 +4,7 @@ from ..models.role import Role
 from domain.repositories.role_repository import IRoleRepository
 
 
-class DBRoleRepository(IRoleRepository):
+class RoleRepository(IRoleRepository):
 
     def __init__(self, session: Session):
         self.session = session

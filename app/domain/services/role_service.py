@@ -1,10 +1,10 @@
-from typing import List, Optional
+from typing import List
 from domain.entities.role import Role
-from infrastructure.database.repositories.role_repository import DBRoleRepository
+from infrastructure.database.repositories.role_repository import RoleRepository
 
 
 class RoleService:
-    def __init__(self, role_repository: DBRoleRepository):
+    def __init__(self, role_repository: RoleRepository):
         self._role_repository = role_repository
 
     def get_all_roles(self) -> List[Role]:

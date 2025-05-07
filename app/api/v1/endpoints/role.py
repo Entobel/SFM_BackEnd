@@ -1,7 +1,7 @@
 from core.database import db
 from typing import Annotated, List
 from fastapi import APIRouter, Depends, HTTPException, status
-from infrastructure.database.repositories.role_repository import DBRoleRepository
+from infrastructure.database.repositories.role_repository import RoleRepository
 from domain.services.role_service import RoleService
 from domain.entities.role import Role
 import logging
@@ -11,16 +11,13 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/roles", tags=["Roles"])
 logger = logging.getLogger("uvicorn")
 
-# Dependencies
-db_dependency = Annotated[Session, Depends(db.get_db)]
 
-
-def get_role_repository(db: db_dependency) -> DBRoleRepository:
-    return DBRoleRepository(db)
+def get_role_repository(db: Annotated[Session, Depends(db.get_db)]) -> RoleRepository:
+    return RoleRepository(db)
 
 
 def get_role_service(
-    repo: Annotated[DBRoleRepository, Depends(get_role_repository)],
+    repo: Annotated[RoleRepository, Depends(get_role_repository)],
 ) -> RoleService:
     return RoleService(repo)
 
@@ -28,7 +25,7 @@ def get_role_service(
 service_dependency = Annotated[RoleService, Depends(get_role_service)]
 
 
-@router.get("/")
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[Role])
 async def get_all_roles(service: service_dependency):
     """
     Get all roles.
