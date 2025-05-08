@@ -2,13 +2,12 @@ from domain.services.auth_service import AuthService
 from fastapi import APIRouter, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
-from infrastructure.database.repositories.auth_repository import AuthRepository
 from api.v1.deps import login_usecase_dependency
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
-@router.post("/login")
+@router.post("/login", status_code=status.HTTP_200_OK)
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     login_use_case: login_usecase_dependency,
