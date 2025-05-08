@@ -12,11 +12,10 @@ logger = logging.getLogger("uvicorn")
 
 
 class Database:
-    """
-    Database connection and session management class.
-    """
-
     def __init__(self, db_url: str):
+        logger.info(
+            f"[DATABASE]:: Connecting to {db_url.replace(config.database.DB_PASSWORD, '***')}"
+        )
         self.engine = create_engine(
             db_url,
             echo=False,
@@ -33,42 +32,40 @@ class Database:
 
     @contextmanager
     def session(self) -> Generator[Session, None, None]:
-        """
-        Context manager for database sessions.
-        """
         session = self.SessionLocal()
         try:
             yield session
             session.commit()
         except Exception as e:
             session.rollback()
-            logger.error(f"Database session error: {str(e)}")
+            logger.error("Database session error:", exc_info=True)
             raise
         finally:
             session.close()
 
-    def get_db(self) -> Generator[Session, None, None]:
-        """
-        FastAPI dependency to provide a database session.
-        """
-        with self.session() as session:
-            yield session
-
     def test_connection(self) -> bool:
-        """
-        Test database connection.
-        """
         try:
             with self.engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
             logger.info(
-                f"[DATABASE]:: Connected to database '{config.database.DB_NAME}' successfully"
+                f"[DATABASE]:: Connected to DB '{config.database.DB_NAME}' successfully"
             )
             return True
         except SQLAlchemyError as e:
-            logger.error(f"[DATABASE]:: Connection failed: {str(e)}")
+            logger.error("[DATABASE]:: Connection failed:", exc_info=True)
             return False
 
+    def get_db(self) -> Generator[Session, None, None]:
+        """
+        FastAPI-compatible dependency for database session.
+        Use as: `db: Session = Depends(db.get_db)`
+        """
+        db_session = self.SessionLocal()
+        try:
+            yield db_session
+        finally:
+            db_session.close()
 
-# Initialize the database instance (used across the app)
+
+# Global instance (use across the app)
 db = Database(db_url=config.database.database_uri)
