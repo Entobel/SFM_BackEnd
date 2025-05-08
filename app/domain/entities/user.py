@@ -27,6 +27,7 @@ class User(BaseModel):
                 "phone": "+1234567890",
                 "first_name": "John",
                 "last_name": "Doe",
+                "role_id": 1,
                 "password": "password123",
                 "department_factory_id": 1,
                 "department_role_id": 1,
