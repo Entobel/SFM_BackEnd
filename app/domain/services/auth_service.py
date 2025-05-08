@@ -1,26 +1,24 @@
 from infrastructure.database.repositories.auth_repository import AuthRepository
-from fastapi import HTTPException
+from fastapi import status
+from core.exception import AuthenticationError, BusinessRuleError
 import re
+import logging
+
+logger = logging.getLogger("app.auth_service")
 
 
 class AuthService:
     def __init__(self, auth_repository: AuthRepository):
         self.auth_repository = auth_repository
 
-    def login(self, username: str, password: str):
-        user = None
-        # Pattern for checking username is email or phone
-        pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
-
-        is_email = re.search(pattern=pattern, string=username)
-
-        if is_email is None:
-            user = self.auth_repository.get_user_by_phone(phone=username)
-        else:
-            print("com here")
-            user = self.auth_repository.get_user_by_email(email=username)
+    def authenticate(self, user_name: str):
+        """Business logic: Login via email or password"""
+        user = self.auth_repository.get_user_by_email_or_phone(user_name=user_name)
 
         if user is None:
-            raise HTTPException(status_code=401)
+            logger.warning(f"Authentication failed: User '{user_name}' not found")
+            raise AuthenticationError(
+                details=[{"field": "user_name", "code": "ETB-401"}],
+            )
 
         return user
