@@ -1,5 +1,4 @@
 from datetime import timedelta
-from core.exception import DomainError
 from domain.services.auth_service import AuthService
 from domain.services.jwt_service import JWTService
 from domain.services.password_service import PasswordService
@@ -30,17 +29,17 @@ class LoginUseCase:
         )
 
         if not is_valid_password:
-            raise AuthenticationError(error_code="ETB-402")
-
-        _user_name = user.email if user.email else user.phone
+            raise AuthenticationError(
+                details={"password": "ETB-4222"},
+            )
 
         token = self.jwt_service.generate_token(
             TokenRequest(
-                user_name=_user_name,
-                user_id=user.id,
+                user_name=user.get_main_username(),
+                user_id=str(user.id),
                 expires_delta=timedelta(minutes=20),
-                department_role_id=user.department_role_id,
-                department_factory_id=user.department_factory_id,
+                department_role_id=str(user.department_role_id),
+                department_factory_id=str(user.department_factory_id),
             )
         )
 
