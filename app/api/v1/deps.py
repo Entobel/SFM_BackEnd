@@ -1,25 +1,31 @@
 from typing import Annotated
 from sqlalchemy.orm import Session
-from fastapi import Depends, Request
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 from core.database import db
-from infrastructure.database.repositories.auth_repository import AuthRepository
+from infrastructure.database.repositories.user_repository import UserRepository
 from domain.services.auth_service import AuthService
 from domain.services.jwt_service import JWTService
+from domain.services.user_service import UserService
 from domain.services.password_service import PasswordService
 from application.use_cases.auth.login import LoginUseCase
+from application.use_cases.user.get_me import GetMeUseCase
+
+# Common Dependency
+db_dependency = Annotated[Session, Depends(db.get_db)]
+oauth_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
+token_dependency = Annotated[str, Depends(oauth_bearer)]
 
 
 # Authentication Route Dependency
-def get_auth_repository(
-    db: Annotated[Session, Depends(db.get_db)],
-) -> AuthRepository:
-    return AuthRepository(session=db)
+def get_user_repository(db: db_dependency) -> UserRepository:
+    return UserRepository(session=db)
 
 
 def get_auth_service(
-    repo: Annotated[AuthRepository, Depends(get_auth_repository)],
+    repo: Annotated[UserRepository, Depends(get_user_repository)],
 ) -> AuthService:
-    return AuthService(auth_repository=repo)
+    return AuthService(user_repository=repo)
 
 
 def get_jwt_service() -> JWTService:
@@ -48,3 +54,20 @@ def get_login_usecase(
 
 
 login_usecase_dependency = Annotated[LoginUseCase, Depends(get_login_usecase)]
+
+
+# User Route Dependecy
+def get_user_service(
+    repo: Annotated[UserRepository, Depends(get_user_repository)],
+) -> UserService:
+    return UserService(user_repository=repo)
+
+
+def get_me_usecase(
+    service: Annotated[UserService, Depends(get_user_service)],
+    jwt_service: Annotated[JWTService, Depends(get_jwt_service)],
+) -> GetMeUseCase:
+    return GetMeUseCase(user_service=service, jwt_service=jwt_service)
+
+
+get_me_usecase_dependency = Annotated[GetMeUseCase, Depends(get_me_usecase)]
