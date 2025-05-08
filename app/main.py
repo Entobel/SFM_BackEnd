@@ -2,11 +2,9 @@ from fastapi import FastAPI, status
 from api.v1.routes import routers as v1_routers
 from core.config import config
 from starlette.middleware.cors import CORSMiddleware
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
 from starlette.requests import Request
 from core.database import db
+from core.error import setup_error_handlers
 import logging
 
 # Configure logging
@@ -53,26 +51,16 @@ class AppCreator:
 
         # Check health route
         @self.app.get("/", status_code=status.HTTP_200_OK)
-        async def root():
+        async def health_check():
             return {"message": "Service is working"}
 
         # Include route
         self.app.include_router(v1_routers, prefix=config.API_V1)
         logger.info(f"[APP]:: API routes mounted at {config.API_V1}")
 
-        # Error handler
-        @self.app.exception_handler(RequestValidationError)
-        async def validation_exception_handler(
-            request: Request, exc: RequestValidationError
-        ):
-            logger.error(f"[APP]:: Validation error: {exc.errors()}")
-            return JSONResponse(
-                status_code=422,
-                content={
-                    "message": "Validation failed",
-                    "errors": jsonable_encoder(exc.errors()),
-                },
-            )
+        # Setup centralized error handlers
+        setup_error_handlers(self.app)
+        logger.info("[APP]:: Centralized error handlers configured")
 
 
 app_creator = AppCreator()
