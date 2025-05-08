@@ -18,8 +18,8 @@ class DomainError(Exception):
         if isinstance(details, dict):
             self.details = details  # Keep the original dict for backward compatibility
             self.errors = []
-            for field, error_msg in details.items():
-                self.errors.append({"field": field, "code": error_code})
+            for field, code in details.items():
+                self.errors.append({"field": field, "code": code})
         elif isinstance(details, list):
             self.errors = []
             # Create a dict version for backward compatibility
@@ -67,6 +67,17 @@ class AuthenticationError(DomainError):
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
         super().__init__(error_code=error_code, status_code=401, details=details)
+
+
+class BadRequestError(DomainError):
+    """Authentication error."""
+
+    def __init__(
+        self,
+        error_code: str = "ETB-400",
+        details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
+    ):
+        super().__init__(error_code=error_code, status_code=400, details=details)
 
 
 class AuthorizationError(DomainError):

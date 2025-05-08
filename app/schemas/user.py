@@ -1,4 +1,4 @@
-"User DTOs"
+"User"
 
 # schemas/user.py
 

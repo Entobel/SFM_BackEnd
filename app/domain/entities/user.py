@@ -3,9 +3,9 @@ from datetime import datetime, UTC
 from typing import Optional
 
 
-class User(BaseModel):
-    id: Optional[int] = Field(None, description="User ID")
-    email: Optional[str] = Field(..., description="User's email address")
+class UserEntity(BaseModel):
+    id: int = Field(None, description="User ID")
+    email: str = Field(..., description="User's email address")
     phone: str = Field(..., description="User's phone number")
     first_name: str = Field(..., description="User's first name")
     last_name: str = Field(..., description="User's last name")
@@ -13,12 +13,6 @@ class User(BaseModel):
     department_factory_id: int = Field(..., description="Factory department ID")
     department_role_id: int = Field(..., description="Department role ID")
     status: bool = Field(default=True, description="User's active status")
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="Creation timestamp"
-    )
-    updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="Last update timestamp"
-    )
 
     class Config:
         json_schema_extra = {
@@ -34,3 +28,6 @@ class User(BaseModel):
                 "status": True,
             }
         }
+
+    def get_main_username(self):
+        return self.email or self.phone

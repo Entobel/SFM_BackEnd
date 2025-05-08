@@ -8,8 +8,9 @@ from passlib.context import CryptContext
 def create_access_token(token_request: TokenRequest) -> str:
 
     payload = {
-        "sub": token_request.model_dump(exclude={"expires_delta"}),
+        "sub": token_request.user_id,
         "exp": datetime.now(timezone.utc) + token_request.expires_delta,
+        **token_request.model_dump(exclude={"expires_delta", "user_id"}),
     }
 
     return jwt.encode(
@@ -17,6 +18,16 @@ def create_access_token(token_request: TokenRequest) -> str:
         key=config.security.SECRET_KEY,
         algorithm=config.security.ALGORITHM,
     )
+
+
+def verify_token(token: str) -> TokenRequest:
+    payload = jwt.decode(
+        token=token,
+        key=config.security.SECRET_KEY,
+        algorithms=[config.security.ALGORITHM],
+    )
+
+    return payload
 
 
 bcrypt_context = CryptContext(schemes=["bcrypt"])
