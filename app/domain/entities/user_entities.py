@@ -5,7 +5,7 @@ from typing import Optional
 
 class UserEntity(BaseModel):
     id: int = Field(None, description="User ID")
-    email: str = Field(..., description="User's email address")
+    email: Optional[str] = Field(None, description="User's email address")
     phone: str = Field(..., description="User's phone number")
     first_name: str = Field(..., description="User's first name")
     last_name: str = Field(..., description="User's last name")
@@ -31,3 +31,6 @@ class UserEntity(BaseModel):
 
     def get_main_username(self):
         return self.email or self.phone
+
+    def change_password(self, new_password_hashed: str) -> None:
+        self.password = new_password_hashed

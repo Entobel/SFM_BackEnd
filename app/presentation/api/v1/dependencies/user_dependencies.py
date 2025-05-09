@@ -3,13 +3,16 @@ from typing import Annotated
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
+from domain.interfaces.services.password_service import IPasswordService
 from core.error import handler
 from presentation.api.v1.dependencies.common_dependencies import (
+    get_password_service,
     get_token_service,
     get_user_repository,
 )
 
 from application.use_cases.user.get_me_use_case import GetMeUseCase
+from application.use_cases.user.change_password_use_case import ChangePasswordUseCase
 
 from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.token_service import ITokenService
@@ -33,8 +36,11 @@ TokenVerifyDep = Annotated[TokenPayload, Depends(get_current_user)]
 
 def get_user_service(
     user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+    password_service: Annotated[IPasswordService, Depends(get_password_service)],
 ) -> UserService:
-    return UserService(user_repository=user_repository)
+    return UserService(
+        user_repository=user_repository, password_service=password_service
+    )
 
 
 def get_me_use_case(
@@ -43,4 +49,13 @@ def get_me_use_case(
     return GetMeUseCase(user_service=user_service)
 
 
+def change_password_use_case(
+    user_service: Annotated[UserService, Depends(get_user_service)],
+) -> ChangePasswordUseCase:
+    return ChangePasswordUseCase(user_service=user_service)
+
+
 GetMeUseCaseDep = Annotated[GetMeUseCase, Depends(get_me_use_case)]
+ChangePasswordUseCaseDep = Annotated[
+    ChangePasswordUseCase, Depends(change_password_use_case)
+]

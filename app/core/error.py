@@ -4,43 +4,42 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
-from .exception import DomainError
-
-from presentation.schemas.response import Response
-
 import logging
 import traceback
 
+from .exception import DomainError
+from presentation.schemas.response import Response
+
 logger = logging.getLogger("app.error")
+
+
+# -------------------- RESPONSE FORMATTER --------------------
 
 
 def error_response(
     status_code: int, error_code: str = None, details: Dict | List = None
 ) -> Dict[str, Any]:
-    """Format consistent error response with i18n support."""
+    """Format consistent error response."""
     errors = []
     code = error_code or f"ETB-{status_code}"
 
-    # For 422 validation errors, include field name with code
-    if status_code == status.HTTP_422_UNPROCESSABLE_ENTITY:
-        if details:
-            if isinstance(details, dict):
-                for field, _ in details.items():
-                    errors.append({"field": field, "code": code})
-            elif isinstance(details, list):
-                for error in details:
-                    if isinstance(error, dict) and "field" in error:
-                        errors.append(
-                            {
-                                "field": error.get("field", ""),
-                                "code": error.get("code", code),
-                            }
-                        )
-    # For other error types, just include code
+    if status_code == status.HTTP_422_UNPROCESSABLE_ENTITY and details:
+        if isinstance(details, dict):
+            for field in details.keys():
+                errors.append({"field": field, "code": code})
+        elif isinstance(details, list):
+            for error in details:
+                if isinstance(error, dict):
+                    field = error.get("field")
+                    if field:
+                        errors.append({"field": field, "code": error.get("code", code)})
     else:
         errors.append({"code": code})
 
     return Response.error(errors)
+
+
+# -------------------- DECORATOR FOR DOMAIN-SAFE HANDLING --------------------
 
 
 def handler(func):
@@ -51,8 +50,6 @@ def handler(func):
         try:
             return func(*args, **kwargs)
         except DomainError as e:
-
-            # The response detail will only contain the success flag and errors list
             raise HTTPException(
                 status_code=e.status_code,
                 detail=Response.error(e.errors),
@@ -67,15 +64,21 @@ def handler(func):
     return wrapper
 
 
+# -------------------- CUSTOM EXCEPTION --------------------
+
+
 class HTTPException(Exception):
     """Custom HTTP exception with formatted details."""
 
-    def __init__(self, status_code: int, detail: Dict | str):
+    def __init__(self, status_code: int, detail: Dict | str = None):
         self.status_code = status_code
-        if isinstance(detail, str):
+        if isinstance(detail, str) or detail is None:
             self.detail = Response.error([{"code": f"ETB-{status_code}"}])
         else:
             self.detail = detail
+
+
+# -------------------- ERROR HANDLER SETUP --------------------
 
 
 def setup_error_handlers(app: FastAPI) -> None:
@@ -90,21 +93,23 @@ def setup_error_handlers(app: FastAPI) -> None:
     async def validation_exception_handler(
         request: Request, exc: RequestValidationError
     ):
-        """Handle request validation errors."""
-        logger.error(f"Validation error: {exc.errors()}")
-
-        # Convert validation errors to format with field and code
         errors = []
-        for error in exc.errors():
-            loc = ".".join([str(x) for x in error.get("loc", [])])
-            if loc:
-                errors.append({"field": loc, "code": "ETB-422"})
+        for err in exc.errors():
+            loc = err.get("loc", [])
+            if loc and loc[0] in {"body", "query", "path"}:
+                loc = loc[1:]
+            field = ".".join(str(part) for part in loc)
 
-        response = Response.error(errors)
+            msg = err.get("msg", "")
 
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=response
-        )
+            # Cố gắng bóc code từ chuỗi "Value error, ETB-322"
+            if isinstance(msg, str) and "ETB-" in msg:
+                code = msg.split("ETB-")[-1]
+                errors.append({"field": field, "code": f"ETB-{code.strip()}"})
+            else:
+                errors.append({"field": field, "code": "ETB-422"})
+
+        return JSONResponse(status_code=422, content=Response.error(errors))
 
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception):

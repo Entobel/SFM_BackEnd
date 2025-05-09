@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 
+from infrastructure.services.password_service import PasswordService
+from domain.interfaces.services.password_service import IPasswordService
 from infrastructure.database.repositories.user_repository import UserRepository
 from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.token_service import ITokenService
@@ -20,3 +22,7 @@ def get_token_service() -> ITokenService:
 
 def get_user_repository(db: DatabaseDep) -> IUserRepository:
     return UserRepository(session=db)
+
+
+def get_password_service() -> IPasswordService:
+    return PasswordService()

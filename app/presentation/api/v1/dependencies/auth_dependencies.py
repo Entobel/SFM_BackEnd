@@ -2,12 +2,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends
 from typing import Annotated, TypeAlias
 
-from .common_dependencies import get_user_repository
+from .common_dependencies import get_password_service, get_user_repository
 from .common_dependencies import get_token_service
 
-from infrastructure.database.repositories.user_repository import UserRepository
-from infrastructure.services.password_service import PasswordService
-from infrastructure.services.token_service import TokenService
 
 from domain.services.auth_service import AuthService
 from domain.interfaces.repositories.user_repository import IUserRepository
@@ -17,10 +14,6 @@ from domain.interfaces.services.password_service import IPasswordService
 from application.use_cases.auth.login_use_case import LoginUseCase
 
 LoginOauth2Dep: TypeAlias = Annotated[OAuth2PasswordRequestForm, Depends()]
-
-
-def get_password_service() -> IPasswordService:
-    return PasswordService()
 
 
 def get_auth_service(

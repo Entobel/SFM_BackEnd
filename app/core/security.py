@@ -24,7 +24,6 @@ def create_access_token(token_request: TokenPayload) -> str:
 
 def verify_token(token: str) -> TokenPayload:
     try:
-        print("Loi o day")
         payload = jwt.decode(
             token=token,
             key=config.security.SECRET_KEY,

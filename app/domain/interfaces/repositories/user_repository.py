@@ -8,3 +8,6 @@ class IUserRepository(ABC):
 
     @abstractmethod
     def get_user_by_email_or_phone(self, username: str) -> UserEntity | None: ...
+
+    @abstractmethod
+    def save(user: UserEntity) -> UserEntity: ...

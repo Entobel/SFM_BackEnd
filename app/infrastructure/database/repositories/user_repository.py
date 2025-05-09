@@ -16,7 +16,7 @@ class UserRepository(IUserRepository):
 
         if user is None:
             return None
-
+        print(user.updated_at)
         return UserEntity.model_validate(user.__dict__)
 
     def get_user_by_email_or_phone(self, user_name: str) -> UserEntity | None:
@@ -33,3 +33,11 @@ class UserRepository(IUserRepository):
             return None
 
         return UserEntity.model_validate(user.__dict__)
+
+    def save(self, user: UserEntity):
+        # Chuyển domain entity → ORM model
+        detached = User(**user.model_dump())
+
+        self.session.merge(detached)
+
+        self.session.commit()
