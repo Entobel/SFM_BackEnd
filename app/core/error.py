@@ -5,7 +5,9 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
 from .exception import DomainError
-from .response import Response
+
+from presentation.schemas.response import Response
+
 import logging
 import traceback
 

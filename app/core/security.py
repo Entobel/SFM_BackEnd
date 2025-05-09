@@ -1,16 +1,18 @@
 from core.config import config
 from datetime import datetime, timezone
-from schemas.security import TokenRequest
-from jose import jwt
+from jose import jwt, JWTError, ExpiredSignatureError
+from domain.value_objects.token_payload import TokenPayload
 from passlib.context import CryptContext
+from .exception import AuthenticationError
 
 
-def create_access_token(token_request: TokenRequest) -> str:
+def create_access_token(token_request: TokenPayload) -> str:
+    data = token_request.to_payload()
 
     payload = {
-        "sub": token_request.user_id,
+        "sub": str(token_request.user_id),
         "exp": datetime.now(timezone.utc) + token_request.expires_delta,
-        **token_request.model_dump(exclude={"expires_delta", "user_id"}),
+        **data,
     }
 
     return jwt.encode(
@@ -20,14 +22,20 @@ def create_access_token(token_request: TokenRequest) -> str:
     )
 
 
-def verify_token(token: str) -> TokenRequest:
-    payload = jwt.decode(
-        token=token,
-        key=config.security.SECRET_KEY,
-        algorithms=[config.security.ALGORITHM],
-    )
+def verify_token(token: str) -> TokenPayload:
+    try:
+        print("Loi o day")
+        payload = jwt.decode(
+            token=token,
+            key=config.security.SECRET_KEY,
+            algorithms=[config.security.ALGORITHM],
+        )
 
-    return payload
+        return payload
+    except ExpiredSignatureError as e:
+        raise AuthenticationError(error_code="ETB-321")
+    except JWTError as e:
+        raise AuthenticationError(error_code="ETB-123")
 
 
 bcrypt_context = CryptContext(schemes=["bcrypt"])
