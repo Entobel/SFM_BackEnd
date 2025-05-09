@@ -1,167 +1,54 @@
-# Centralized Error Handling with I18n Support
+# Login API – Sequence Diagram
 
-This document provides guidelines for using the centralized error handling system with internationalization (i18n) support.
+```mermaid
+	sequenceDiagram
+	autonumber
 
-## Overview
+		participant Client                as Client / Browser / cURL
+		participant Router                as FastAPI\n`POST /api/v1/auth/login`
+		participant LoginUseCase          as `LoginUseCase.execute()`
+		participant AuthService           as `AuthService`
+		participant UserRepo              as `UserRepository`
+		participant DB                    as Database
+		participant PasswordService       as `PasswordService`
+		participant TokenService          as `TokenService`
+		participant Security              as `core.security`
 
-The error handling system follows clean architecture principles by:
+		Client  ->>  Router          : Form-encoded username & password
+		Router  ->>  LoginUseCase    : `execute(username, password)`
+		LoginUseCase  ->>  AuthService  : `validate_credentials()`
 
-1. Defining domain-specific exceptions that represent business errors
-2. Providing a centralized way to handle and format error responses
-3. Using error codes instead of messages for client-side internationalization
-4. Ensuring consistent error response structure across the application
-5. Separating error handling concerns from business logic
+		%% --- Validate credentials ----------------------------
+		AuthService   ->>  UserRepo   : `get_user_by_email_or_phone(username)`
+		UserRepo      ->>  DB         : SQL SELECT user
+		DB            -->> UserRepo   : user row
+		UserRepo      -->> AuthService: `UserEntity`
 
-## Error Response Structure
+		AuthService   ->>  PasswordService : `verify_password(hash, password)`
+		PasswordService ->> Security  : `verify_password()`
+		Security      -->> PasswordService : boolean
+		PasswordService -->> AuthService   : boolean
 
-The error response format differs slightly based on the error type:
+		AuthService  -->>  LoginUseCase    : valid `UserEntity`
+		%% --- Credentials validated ---------------------------
 
-### Validation Errors (422)
+		%% --- Generate token ----------------------------------
+		LoginUseCase  ->>  TokenService  : `generate_token(TokenPayload)`
+		TokenService  ->>  Security      : `create_access_token(payload)`
+		Security      -->> TokenService  : JWT access-token
+		TokenService  -->> LoginUseCase  : token string
+		%% ------------------------------------------------------
 
-For validation errors (status code 422), the format includes field information:
+		LoginUseCase  -->>  Router       : `LoginResponseDTO(token, user)`
+		Router        -->>  Client       : 200 OK\n`Response.success(...)`
 
-```json
-{
-	"success": false,
-	"errors": [
-		{
-			"field": "username",
-			"code": "ETB-422"
-		},
-		{
-			"field": "email",
-			"code": "ETB-422"
-		}
-	]
-}
 ```
 
-### Other Errors (400, 401, 403, 404, 409, 500, etc.)
+### Viewing the Diagram
 
-For non-validation errors, the format uses a simpler structure:
+GitHub now supports rendering Mermaid diagrams natively. After pushing this README to GitHub (or viewing it in any Markdown viewer with Mermaid support, such as the VS Code "Markdown Preview Mermaid Support" extension), you will see the diagram rendered automatically.
 
-```json
-{
-	"success": false,
-	"errors": [
-		{
-			"code": "ETB-403"
-		}
-	]
-}
-```
+If you are using a Markdown viewer that does **not** support Mermaid, the fenced code will simply appear as text. In that case you can:
 
-## Exception Types
-
-The system provides several specialized exception types:
-
--   `DomainError`: Base class for all domain-specific errors
--   `NotFoundError`: Resource not found (404)
--   `ValidationError`: Input validation failed (422)
--   `AuthenticationError`: Authentication failed (401)
--   `AuthorizationError`: User lacks permission (403)
--   `BusinessRuleError`: Business rule violation (409)
-
-## How to Use
-
-### 1. Use the Error Handler Decorator
-
-Apply the `@handler` decorator to your use case methods to automatically catch and format exceptions:
-
-```python
-from core.error import handler
-
-class MyUseCase:
-    @handler
-    def execute(self, data):
-        # Your logic here
-        pass
-```
-
-### 2. Raising Validation Errors (422)
-
-When raising validation errors, provide field information:
-
-```python
-from core.exception import ValidationError
-
-# Using list style with specific error codes
-errors = [
-    {"field": "email", "code": "ETB-EMAIL-INVALID"},
-    {"field": "password", "code": "ETB-PASSWORD-SHORT"}
-]
-
-raise ValidationError(
-    error_code="ETB-VALIDATION-422",  # Generic error code
-    details=errors  # Field-specific errors
-)
-
-# OR using dictionary style (simpler but less flexible)
-errors = {
-    "email": "ETB-EMAIL-INVALID",
-    "password": "ETB-PASSWORD-SHORT"
-}
-
-raise ValidationError(
-    error_code="ETB-VALIDATION-422",  # This code will be used for all fields
-    details=errors
-)
-```
-
-### 3. Raising Other Error Types
-
-For non-validation errors, you can simply raise the appropriate exception with an error code:
-
-```python
-from core.exception import NotFoundError
-
-raise NotFoundError(
-    error_code="ETB-USER-NOT-FOUND"  # Custom error code for i18n
-)
-```
-
-### 4. Using Specific Error Codes
-
-It's recommended to use specific, descriptive error codes for better i18n:
-
-```python
-# Instead of generic codes:
-raise ValidationError(error_code="ETB-422")
-
-# Use specific codes:
-raise ValidationError(error_code="ETB-USERNAME-REQUIRED")
-# or
-raise ValidationError(
-    error_code="ETB-VALIDATION",
-    details=[{"field": "username", "code": "ETB-USERNAME-REQUIRED"}]
-)
-```
-
-## Client-Side Internationalization
-
-The system is designed to work with client-side internationalization:
-
-1. The backend only provides error codes, not human-readable messages
-2. The client uses these codes to look up appropriate translated messages
-3. This allows changing languages without requiring backend changes
-4. For validation errors, the field name is included to provide context
-
-## Error Code Naming Conventions
-
-Follow these conventions for error codes:
-
-1. All error codes should start with the `ETB-` prefix
-2. Use uppercase letters and hyphens for separating words
-3. Include module or feature name in the error code
-4. Be specific and descriptive
-
-Examples:
-
--   `ETB-USER-NOT-FOUND`
--   `ETB-PERMISSION-DENIED`
--   `ETB-USERNAME-REQUIRED`
--   `ETB-EMAIL-INVALID`
-
-## Example
-
-See `app/application/examples/error_handling_example.py` for practical examples of how to use the error handling system in different scenarios.
+1. Copy the fenced diagram code above and paste it into the [Mermaid Live Editor](https://mermaid.live/).
+2. Export SVG/PNG from the live editor and embed it as an image instead.
