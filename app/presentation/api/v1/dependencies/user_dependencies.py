@@ -16,7 +16,7 @@ from domain.interfaces.services.token_service import ITokenService
 from domain.value_objects.token_payload import TokenPayload
 from domain.services.user_service import UserService
 
-get_oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
+get_oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 TokenServiceDep = Annotated[ITokenService, Depends(get_token_service)]
 
