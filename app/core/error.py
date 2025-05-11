@@ -39,31 +39,6 @@ def error_response(
     return Response.error(errors)
 
 
-# -------------------- DECORATOR FOR DOMAIN-SAFE HANDLING --------------------
-
-
-def handler(func):
-    """Error handler decorator for service functions."""
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except DomainError as e:
-            raise HTTPException(
-                status_code=e.status_code,
-                detail=Response.error(e.errors),
-            )
-        except Exception as e:
-            logger.error(f"Unhandled exception: {str(e)}", exc_info=True)
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=Response.error([{"code": "ETB-500"}]),
-            )
-
-    return wrapper
-
-
 # -------------------- CUSTOM EXCEPTION --------------------
 
 
@@ -84,11 +59,16 @@ class HTTPException(Exception):
 def setup_error_handlers(app: FastAPI) -> None:
     """Configure global exception handlers for the FastAPI application."""
 
-    @app.exception_handler(HTTPException)
-    async def http_exception_handler(request: Request, exc: HTTPException):
-        """Handle custom HTTP exceptions."""
-        return JSONResponse(status_code=exc.status_code, content=exc.detail)
+    # 1. Bắt hết DomainError (NotFoundError, ValidationError, v.v.)
+    @app.exception_handler(DomainError)
+    async def domain_error_handler(request: Request, exc: DomainError):
+        # exc.errors đã được build sẵn trong DomainError
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=Response.error(exc.errors),
+        )
 
+    # 2. Bắt validation lỗi của FastAPI (422)
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(
         request: Request, exc: RequestValidationError
@@ -99,26 +79,19 @@ def setup_error_handlers(app: FastAPI) -> None:
             if loc and loc[0] in {"body", "query", "path"}:
                 loc = loc[1:]
             field = ".".join(str(part) for part in loc)
-
             msg = err.get("msg", "")
-
-            # Cố gắng bóc code từ chuỗi "Value error, ETB-322"
             if isinstance(msg, str) and "ETB-" in msg:
                 code = msg.split("ETB-")[-1]
                 errors.append({"field": field, "code": f"ETB-{code.strip()}"})
             else:
                 errors.append({"field": field, "code": "ETB-422"})
-
         return JSONResponse(status_code=422, content=Response.error(errors))
 
+    # 3. Bắt mọi Exception chưa xử lý khác
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception):
-        """Handle any unhandled exceptions."""
-        logger.error(f"Unhandled exception: {str(exc)}")
-        logger.error(traceback.format_exc())
-
-        response = Response.error([{"code": "ETB-500"}])
-
+        logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
         return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=response
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content=Response.error([{"code": "ETB-500"}]),
         )

@@ -27,3 +27,13 @@ class UserEntity:
 
     def change_password(self, new_password: str):
         self.password = new_password
+
+    def __repr__(self):
+        return (
+            f"<UserEntity(id={self.id}, user_name='{self.user_name}', "
+            f"first_name='{self.first_name}', last_name='{self.last_name}', "
+            f"department='{self.department.name if self.department else None}', "
+            f"factory='{self.factory.name if self.factory else None}', "
+            f"role='{self.role.name if self.role else None}', "
+            f"status={'Active' if self.status else 'Inactive'})>"
+        )

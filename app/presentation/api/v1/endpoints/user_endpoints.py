@@ -6,11 +6,18 @@ from presentation.api.v1.dependencies.user_dependencies import (
     ChangePasswordUseCaseDep,
     GetMeUseCaseDep,
     TokenVerifyDep,
+    GetListUserUseCaseDep,
 )
 from presentation.schemas.token_dtos import TokenPayloadInputDTO
 from domain.value_objects.token_payload import TokenPayload
 
 router = APIRouter(prefix="/users", tags=["Users"])
+
+
+@router.get("/")
+async def get_list_users(get_list_users_use_case: GetListUserUseCaseDep):
+    get_list_users_use_case.execute()
+    return "!23"
 
 
 @router.get("/me", status_code=status.HTTP_200_OK, summary="Get own profile")
@@ -31,7 +38,7 @@ async def change_password(
     token_input_dto = TokenPayloadInputDTO(**token)
 
     change_password_use_case.execute(
-        id=token_input_dto.sub,
+        user_name=token_input_dto.user_name,
         new_password=body.new_password,
         old_password=body.old_password,
     )

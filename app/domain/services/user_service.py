@@ -19,8 +19,11 @@ class UserService:
 
         return user
 
-    def change_password(self, id: int, old_password: str, new_password: str):
-        user = self.get_user_by_id(id=id)
+    def change_password(self, identifier: str, old_password: str, new_password: str):
+        user = self.user_repository.get_cred_by_email_or_phone(identifier=identifier)
+
+        if user is None:
+            raise NotFoundError(error_code="ETB-2999")
 
         # Verify old password
         if not self.password_service.verify_password(user.password, old_password):
@@ -32,7 +35,14 @@ class UserService:
 
         new_hashed_password = self.password_service.hash_password(password=new_password)
 
-        # Save to database
-        user.change_password(new_password_hashed=new_hashed_password)
+        print("Logg", new_hashed_password)
 
-        self.user_repository.save(user)
+        # Save to database
+        user.change_password(new_password=new_hashed_password)
+
+        result = self.user_repository.update_password_by_user(user=user)
+
+        return result
+
+    def get_list_users(self):
+        self.user_repository.get_list_users()

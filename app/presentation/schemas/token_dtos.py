@@ -7,5 +7,6 @@ class TokenPayloadInputDTO(BaseModel):
     role_id: int
     role_level: int
     department_id: int
+    user_name: str
     factory_id: int
     exp: timedelta

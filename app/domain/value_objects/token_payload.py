@@ -7,6 +7,7 @@ from datetime import timedelta
 class TokenPayload:
     user_id: int
     role_id: int
+    user_name: str
     role_level: int
     department_id: int
     factory_id: int
@@ -16,6 +17,7 @@ class TokenPayload:
         return {
             "role_id": self.role_id,
             "role_level": self.role_level,
+            "user_name": self.user_name,
             "department_id": self.department_id,
             "factory_id": self.factory_id,
         }

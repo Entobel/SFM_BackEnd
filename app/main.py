@@ -2,7 +2,6 @@ from fastapi import FastAPI, status
 from presentation.api.v1.routes import routers as v1_routers
 from core.config import config
 from starlette.middleware.cors import CORSMiddleware
-from starlette.requests import Request
 from core.database import db
 from core.error import setup_error_handlers
 import logging
