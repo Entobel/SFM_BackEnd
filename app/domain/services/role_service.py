@@ -1,5 +1,5 @@
 from typing import List
-from domain.entities.role import Role
+from domain.entities.role_entity import Role
 from infrastructure.database.repositories.role_repository import RoleRepository
 
 

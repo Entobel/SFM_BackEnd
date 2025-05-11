@@ -1,5 +1,5 @@
 from fastapi import status
-from domain.entities.user_entities import UserEntity
+from domain.entities.user_entity import UserEntity
 from core.exception import AuthenticationError
 from ..interfaces.services.password_service import IPasswordService
 from ..interfaces.repositories.user_repository import IUserRepository
@@ -15,9 +15,9 @@ class AuthService:
         self.user_repository = user_repository
         self.password_service = password_service
 
-    def get_user_by_username(self, user_name: str) -> UserEntity | None:
+    def get_credentials(self, user_name: str) -> UserEntity | None:
         # Phase 1: Get user account by email or phone
-        user = self.user_repository.get_user_by_email_or_phone(user_name=user_name)
+        user = self.user_repository.get_cred_by_email_or_phone(user_name=user_name)
 
         if user is None:
             raise AuthenticationError(
@@ -41,7 +41,7 @@ class AuthService:
 
     def validate_credentials(self, user_name: str, password: str) -> UserEntity:
         # Phase 3: Verify credentials
-        user = self.get_user_by_username(user_name=user_name)
+        user = self.get_credentials(user_name=user_name)
 
         self.verify_password(hashed_password=user.password, password=password)
 

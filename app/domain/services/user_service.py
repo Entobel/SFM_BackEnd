@@ -1,4 +1,4 @@
-from domain.entities.user_entities import UserEntity
+from domain.entities.user_entity import UserEntity
 from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.password_service import IPasswordService
 from core.exception import NotFoundError, AuthenticationError, BadRequestError

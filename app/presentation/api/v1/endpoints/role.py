@@ -3,7 +3,7 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, HTTPException, status
 from infrastructure.database.repositories.role_repository import RoleRepository
 from domain.services.role_service import RoleService
-from domain.entities.role import Role
+from domain.entities.role_entity import Role
 import logging
 
 from sqlalchemy.orm import Session

@@ -29,24 +29,14 @@ class LoginUseCase:
         # Phase 2: Generate token
         token_payload = TokenPayload(
             user_id=user.id,
-            user_name=user.get_main_username(),
-            department_factory_id=user.department_factory_id,
-            department_role_id=user.department_role_id,
+            role_level=user.role.level,
+            role_id=user.role.id,
+            department_id=user.department.id,
+            factory_id=user.factory.id,
             expires_delta=timedelta(minutes=20),
         )
 
         token = self.token_service.generate_token(token_payload)
 
         # Phase 3: Response DTO
-        return LoginResponseDTO(
-            token=token,
-            user=UserDTO(
-                id=user.id,
-                email=user.email,
-                phone=user.phone,
-                first_name=user.first_name,
-                last_name=user.last_name,
-                department_factory_id=user.department_factory_id,
-                department_role_id=user.department_role_id,
-            ),
-        )
+        return LoginResponseDTO(token=token, user={"id": user.id})

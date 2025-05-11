@@ -1,6 +1,4 @@
-from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.services.user_service import UserService
-from domain.value_objects.token_payload import TokenPayload
 from application.schemas.user_schemas import UserDTO
 
 
@@ -14,9 +12,11 @@ class GetMeUseCase:
         return UserDTO(
             id=user.id,
             email=user.email,
+            phone=user.phone,
             first_name=user.first_name,
             last_name=user.last_name,
-            phone=user.phone,
-            department_factory_id=user.department_factory_id,
-            department_role_id=user.department_role_id,
+            factory=user.factory,
+            department=user.department,
+            role=user.role,
+            status=user.status,
         )

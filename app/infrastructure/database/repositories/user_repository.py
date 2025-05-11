@@ -1,8 +1,15 @@
-from sqlalchemy import text
+from sqlalchemy import text, Integer, String, Boolean
 from sqlalchemy.orm import Session
-from domain.entities.user_entities import UserEntity
+
+from domain.entities.user_entity import UserEntity
+from domain.entities.department_entity import DepartmentEntity
+from domain.entities.role_entity import RoleEntity
+from domain.entities.factory_entity import FactoryEntity
+
+
 from infrastructure.database.models.user import User
 from domain.interfaces.repositories.user_repository import IUserRepository
+from textwrap import dedent
 
 
 class UserRepository(IUserRepository):
@@ -10,29 +17,160 @@ class UserRepository(IUserRepository):
         self.session = session
 
     def get_user_by_id(self, id: int) -> UserEntity | None:
-        user = (
-            self.session.query(User).filter(User.id == id, User.status == True).first()
+        query = dedent(
+            """SELECT u.id as u_id,
+            u.email as u_email,
+            u.phone as u_phone,
+            u.first_name as u_first_name,
+            u.last_name as u_last_name,
+            u.status as u_status,
+
+            dp.id as dp_id,
+            dp.name as dp_name,
+            dp.description as dp_description,
+            dp.abbr_name as dp_abbr_name,
+            dp.status as dp_status,
+
+            f.id as f_id,
+            f.name as f_name,
+            f.abbr_name as f_abbr_name,
+            f.description as f_description,
+            f.location as f_location,
+            f.address as f_address,
+            f.status as f_status,
+
+            r.id as r_id,
+            r.name as r_name,
+            r.level as r_level,
+            r.description as r_description,
+            r.status as r_status
+        FROM "user" u
+                JOIN department_role dp_r ON u.department_role_id = dp_r.id
+                JOIN department_factory dp_f ON u.department_factory_id = dp_f.id
+                JOIN role r ON r.id = dp_r.role_id
+                JOIN department dp ON dp.id = dp_r.department_id
+                JOIN factory f ON f.id = dp_f.factory_id
+        WHERE u.id = :id AND u.status = true"""
         )
 
-        if user is None:
-            return None
-        print(user.updated_at)
-        return UserEntity.model_validate(user.__dict__)
-
-    def get_user_by_email_or_phone(self, user_name: str) -> UserEntity | None:
-        user = (
-            self.session.query(User)
-            .filter(
-                (User.email == user_name) | (User.phone == user_name),
-                (User.status == True),
+        row = (
+            self.session.execute(
+                text(query).columns(
+                    u_id=Integer,
+                    u_email=String,
+                    u_phone=String,
+                    u_first_name=String,
+                    u_last_name=String,
+                    u_status=String,
+                    dp_id=Integer,
+                    dp_name=String,
+                    dp_description=String,
+                    dp_status=Boolean,
+                    dp_abbr_name=String,
+                    f_id=Integer,
+                    f_name=String,
+                    f_abbr_name=String,
+                    f_description=String,
+                    f_location=String,
+                    f_address=String,
+                    f_status=Boolean,
+                    r_id=Integer,
+                    r_name=String,
+                    r_level=Integer,
+                    r_description=String,
+                    r_status=Boolean,
+                ),
+                {"id": id},
             )
-            .first()
+            .mappings()
+            .one_or_none()
         )
 
-        if user is None:
+        if row is None:
             return None
 
-        return UserEntity.model_validate(user.__dict__)
+        user_entity = UserEntity(
+            id=row.u_id,
+            email=row.u_email,
+            phone=row.u_phone,
+            first_name=row.u_first_name,
+            last_name=row.u_last_name,
+            status=row.u_status,
+            department=DepartmentEntity(
+                id=row.dp_id,
+                name=row.dp_name,
+                abbr_name=row.dp_abbr_name,
+                description=row.dp_description,
+                status=row.dp_status,
+            ),
+            factory=FactoryEntity(
+                id=row.f_id,
+                name=row.f_name,
+                abbr_name=row.f_abbr_name,
+                description=row.f_description,
+                location=row.f_location,
+                address=row.f_address,
+                status=row.f_status,
+            ),
+            role=RoleEntity(
+                id=row.r_id,
+                name=row.r_name,
+                level=row.r_level,
+                description=row.r_description,
+                status=row.r_status,
+            ),
+        )
+
+        return user_entity
+
+    def get_cred_by_email_or_phone(self, user_name: str) -> UserEntity | None:
+        query = dedent(
+            """SELECT u.id as u_id,
+            u.password as u_password,
+            u.status as u_status,
+            dp.id as dp_id,
+            r.id as r_id,
+            r.level as r_level,
+            f.id as f_id
+
+            FROM "user" u
+            JOIN department_role dp_r ON u.department_role_id = dp_r.id
+            JOIN role r ON r.id = dp_r.role_id
+            JOIN department dp ON dp.id = dp_r.department_id
+            JOIN department_factory df ON df.id = dp_r.id
+            JOIN factory f ON df.factory_id = f.id
+            WHERE u.email = :user_name OR u.phone = :user_name AND u.status = true"""
+        )
+
+        row = (
+            self.session.execute(
+                text(query).columns(
+                    u_id=Integer,
+                    u_password=String,
+                    u_status=Boolean,
+                    dp_id=Integer,
+                    r_level=Integer,
+                    r_id=Integer,
+                ),
+                {"user_name": user_name},
+            )
+            .mappings()
+            .one_or_none()
+        )
+
+        if row is None:
+            return None
+
+        user_entity = UserEntity(
+            id=row.u_id,
+            password=row.u_password,
+            status=row.u_status,
+            department=DepartmentEntity(id=row.dp_id),
+            role=RoleEntity(id=row.r_id, level=row.r_level),
+            factory=FactoryEntity(id=row.f_id),
+        )
+
+        return user_entity
 
     def save(self, user: UserEntity):
         # Chuyển domain entity → ORM model

@@ -8,6 +8,7 @@ from presentation.api.v1.dependencies.user_dependencies import (
     TokenVerifyDep,
 )
 from presentation.schemas.token_dtos import TokenPayloadInputDTO
+from domain.value_objects.token_payload import TokenPayload
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
