@@ -135,12 +135,13 @@ class UserRepository(IUserRepository):
             f.id as f_id
 
             FROM "user" u
+
             JOIN department_role dp_r ON u.department_role_id = dp_r.id
             JOIN role r ON r.id = dp_r.role_id
             JOIN department dp ON dp.id = dp_r.department_id
-            JOIN department_factory df ON df.id = dp_r.id
-            JOIN factory f ON df.factory_id = f.id
-            WHERE u.email = :identifier OR u.phone = :identifier AND u.status = true"""
+            JOIN department_factory dp_f ON dp_f.department_id = dp.id
+            JOIN factory f ON dp_f.factory_id = f.id
+            WHERE u.status = true AND (u.email = :identifier OR u.phone = :identifier)"""
         )
 
         result = self.session.execute(
@@ -241,7 +242,7 @@ class UserRepository(IUserRepository):
                 u_phone=String,
                 u_first_name=String,
                 u_last_name=String,
-                u_status=String,
+                u_status=Boolean,
                 dp_id=Integer,
                 dp_name=String,
                 dp_description=String,
@@ -298,5 +299,7 @@ class UserRepository(IUserRepository):
             )
 
             users.append(user)
+
+        print(users)
 
         return users
