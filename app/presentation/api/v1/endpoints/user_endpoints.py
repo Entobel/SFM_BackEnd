@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Path, Depends
+from fastapi import APIRouter, status, Path
 
 from presentation.schemas.user_dtos import ChangePasswordInputDTO
 from presentation.schemas.response import Response
@@ -38,10 +38,7 @@ async def change_password(
     token: TokenVerifyDep,
     body: ChangePasswordInputDTO,
     change_password_use_case: ChangePasswordUCDep,
-    target_user_id: int = Path(
-        ..., description="ID of the user whose password will be changed"
-    ),
-    target_user: AccessCheckDep = Depends(),
+    target_user: AccessCheckDep,
 ):
     token_input_dto = TokenPayloadInputDTO(**token)
 
