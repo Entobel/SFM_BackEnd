@@ -44,7 +44,7 @@ class NotFoundError(DomainError):
         error_code: str = "ETB-404",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
-        super().__init__(error_code=error_code, status_code=404, details=details)
+        super().__init__(error_code=error_code, status_code=400, details=details)
 
 
 class ValidationError(DomainError):
@@ -55,7 +55,7 @@ class ValidationError(DomainError):
         error_code: str = "ETB-422",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
-        super().__init__(error_code=error_code, status_code=422, details=details)
+        super().__init__(error_code=error_code, status_code=400, details=details)
 
 
 class AuthenticationError(DomainError):
@@ -66,7 +66,7 @@ class AuthenticationError(DomainError):
         error_code: str = "ETB-401",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
-        super().__init__(error_code=error_code, status_code=401, details=details)
+        super().__init__(error_code=error_code, status_code=400, details=details)
 
 
 class BadRequestError(DomainError):
@@ -88,7 +88,7 @@ class AuthorizationError(DomainError):
         error_code: str = "ETB-403",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
-        super().__init__(error_code=error_code, status_code=403, details=details)
+        super().__init__(error_code=error_code, status_code=400, details=details)
 
 
 class BusinessRuleError(DomainError):
@@ -99,4 +99,15 @@ class BusinessRuleError(DomainError):
         error_code: str = "ETB-409",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
-        super().__init__(error_code=error_code, status_code=409, details=details)
+        super().__init__(error_code=error_code, status_code=400, details=details)
+
+
+class ForbiddenError(DomainError):
+    """Business rule violation error."""
+
+    def __init__(
+        self,
+        error_code: str = "ETB-403",
+        details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
+    ):
+        super().__init__(error_code=error_code, status_code=400, details=details)

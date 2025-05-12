@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from application.interfaces.use_cases.auth.login_uc import ILoginUC
 from application.schemas.auth_schemas import LoginResponseDTO
 from application.schemas.user_schemas import UserDTO
 
@@ -8,7 +9,7 @@ from domain.interfaces.services.token_service import ITokenService
 from domain.value_objects.token_payload import TokenPayload
 
 
-class LoginUseCase:
+class LoginUC(ILoginUC):
     def __init__(
         self,
         auth_service: AuthService,
@@ -26,7 +27,6 @@ class LoginUseCase:
         # Phase 2: Generate token
         token_payload = TokenPayload(
             user_id=user.id,
-            role_level=user.role.level,
             role_id=user.role.id,
             user_name=user.user_name,
             department_id=user.department.id,

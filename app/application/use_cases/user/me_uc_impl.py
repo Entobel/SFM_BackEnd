@@ -1,13 +1,16 @@
-from domain.services.user_service import UserService
+from application.interfaces.use_cases.user.me_uc import IMeUC
 from application.schemas.user_schemas import UserDTO
+from domain.services.user_service import UserService
 
 
-class GetMeUseCase:
+class GetMeUseCase(IMeUC):
     def __init__(self, user_service: UserService):
         self.user_service = user_service
 
-    def execute(self, user_id: int):
-        user = self.user_service.get_user_by_id(id=user_id)
+        super().__init__()
+
+    def execute(self, user_id: int) -> UserDTO:
+        user = self.user_service.get_profile_by_id(id=user_id)
 
         return UserDTO(
             id=user.id,

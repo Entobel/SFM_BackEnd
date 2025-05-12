@@ -1,4 +1,3 @@
-from fastapi import status
 from domain.entities.user_entity import UserEntity
 from core.exception import AuthenticationError
 from ..interfaces.services.password_service import IPasswordService
@@ -21,7 +20,9 @@ class AuthService:
 
         if user is None:
             raise AuthenticationError(
-                details=[{"field": "password", "code": "ETB-401"}],
+                details=[
+                    {"field": "password", "code": "ETB-sai_tai_khoan_hoac_mat_khau"}
+                ],
             )
 
         return user
@@ -34,7 +35,9 @@ class AuthService:
 
         if not is_valid_password:
             raise AuthenticationError(
-                details=[{"field": "password", "code": "ETB-401"}],
+                details=[
+                    {"field": "password", "code": "ETB-sai_tai_khoan_hoac_mat_khau"}
+                ],
             )
 
         return is_valid_password

@@ -10,7 +10,6 @@ class Role(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(VARCHAR(255))
-    level = Column(Integer)
     description = Column(Text)
     created_at = Column(DateTime(timezone=True))
     updated_at = Column(DateTime(timezone=True))

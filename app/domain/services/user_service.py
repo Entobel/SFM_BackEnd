@@ -11,17 +11,20 @@ class UserService:
         self.user_repository = user_repository
         self.password_service = password_service
 
-    def get_user_by_id(self, id: int) -> UserEntity:
-        user = self.user_repository.get_user_by_id(id=id)
+    def get_profile_by_id(self, id: int, is_basic: bool = False) -> UserEntity:
+        user = None
+
+        if not is_basic:
+            user = self.user_repository.get_profile_by_id(id=id)
+        else:
+            user = self.user_repository.get_basic_profile_by_id(id=id)
 
         if not user:
             raise NotFoundError(error_code="ETB-2999")
 
         return user
 
-    def change_password(self, identifier: str, old_password: str, new_password: str):
-        user = self.user_repository.get_cred_by_email_or_phone(identifier=identifier)
-
+    def change_password(self, user: UserEntity, old_password: str, new_password: str):
         if user is None:
             raise NotFoundError(error_code="ETB-2999")
 
@@ -35,8 +38,6 @@ class UserService:
 
         new_hashed_password = self.password_service.hash_password(password=new_password)
 
-        print("Logg", new_hashed_password)
-
         # Save to database
         user.change_password(new_password=new_hashed_password)
 
@@ -46,3 +47,14 @@ class UserService:
 
     def get_list_users(self):
         self.user_repository.get_list_users()
+
+    def change_status(self, user: UserEntity, status: bool) -> bool:
+
+        user.change_status(status=status)
+
+        result = self.user_repository.update_status_user(id=user.id, status=user.status)
+
+        if not result:
+            raise BadRequestError(error_code="ETB-khong_thay_duoc")
+
+        return True

@@ -17,13 +17,24 @@ class ChangePasswordInputDTO(BaseModel):
     @classmethod
     def validate_new_password(cls, v: str):
         if len(v) < 8:
-            raise ValueError("ETB-322")
+            raise ValueError("ETB-mat_khau_dai_hon_8_ki_tu")
         if not re.search(r"[A-Z]", v):
-            raise ValueError("ETB-323")
+            raise ValueError("ETB-mat_khau_phai_co_1_ky_tu_hoa")
         if not re.search(r"[a-z]", v):
-            raise ValueError("ETB-324")
+            raise ValueError("ETB-mat_khau_phai_co_1_ky_tu_thuong")
         if not re.search(r"\d", v):
-            raise ValueError("ETB-325")
+            raise ValueError("ETB-mat_khau_phai_co_1_ky_tu_so")
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
-            raise ValueError("ETB-326")
+            raise ValueError("ETB-mat_khau_phai_co_1_ky_tu_dac_biet")
+        return v
+
+
+class UpdateStatusInputDTO(BaseModel):
+    status: bool = Field(...)
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v: bool):
+        if v not in [True, False]:
+            raise ValueError("ETB-status_khong_hop_le")
         return v

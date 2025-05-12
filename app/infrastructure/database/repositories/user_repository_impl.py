@@ -17,7 +17,59 @@ class UserRepository(IUserRepository):
     def __init__(self, session: Session):
         self.session = session
 
-    def get_user_by_id(self, id: int) -> UserEntity | None:
+    def get_basic_profile_by_id(self, id: int) -> UserEntity | None:
+        query = dedent(
+            """SELECT u.id as u_id,
+            u.email as u_email,
+            u.phone as u_phone,
+            u.password as u_password,
+            u.status as u_status,
+            dp.id as dp_id,
+            r.id as r_id,
+            f.id as f_id
+
+            FROM "user" u
+
+            JOIN department_role dp_r ON u.department_role_id = dp_r.id
+            JOIN role r ON r.id = dp_r.role_id
+            JOIN department dp ON dp.id = dp_r.department_id
+            JOIN department_factory dp_f ON dp_f.department_id = dp.id
+            JOIN factory f ON dp_f.factory_id = f.id
+            WHERE u.status = true AND u.id = :id"""
+        )
+
+        result = self.session.execute(
+            text(query).columns(
+                u_id=Integer,
+                u_password=String,
+                u_status=Boolean,
+                u_email=String,
+                u_phone=String,
+                dp_id=Integer,
+                r_id=Integer,
+            ),
+            {"id": id},
+        )
+
+        row = result.mappings().one_or_none()
+
+        if row is None:
+            return None
+
+        user_entity = UserEntity(
+            id=row.u_id,
+            password=row.u_password,
+            status=row.u_status,
+            phone=row.u_phone,
+            email=row.u_email,
+            department=DepartmentEntity(id=row.dp_id),
+            role=RoleEntity(id=row.r_id),
+            factory=FactoryEntity(id=row.f_id),
+        )
+
+        return user_entity
+
+    def get_profile_by_id(self, id: int) -> UserEntity | None:
         query = dedent(
             """SELECT u.id as u_id,
             u.email as u_email,
@@ -42,7 +94,6 @@ class UserRepository(IUserRepository):
 
             r.id as r_id,
             r.name as r_name,
-            r.level as r_level,
             r.description as r_description,
             r.status as r_status
         FROM "user" u
@@ -76,7 +127,6 @@ class UserRepository(IUserRepository):
                 f_status=Boolean,
                 r_id=Integer,
                 r_name=String,
-                r_level=Integer,
                 r_description=String,
                 r_status=Boolean,
             ),
@@ -114,7 +164,6 @@ class UserRepository(IUserRepository):
             role=RoleEntity(
                 id=row.r_id,
                 name=row.r_name,
-                level=row.r_level,
                 description=row.r_description,
                 status=row.r_status,
             ),
@@ -131,7 +180,6 @@ class UserRepository(IUserRepository):
             u.status as u_status,
             dp.id as dp_id,
             r.id as r_id,
-            r.level as r_level,
             f.id as f_id
 
             FROM "user" u
@@ -152,7 +200,6 @@ class UserRepository(IUserRepository):
                 u_email=String,
                 u_phone=String,
                 dp_id=Integer,
-                r_level=Integer,
                 r_id=Integer,
             ),
             {"identifier": identifier},
@@ -170,7 +217,7 @@ class UserRepository(IUserRepository):
             phone=row.u_phone,
             email=row.u_email,
             department=DepartmentEntity(id=row.dp_id),
-            role=RoleEntity(id=row.r_id, level=row.r_level),
+            role=RoleEntity(id=row.r_id),
             factory=FactoryEntity(id=row.f_id),
         )
 
@@ -188,9 +235,9 @@ class UserRepository(IUserRepository):
             {"new_password": user.password, "user_name": lookup},
         )
 
-        self.session.commit()
-
         if result.rowcount > 0:
+            self.session.commit()
+
             return True
 
         return False
@@ -222,7 +269,6 @@ class UserRepository(IUserRepository):
 
             r.id as r_id,
             r.name as r_name,
-            r.level as r_level,
             r.description as r_description,
             r.status as r_status
 
@@ -257,7 +303,6 @@ class UserRepository(IUserRepository):
                 f_status=Boolean,
                 r_id=Integer,
                 r_name=String,
-                r_level=Integer,
                 r_description=String,
                 r_status=Boolean,
             )
@@ -292,7 +337,6 @@ class UserRepository(IUserRepository):
                 role=RoleEntity(
                     id=row.r_id,
                     name=row.r_name,
-                    level=row.r_level,
                     description=row.r_description,
                     status=row.r_status,
                 ),
@@ -300,6 +344,17 @@ class UserRepository(IUserRepository):
 
             users.append(user)
 
-        print(users)
-
         return users
+
+    def update_status_user(self, id: int, status: bool) -> bool:
+        query = dedent(
+            """UPDATE "user"
+            SET status = :status
+            WHERE id = :id"""
+        )
+
+        result = self.session.execute(text(query), {"id": id, "status": status})
+
+        print(result.rowcount)
+
+        return True

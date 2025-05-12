@@ -6,6 +6,5 @@ from typing import Optional
 class RoleDTO:
     id: Optional[int] = None
     name: Optional[str] = None
-    level: Optional[int] = None
     description: Optional[str] = None
     status: Optional[bool] = None

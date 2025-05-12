@@ -2,6 +2,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends
 from typing import Annotated, TypeAlias
 
+from application.interfaces.use_cases.auth.login_uc import ILoginUC
+
 from .common_dependencies import get_password_service, get_user_repository
 from .common_dependencies import get_token_service
 
@@ -11,7 +13,7 @@ from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.token_service import ITokenService
 from domain.interfaces.services.password_service import IPasswordService
 
-from application.use_cases.auth.login_use_case import LoginUseCase
+from application.use_cases.auth.login_uc_impl import LoginUC
 
 LoginOauth2Dep: TypeAlias = Annotated[OAuth2PasswordRequestForm, Depends()]
 
@@ -28,8 +30,8 @@ def get_auth_service(
 def get_login_use_case(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     token_service: Annotated[ITokenService, Depends(get_token_service)],
-) -> LoginUseCase:
-    return LoginUseCase(auth_service=auth_service, token_service=token_service)
+) -> ILoginUC:
+    return LoginUC(auth_service=auth_service, token_service=token_service)
 
 
-LoginUseCaseDep = Annotated[LoginUseCase, Depends(get_login_use_case)]
+LoginUseCaseDep = Annotated[ILoginUC, Depends(get_login_use_case)]

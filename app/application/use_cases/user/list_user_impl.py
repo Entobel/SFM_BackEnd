@@ -5,5 +5,7 @@ class ListUserUseCase:
     def __init__(self, user_service: UserService) -> None:
         self.user_service = user_service
 
+        super().__init__()
+
     def execute(self):
         self.user_service.get_list_users()

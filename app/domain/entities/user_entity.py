@@ -28,6 +28,9 @@ class UserEntity:
     def change_password(self, new_password: str):
         self.password = new_password
 
+    def change_status(self, status: bool):
+        self.status = status
+
     def __repr__(self):
         return (
             f"<UserEntity(id={self.id}, user_name='{self.user_name}', "
