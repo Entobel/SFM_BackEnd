@@ -355,6 +355,7 @@ class UserRepository(IUserRepository):
 
         result = self.session.execute(text(query), {"id": id, "status": status})
 
-        print(result.rowcount)
+        if result.rowcount > 0:
+            self.session.commit()
 
         return True

@@ -20,14 +20,11 @@ class UserService:
             user = self.user_repository.get_basic_profile_by_id(id=id)
 
         if not user:
-            raise NotFoundError(error_code="ETB-2999")
+            raise NotFoundError(error_code="ETB-khong_tim_thay_user")
 
         return user
 
     def change_password(self, user: UserEntity, old_password: str, new_password: str):
-        if user is None:
-            raise NotFoundError(error_code="ETB-2999")
-
         # Verify old password
         if not self.password_service.verify_password(user.password, old_password):
             raise AuthenticationError(error_code="ETB-khongdungmatkhaucu")

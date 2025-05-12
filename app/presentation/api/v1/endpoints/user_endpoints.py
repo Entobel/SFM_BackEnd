@@ -1,16 +1,16 @@
 from fastapi import APIRouter, status, Path
 
-from presentation.schemas.user_dtos import ChangePasswordInputDTO
+from presentation.schemas.user_dtos import ChangePasswordInputDTO, UpdateStatusInputDTO
 from presentation.schemas.response import Response
 from presentation.api.v1.dependencies.user_dependencies import (
     ChangePasswordUCDep,
+    ChangeStatusUseCaseDep,
     GetMeUseCaseDep,
     TokenVerifyDep,
     GetListUserUseCaseDep,
-    AccessCheckDep,
+    AccessCustomRole,
 )
 from presentation.schemas.token_dtos import TokenPayloadInputDTO
-from domain.value_objects.token_payload import TokenPayload
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -35,16 +35,13 @@ async def get_me(token: TokenVerifyDep, get_me_use_case: GetMeUseCaseDep):
 # Change password
 @router.put("/{target_user_id}/password", summary="Change password")
 async def change_password(
-    token: TokenVerifyDep,
     body: ChangePasswordInputDTO,
     change_password_use_case: ChangePasswordUCDep,
-    target_user: AccessCheckDep,
+    target_user: AccessCustomRole,
 ):
-    token_input_dto = TokenPayloadInputDTO(**token)
 
     change_password_use_case.execute(
         target_user=target_user,
-        actor_user_id=token_input_dto.sub,
         old_password=body.old_password,
         new_password=body.new_password,
     )
@@ -54,4 +51,11 @@ async def change_password(
 
 # Delete user
 @router.patch("/{target_user_id}/status", summary="Delete user")
-async def delete_user(token: TokenVerifyDep, target_user_id: int): ...
+async def delete_user(
+    body: UpdateStatusInputDTO,
+    target_user: AccessCustomRole,
+    change_status_use_case: ChangeStatusUseCaseDep,
+):
+    change_status_use_case.execute(status=body.status, target_user=target_user)
+
+    return Response.success(code="ETB-123", data="Success")

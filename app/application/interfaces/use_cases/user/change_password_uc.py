@@ -7,7 +7,6 @@ class IChangePasswordUC(ABC):
     def execute(
         self,
         target_user: UserEntity,
-        actor_user_id: int,
         old_password: str,
         new_password: str,
     ) -> bool: ...
