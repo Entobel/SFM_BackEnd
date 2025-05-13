@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, Path
 
-from presentation.schemas.user_dtos import ChangePasswordInputDTO, UpdateStatusInputDTO
+from presentation.schemas.user_dto import ChangePasswordInputDTO, UpdateStatusInputDTO
 from presentation.schemas.response import Response
 from presentation.api.v1.dependencies.user_dependencies import (
     ChangePasswordUCDep,
@@ -10,7 +10,7 @@ from presentation.api.v1.dependencies.user_dependencies import (
     GetListUserUseCaseDep,
     AccessCustomRole,
 )
-from presentation.schemas.token_dtos import TokenPayloadInputDTO
+from presentation.schemas.token_dto import TokenPayloadInputDTO
 
 router = APIRouter(prefix="/users", tags=["Users"])
 

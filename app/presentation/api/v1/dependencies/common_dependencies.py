@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+import psycopg2.extensions
 from fastapi.security import OAuth2PasswordBearer
 
 from infrastructure.services.password_service_imply import PasswordService
@@ -16,7 +16,7 @@ from core.database import db
 from fastapi import Depends
 from typing import Annotated
 
-DatabaseDep = Annotated[Session, Depends(db.get_db)]
+DatabaseDep = Annotated[psycopg2.extensions.connection, Depends(db.get_db)]
 
 
 def get_token_service() -> ITokenService:
@@ -24,7 +24,7 @@ def get_token_service() -> ITokenService:
 
 
 def get_user_repository(db: DatabaseDep) -> IUserRepository:
-    return UserRepository(session=db)
+    return UserRepository(conn=db)
 
 
 def get_access_policy_service() -> IAccessPolicyService:

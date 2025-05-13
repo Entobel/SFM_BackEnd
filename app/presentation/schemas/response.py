@@ -1,17 +1,21 @@
-from typing import Generic, TypeVar, Dict, Any, Optional, List
+# presentation/schemas/response.py
+
+from typing import Generic, TypeVar, Optional, List
+from pydantic import BaseModel
+from pydantic.generics import GenericModel
 
 T = TypeVar("T")
 
 
-class Response(Generic[T]):
-    """Standard response format for API endpoints."""
+class Response(GenericModel, Generic[T]):
+    success: bool
+    code: Optional[str] = None
+    data: Optional[T] = None
 
-    @staticmethod
-    def success(data: T, code: str = "Success") -> Dict[str, Any]:
-        """Create a standardized success response."""
-        return {"success": True, "code": code, "data": data}
+    @classmethod
+    def success_response(cls, data: T, code: str = "Success") -> "Response[T]":
+        return cls(success=True, code=code, data=data)
 
-    @staticmethod
-    def error(errors: List[Dict[str, str]], success: bool = False) -> Dict[str, Any]:
-        """Create a standardized error response."""
-        return {"success": success, "errors": errors}
+    @classmethod
+    def error_response(cls, errors: List[dict[str, str]]) -> "Response":
+        return cls(success=False, errors=errors)

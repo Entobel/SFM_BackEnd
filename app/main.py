@@ -32,10 +32,12 @@ class AppCreator:
             ],
         )
 
+        # Ensure DB connection works
         if not db.test_connection():
             logger.error("[APP]:: Failed to connect to the database")
             raise RuntimeError("❌ Failed to connect to the database.")
 
+        # Configure CORS middleware if applicable
         if config.BACKEND_CORS_ORIGINS:
             self.app.add_middleware(
                 CORSMiddleware,
@@ -48,16 +50,16 @@ class AppCreator:
                 f"[APP]:: CORS configured with origins: {config.BACKEND_CORS_ORIGINS}"
             )
 
-        # Check health route
+        # Health check endpoint
         @self.app.get("/", status_code=status.HTTP_200_OK)
         async def health_check():
             return {"message": "Service is working"}
 
-        # Include route
+        # Mount API v1 routes
         self.app.include_router(v1_routers, prefix=config.API_V1)
         logger.info(f"[APP]:: API routes mounted at {config.API_V1}")
 
-        # Setup centralized error handlers
+        # Setup centralized error handling
         setup_error_handlers(self.app)
         logger.info("[APP]:: Centralized error handlers configured")
 

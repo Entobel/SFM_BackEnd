@@ -6,19 +6,15 @@ from datetime import timedelta
 @dataclass(frozen=True)
 class TokenPayload:
     user_id: int
-    role_id: int
     user_name: str
-    department_id: int
-    factory_id: int
+    department_factory_role_id: int
     expires_delta: timedelta
 
     def to_payload(self) -> dict:
         return {
-            "role_id": self.role_id,
             "user_name": self.user_name,
-            "department_id": self.department_id,
-            "factory_id": self.factory_id,
+            "department_factory_role": self.department_factory_role_id,
         }
 
     def __repr__(self) -> str:
-        return f"{self.user_id}  {self.role_id}  {self.department_id} {self.factory_id}"
+        return f"{self.user_id}  {self.role_id}  {self.department_factory_role_id} "

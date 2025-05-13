@@ -1,7 +1,5 @@
-from sqlalchemy import create_engine, text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.exc import SQLAlchemyError
+import psycopg2
+from psycopg2 import pool, OperationalError
 from contextlib import contextmanager
 from typing import Generator
 import logging
@@ -13,58 +11,59 @@ logger = logging.getLogger("uvicorn")
 
 class Database:
     def __init__(self, db_url: str):
-        logger.info(
-            f"[DATABASE]:: Connecting to {db_url.replace(config.database.DB_PASSWORD, '***')}"
-        )
-        self.engine = create_engine(
-            db_url,
-            echo=False,
-            pool_pre_ping=True,
-            pool_size=5,
-            max_overflow=10,
-        )
-        self.SessionLocal = sessionmaker(
-            autocommit=False,
-            autoflush=False,
-            bind=self.engine,
-        )
-        self.Base = declarative_base()
+        masked_url = db_url.replace(config.database.DB_PASSWORD, "***")
+        logger.info(f"[DATABASE]:: Connecting to {masked_url}")
+
+        try:
+            self.connection_pool = psycopg2.pool.SimpleConnectionPool(
+                minconn=1, maxconn=15, dsn=db_url
+            )
+            if self.connection_pool:
+                logger.info("[DATABASE]:: Connection pool created successfully")
+        except OperationalError as e:
+            logger.error("[DATABASE]:: Failed to create connection pool", exc_info=True)
+            raise
 
     @contextmanager
-    def session(self) -> Generator[Session, None, None]:
-        session = self.SessionLocal()
+    def session(self) -> Generator[psycopg2.extensions.connection, None, None]:
+        conn = None
         try:
-            yield session
-            session.commit()
-        except Exception as e:
-            session.rollback()
+            conn = self.connection_pool.getconn()
+            yield conn
+            conn.commit()
+        except Exception:
+            if conn:
+                conn.rollback()
             logger.error("Database session error:", exc_info=True)
             raise
         finally:
-            session.close()
+            if conn:
+                self.connection_pool.putconn(conn)
 
     def test_connection(self) -> bool:
         try:
-            with self.engine.connect() as conn:
-                conn.execute(text("SELECT 1"))
-            logger.info(
-                f"[DATABASE]:: Connected to DB '{config.database.DB_NAME}' successfully"
-            )
-            return True
-        except SQLAlchemyError as e:
-            logger.error("[DATABASE]:: Connection failed:", exc_info=True)
+            with self.session() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT 1")
+                    result = cur.fetchone()
+                    logger.info(
+                        f"[DATABASE]:: Connected to DB '{config.database.DB_NAME}' successfully"
+                    )
+                    return result == (1,)
+        except Exception:
+            logger.error("[DATABASE]:: Connection test failed", exc_info=True)
             return False
 
-    def get_db(self) -> Generator[Session, None, None]:
+    def get_db(self) -> Generator[psycopg2.extensions.connection, None, None]:
         """
-        FastAPI-compatible dependency for database session.
-        Use as: `db: Session = Depends(db.get_db)`
+        FastAPI-compatible dependency for database connection.
+        Use as: `conn = Depends(db.get_connection)`
         """
-        db_session = self.SessionLocal()
+        conn = self.connection_pool.getconn()
         try:
-            yield db_session
+            yield conn
         finally:
-            db_session.close()
+            self.connection_pool.putconn(conn)
 
 
 # Global instance (use across the app)

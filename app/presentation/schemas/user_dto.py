@@ -1,5 +1,12 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 import re
+
+
+class UserLoginResponseDTO(BaseModel):
+    id: int
+    user_name: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ChangePasswordInputDTO(BaseModel):

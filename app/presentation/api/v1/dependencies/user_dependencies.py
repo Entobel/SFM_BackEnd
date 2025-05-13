@@ -9,7 +9,7 @@ from presentation.api.v1.dependencies.common_dependencies import (
     get_token_service,
     get_user_repository,
 )
-from presentation.schemas.token_dtos import TokenPayloadInputDTO
+from presentation.schemas.token_dto import TokenPayloadInputDTO
 
 from application.interfaces.use_cases.user.change_password_uc import IChangePasswordUC
 from application.interfaces.use_cases.user.change_status_uc import IChangeStatusUC

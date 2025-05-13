@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from .user_schemas import UserDTO
+
+from domain.entities.user_entity import UserEntity
 
 
 @dataclass(frozen=True)
-class LoginResponseDTO:
+class LoginResponse:
     token: str
-    user: UserDTO
+    user: UserEntity

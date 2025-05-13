@@ -2,6 +2,7 @@ from typing import Optional
 from .department_entity import DepartmentEntity
 from .factory_entity import FactoryEntity
 from .role_entity import RoleEntity
+from .department_factory_role_entity import DepartmentFactoryRoleEntity
 
 from dataclasses import dataclass
 
@@ -15,11 +16,9 @@ class UserEntity:
     last_name: Optional[str] = None
     password: Optional[str] = None
 
-    department: Optional[DepartmentEntity] = None
-    factory: Optional[FactoryEntity] = None
-    role: Optional[RoleEntity] = None
+    department_factory_role: Optional[DepartmentFactoryRoleEntity] = None
 
-    status: Optional[bool] = True
+    is_active: Optional[bool] = True
 
     @property
     def user_name(self) -> str:
@@ -28,15 +27,13 @@ class UserEntity:
     def change_password(self, new_password: str):
         self.password = new_password
 
-    def change_status(self, status: bool):
-        self.status = status
+    def change_is_active(self, is_active: bool):
+        self.is_active = is_active
 
     def __repr__(self):
         return (
             f"<UserEntity(id={self.id}, user_name='{self.user_name}', "
             f"first_name='{self.first_name}', last_name='{self.last_name}', "
-            f"department='{self.department.name if self.department else None}', "
-            f"factory='{self.factory.name if self.factory else None}', "
-            f"role='{self.role.name if self.role else None}', "
-            f"status={'Active' if self.status else 'Inactive'})>"
+            f"is_active={'Active' if self.is_active else 'Inactive'})>"
+            f"department_factory_role='{self.department_factory_role}'"
         )

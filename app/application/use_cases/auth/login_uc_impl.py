@@ -1,8 +1,7 @@
 from datetime import timedelta
 
+from application.schemas.auth_schemas import LoginResponse
 from application.interfaces.use_cases.auth.login_uc import ILoginUC
-from application.schemas.auth_schemas import LoginResponseDTO
-from application.schemas.user_schemas import UserDTO
 
 from domain.services.auth_service import AuthService
 from domain.interfaces.services.token_service import ITokenService
@@ -18,7 +17,7 @@ class LoginUC(ILoginUC):
         self.auth_service = auth_service
         self.token_service = token_service
 
-    def execute(self, user_name: str, password: str) -> LoginResponseDTO:
+    def execute(self, user_name, password) -> LoginResponse:
         # Phase 1: Credential checking
         user = self.auth_service.validate_credentials(
             identifier=user_name, password=password
@@ -27,14 +26,11 @@ class LoginUC(ILoginUC):
         # Phase 2: Generate token
         token_payload = TokenPayload(
             user_id=user.id,
-            role_id=user.role.id,
             user_name=user.user_name,
-            department_id=user.department.id,
-            factory_id=user.factory.id,
+            department_factory_role_id=user.department_factory_role.id,
             expires_delta=timedelta(minutes=20),
         )
 
         token = self.token_service.generate_token(token_payload)
 
-        # Phase 3: Response DTO
-        return LoginResponseDTO(token=token, user={"id": user.id})
+        return LoginResponse(token=token, user=user)
