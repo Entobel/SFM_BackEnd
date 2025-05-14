@@ -27,8 +27,10 @@ class LoginUC(ILoginUC):
         token_payload = TokenPayload(
             user_id=user.id,
             user_name=user.user_name,
+            role_id=user.department_factory_role.role.id,
+            department_id=user.department_factory_role.department.id,
             department_factory_role_id=user.department_factory_role.id,
-            expires_delta=timedelta(minutes=20),
+            expires_delta=timedelta(days=7),
         )
 
         token = self.token_service.generate_token(token_payload)

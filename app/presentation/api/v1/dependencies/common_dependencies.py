@@ -1,6 +1,8 @@
 import psycopg2.extensions
 from fastapi.security import OAuth2PasswordBearer
 
+from domain.interfaces.services.query_helper_service import IQueryHelperService
+from infrastructure.services.query_helper_service_impl import QueryHelper
 from infrastructure.services.password_service_imply import PasswordService
 from infrastructure.services.token_service_imply import TokenService
 from infrastructure.services.access_policy_service_impl import AccessPolicyService
@@ -23,8 +25,17 @@ def get_token_service() -> ITokenService:
     return TokenService()
 
 
-def get_user_repository(db: DatabaseDep) -> IUserRepository:
-    return UserRepository(conn=db)
+def get_query_helper() -> IQueryHelperService:
+    return QueryHelper()
+
+
+QueryHelperDep = Annotated[IQueryHelperService, Depends(get_query_helper)]
+
+
+def get_user_repository(
+    db: DatabaseDep, query_helper: QueryHelperDep
+) -> IUserRepository:
+    return UserRepository(conn=db, query_helper=query_helper)
 
 
 def get_access_policy_service() -> IAccessPolicyService:

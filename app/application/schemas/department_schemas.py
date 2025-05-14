@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from pydantic import ConfigDict
+
 
 @dataclass(frozen=True)
 class DepartmentDTO:
@@ -9,4 +11,14 @@ class DepartmentDTO:
     abbr_name: Optional[str] = None
     description: Optional[str] = None
     parent_id: Optional[int] = None
-    status: Optional[bool] = None
+    is_active: Optional[bool] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+@dataclass(frozen=True)
+class CreateDepartmentDTO:
+    name: str
+    abbr_name: str
+    description: str
+    parent_id: int

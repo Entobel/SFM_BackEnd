@@ -32,9 +32,9 @@ def verify_token(token: str) -> TokenPayload:
 
         return payload
     except ExpiredSignatureError as e:
-        raise AuthenticationError(error_code="ETB-321")
+        raise AuthenticationError(error_code="ETB-het_han_token")
     except JWTError as e:
-        raise AuthenticationError(error_code="ETB-123")
+        raise AuthenticationError(error_code="ETB-loi_token")
 
 
 bcrypt_context = CryptContext(schemes=["bcrypt"])

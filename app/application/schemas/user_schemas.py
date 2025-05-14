@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
+
+from pydantic import ConfigDict
 from .department_schemas import DepartmentDTO
 from .factory_schemas import FactoryDTO
 from .role_schemas import RoleDTO
@@ -12,8 +14,10 @@ class UserDTO:
     phone: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    status: Optional[bool] = True
+    is_active: Optional[bool] = True
 
     department: Optional[DepartmentDTO] = None
     factory: Optional[FactoryDTO] = None
     role: Optional[RoleDTO] = None
+
+    model_config = ConfigDict(from_attributes=True)

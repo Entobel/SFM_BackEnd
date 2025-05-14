@@ -1,13 +1,16 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from pydantic import ConfigDict
+
 
 @dataclass(frozen=True)
 class FactoryDTO:
-    id: int
+    id: Optional[int] = None
     name: Optional[str] = None
     abbr_name: Optional[str] = None
     description: Optional[str] = None
     location: Optional[str] = None
-    address: Optional[str] = None
-    status: Optional[bool] = None
+    is_active: Optional[bool] = None
+
+    model_config = ConfigDict(from_attributes=True)

@@ -1,13 +1,11 @@
 from domain.entities.user_entity import UserEntity
 from application.interfaces.use_cases.user.change_status_uc import IChangeStatusUC
-from domain.services.user_service import UserService
+from domain.interfaces.repositories.user_repository import IUserRepository
 
 
 class ChangeStatusUC(IChangeStatusUC):
-    def __init__(self, user_service: UserService) -> None:
-        self.user_service = user_service
+    def __init__(self, user_repository: IUserRepository) -> None:
+        self.user_repository = user_repository
 
-        super().__init__()
-
-    def execute(self, status: bool, target_user: UserEntity):
-        self.user_service.change_status(status=status, user=target_user)
+    def execute(self, status: bool, target_user: UserEntity) -> bool:
+        return self.user_repository.update_status_user(user=target_user, status=status)

@@ -1,4 +1,5 @@
 from fastapi import FastAPI, status
+from fastapi.encoders import jsonable_encoder
 from presentation.api.v1.routes import routers as v1_routers
 from core.config import config
 from starlette.middleware.cors import CORSMiddleware
@@ -30,6 +31,8 @@ class AppCreator:
                     "description": "Endpoints for managing user roles, including creation, updating, deletion, and role assignment.",
                 },
             ],
+            # Đặt exclude_none=True mặc định cho toàn bộ ứng dụng
+            response_model_exclude_none=True,
         )
 
         # Ensure DB connection works

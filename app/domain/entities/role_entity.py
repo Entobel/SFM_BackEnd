@@ -7,4 +7,4 @@ class RoleEntity:
     id: Optional[int] = None
     name: Optional[str] = None
     description: Optional[str] = None
-    status: Optional[bool] = None
+    is_active: Optional[bool] = None

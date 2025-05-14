@@ -1,16 +1,20 @@
 from application.interfaces.use_cases.user.me_uc import IMeUC
 from application.schemas.user_schemas import UserDTO
-from domain.services.user_service import UserService
+from domain.interfaces.repositories.user_repository import IUserRepository
+from core.exception import NotFoundError
 
 
 class GetMeUseCase(IMeUC):
-    def __init__(self, user_service: UserService):
-        self.user_service = user_service
+    def __init__(self, user_repository: IUserRepository):
+        self.user_repository = user_repository
 
         super().__init__()
 
     def execute(self, user_id: int) -> UserDTO:
-        user = self.user_service.get_profile_by_id(id=user_id)
+        user = self.user_repository.get_profile_by_id(id=user_id)
+
+        if not user:
+            raise NotFoundError(error_code="ETB-khong_tim_thay_user")
 
         return UserDTO(
             id=user.id,
@@ -18,8 +22,8 @@ class GetMeUseCase(IMeUC):
             phone=user.phone,
             first_name=user.first_name,
             last_name=user.last_name,
-            factory=user.factory,
-            department=user.department,
-            role=user.role,
-            status=user.status,
+            factory=user.department_factory_role.factory,
+            department=user.department_factory_role.department,
+            role=user.department_factory_role.role,
+            is_active=user.is_active,
         )

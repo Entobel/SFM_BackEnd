@@ -5,8 +5,8 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
 import logging
-import traceback
-
+import psycopg2
+from psycopg2 import errorcodes as pg_errorcodes
 from .exception import DomainError
 from presentation.schemas.response import Response
 
@@ -36,7 +36,7 @@ def error_response(
     else:
         errors.append({"code": code})
 
-    return Response.error(errors)
+    return Response.error_response(errors)
 
 
 # -------------------- CUSTOM EXCEPTION --------------------
@@ -48,7 +48,8 @@ class HTTPException(Exception):
     def __init__(self, status_code: int, detail: Dict | str = None):
         self.status_code = status_code
         if isinstance(detail, str) or detail is None:
-            self.detail = Response.error([{"code": f"ETB-{status_code}"}])
+            response = Response.error_response([{"code": f"ETB-{status_code}"}])
+            self.detail = response.model_dump(exclude_none=True)
         else:
             self.detail = detail
 
@@ -63,9 +64,10 @@ def setup_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(DomainError)
     async def domain_error_handler(request: Request, exc: DomainError):
         # exc.errors đã được build sẵn trong DomainError
+        response = Response.error_response(exc.errors)
         return JSONResponse(
             status_code=exc.status_code,
-            content=Response.error(exc.errors),
+            content=response.model_dump(exclude_none=True),
         )
 
     # 2. Bắt validation lỗi của FastAPI (422)
@@ -85,13 +87,42 @@ def setup_error_handlers(app: FastAPI) -> None:
                 errors.append({"field": field, "code": f"ETB-{code.strip()}"})
             else:
                 errors.append({"field": field, "code": "ETB-422"})
-        return JSONResponse(status_code=422, content=Response.error(errors))
+        response = Response.error_response(errors)
+        return JSONResponse(
+            status_code=422, content=response.model_dump(exclude_none=True)
+        )
 
     # 3. Bắt mọi Exception chưa xử lý khác
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception):
         logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
+        response = Response.error_response([{"code": "ETB-500"}])
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content=Response.error([{"code": "ETB-500"}]),
+            content=response.model_dump(exclude_none=True),
+        )
+
+    @app.exception_handler(psycopg2.Error)
+    async def psycopg2_exception_handler(request: Request, exc: psycopg2.Error):
+        """
+        Chuẩn hoá lỗi DB thành HTTP status + ETB-code quen thuộc.
+        """
+        sqlstate = exc.pgcode  # ví dụ '23505' = UNIQUE_VIOLATION
+        mapping = {
+            pg_errorcodes.UNIQUE_VIOLATION: status.HTTP_409_CONFLICT,
+            pg_errorcodes.FOREIGN_KEY_VIOLATION: status.HTTP_409_CONFLICT,
+            pg_errorcodes.NOT_NULL_VIOLATION: status.HTTP_400_BAD_REQUEST,
+            pg_errorcodes.CHECK_VIOLATION: status.HTTP_400_BAD_REQUEST,
+            pg_errorcodes.INVALID_TEXT_REPRESENTATION: status.HTTP_400_BAD_REQUEST,
+        }
+        status_code = mapping.get(sqlstate, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Log chi tiết cho dev/ops
+        logger.error(f"psycopg2 error {sqlstate or 'unknown'}: {exc}", exc_info=True)
+
+        # Giữ nguyên convention ETB-<status>
+        response = Response.error_response([{"code": f"ETB-{status_code}"}])
+        return JSONResponse(
+            status_code=status_code,
+            content=response.model_dump(exclude_none=True),
         )

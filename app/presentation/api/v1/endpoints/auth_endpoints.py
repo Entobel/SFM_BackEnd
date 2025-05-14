@@ -12,7 +12,9 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post(
-    "/login", status_code=status.HTTP_200_OK, response_model=Response[LoginResponseDTO]
+    "/login",
+    status_code=status.HTTP_200_OK,
+    response_model=None,  # Disable Pydantic model to use custom dict
 )
 async def login(
     form_data: LoginOauth2Dep,
@@ -26,7 +28,7 @@ async def login(
         user_name=login_input_dto.username, password=login_input_dto.password
     )
 
-    return Response.success_response(
+    response = Response.success_response(
         code="ETB-dang_nhap_thanh_cong",
         data=LoginResponseDTO(
             token=result.token,
@@ -35,3 +37,5 @@ async def login(
             ),
         ),
     )
+
+    return response.get_dict()
