@@ -27,9 +27,15 @@ class AppCreator:
                 },
                 {"name": "Users", "description": "User profile and account management"},
                 {
-                    "name": "Roles",
+                    "name": "Role",
                     "description": "Endpoints for managing user roles, including creation, updating, deletion, and role assignment.",
                 },
+                {"name": "default", "description": "Service health check"},
+                {
+                    "name": "Department",
+                    "description": "Endpoints for managing departments",
+                },
+                {"name": "Factory", "description": "Endpoints for managing factories"},
             ],
             # Đặt exclude_none=True mặc định cho toàn bộ ứng dụng
             response_model_exclude_none=True,

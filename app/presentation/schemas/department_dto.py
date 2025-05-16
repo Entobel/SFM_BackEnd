@@ -53,7 +53,7 @@ class CreateDepartmentDTO(BaseModel):
     @field_validator("parent_id")
     def validate_parent_id(cls, v: int):
         if v < 0:
-            raise ValueError("ETB_parent_id_khong_hop_le")
+            raise ValueError("ETB-parent_id_khong_hop_le")
         return v
 
 

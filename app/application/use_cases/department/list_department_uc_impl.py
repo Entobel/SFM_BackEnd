@@ -19,5 +19,5 @@ class ListDepartmentUC(IListDepartmentUC):
         "items" : list[DepartmentEntity],
     ]:
         return self.department_repository.get_list_departments(
-            page, page_size, search, is_active
+            page=page, page_size=page_size, search=search, is_active=is_active
         )

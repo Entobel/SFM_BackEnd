@@ -26,7 +26,6 @@ from presentation.schemas.token_dto import TokenPayloadInputDTO
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-# Get list users
 @router.get("/", response_model_exclude_none=True)
 async def get_list_users(
     token: TokenVerifyDep,
@@ -90,12 +89,11 @@ async def get_list_users(
     ).get_dict()
 
 
-# Get own profile
 @router.get(
     "/me",
     status_code=status.HTTP_200_OK,
     summary="Get own profile",
-    response_model=None,  # Disable Pydantic validation to use custom dict
+    response_model=None,
 )
 async def get_me(token: TokenVerifyDep, get_me_use_case: GetMeUseCaseDep):
     token_input_dto = TokenPayloadInputDTO(**token)
@@ -107,7 +105,6 @@ async def get_me(token: TokenVerifyDep, get_me_use_case: GetMeUseCaseDep):
     ).get_dict()
 
 
-# Change password
 @router.put(
     "/{target_user_id}/password",
     summary="Change password",
@@ -131,7 +128,6 @@ async def change_password(
     ).get_dict()
 
 
-# Change status user
 @router.patch(
     "/{target_user_id}/status",
     summary="Change status user",
@@ -156,6 +152,7 @@ async def change_status_user(
     "/",
     summary="Create User",
     response_model_exclude_none=True,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_user(
     token: TokenVerifyDep,

@@ -41,7 +41,7 @@ class NotFoundError(DomainError):
 
     def __init__(
         self,
-        error_code: str = "ETB-404",
+        error_code: str = "ETB-khong_tim_thay_tai_nguyen",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
         super().__init__(error_code=error_code, status_code=400, details=details)
@@ -52,7 +52,7 @@ class ValidationError(DomainError):
 
     def __init__(
         self,
-        error_code: str = "ETB-422",
+        error_code: str = "ETB-loi_du_lieu",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
         super().__init__(error_code=error_code, status_code=400, details=details)
@@ -63,7 +63,7 @@ class AuthenticationError(DomainError):
 
     def __init__(
         self,
-        error_code: str = "ETB-401",
+        error_code: str = "ETB-loi_xac_thuc",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
         super().__init__(error_code=error_code, status_code=400, details=details)
@@ -74,7 +74,7 @@ class BadRequestError(DomainError):
 
     def __init__(
         self,
-        error_code: str = "ETB-400",
+        error_code: str = "ETB-loi_yeu_cau",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
         super().__init__(error_code=error_code, status_code=400, details=details)
@@ -85,7 +85,7 @@ class AuthorizationError(DomainError):
 
     def __init__(
         self,
-        error_code: str = "ETB-403",
+        error_code: str = "ETB-khong_co_quyen_truy_cap",
         details: Union[Dict[str, Any], List[Dict[str, Any]]] = None,
     ):
         super().__init__(error_code=error_code, status_code=400, details=details)

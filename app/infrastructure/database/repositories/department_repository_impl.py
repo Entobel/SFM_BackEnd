@@ -86,7 +86,7 @@ class DepartmentRepository(IDepartmentRepository):
                 self.conn.rollback()
                 return False
 
-    def get_department_by_id(self, id: int) -> DepartmentEntity:
+    def get_department_by_id(self, id: int) -> DepartmentEntity | None:
         query = """
             SELECT dp.id as id, dp.name as name, dp.abbr_name as abbr_name, dp.description as description, dp.parent_id as parent_id, dp.is_active as is_active
             FROM department dp
