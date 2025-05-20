@@ -1,6 +1,27 @@
 from typing import Annotated
 from fastapi import Depends
 
+from application.use_cases.department.list_department_factory_role_uc_impl import (
+    ListDepartmentFactoryRoleUC,
+)
+from application.interfaces.use_cases.department.list_department_factory_role_uc import (
+    IListDepartmentFactoryRoleUC,
+)
+from infrastructure.database.repositories.department_factory_role_repository_impl import (
+    DepartmentFactoryRoleRepository,
+)
+from domain.interfaces.repositories.deparment_factory_role_repository import (
+    IDepartmentFactoryRoleRepository,
+)
+from application.use_cases.department.list_department_factory_uc_impl import (
+    ListDepartmentFactoryUC,
+)
+from infrastructure.database.repositories.department_factory_repository_impl import (
+    DepartmentFactoryRepository,
+)
+from domain.interfaces.repositories.department_factory_repository import (
+    IDepartmentFactoryRepository,
+)
 from application.use_cases.department.update_status_department_uc_impl import (
     UpdateStatusDepartmentUC,
 )
@@ -22,6 +43,9 @@ from application.interfaces.use_cases.department.create_department_uc import (
 from application.interfaces.use_cases.department.list_department_uc import (
     IListDepartmentUC,
 )
+from application.interfaces.use_cases.department.list_department_factory_uc import (
+    IListDepartmentFactoryUC,
+)
 from infrastructure.database.repositories.department_repository_impl import (
     DepartmentRepository,
 )
@@ -38,6 +62,13 @@ def get_department_repository(
     query_helper: QueryHelperDep,
 ) -> IDepartmentRepository:
     return DepartmentRepository(conn=conn, query_helper=query_helper)
+
+
+def get_department_factory_repository(
+    conn: DatabaseDep,
+    query_helper: QueryHelperDep,
+) -> IDepartmentFactoryRepository:
+    return DepartmentFactoryRepository(conn=conn, query_helper=query_helper)
 
 
 def get_list_department_use_case(
@@ -72,6 +103,30 @@ def get_update_status_department_use_case(
     return UpdateStatusDepartmentUC(department_repository=department_repository)
 
 
+def get_department_factory_role_repository(
+    conn: DatabaseDep,
+    query_helper: QueryHelperDep,
+) -> IDepartmentFactoryRoleRepository:
+    return DepartmentFactoryRoleRepository(conn=conn, query_helper=query_helper)
+
+
+def get_list_department_factory_use_case(
+    department_factory_repository: Annotated[
+        IDepartmentFactoryRepository, Depends(get_department_factory_repository)
+    ],
+) -> IListDepartmentFactoryUC:
+    return ListDepartmentFactoryUC(repository=department_factory_repository)
+
+
+def get_list_department_factory_role_use_case(
+    department_factory_role_repository: Annotated[
+        IDepartmentFactoryRoleRepository,
+        Depends(get_department_factory_role_repository),
+    ],
+) -> IListDepartmentFactoryRoleUC:
+    return ListDepartmentFactoryRoleUC(repository=department_factory_role_repository)
+
+
 ListDepartmentUseCaseDep = Annotated[
     IListDepartmentUC, Depends(get_list_department_use_case)
 ]
@@ -86,4 +141,12 @@ UpdateDepartmentUseCaseDep = Annotated[
 
 UpdateStatusDepartmentUseCaseDep = Annotated[
     IUpdateStatusDepartmentUC, Depends(get_update_status_department_use_case)
+]
+
+ListDepartmentFactoryUseCaseDep = Annotated[
+    IListDepartmentFactoryUC, Depends(get_list_department_factory_use_case)
+]
+
+ListDepartmentFactoryRoleUseCaseDep = Annotated[
+    IListDepartmentFactoryRoleUC, Depends(get_list_department_factory_role_use_case)
 ]

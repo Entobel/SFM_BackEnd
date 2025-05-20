@@ -282,7 +282,7 @@ class UserRepository(IUserRepository):
         JOIN role r                      ON dpfr.role_id = r.id
         JOIN department dp               ON dp.id = dpf.department_id
         {qb.where_sql()}
-        ORDER BY u.id
+        ORDER BY u.created_at DESC
         {limit_sql}
         """
         params = qb.all_params(limit_params)

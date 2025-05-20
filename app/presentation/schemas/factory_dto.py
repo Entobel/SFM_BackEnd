@@ -3,6 +3,14 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, field_validator, model_validator
 
 
+class FactoryDTO(BaseModel):
+    id: int
+    name: str
+    abbr_name: str
+    description: Optional[str] = None
+    location: Optional[str] = None
+
+
 class CreateFactoryDTO(BaseModel):
     name: str
     abbr_name: str
