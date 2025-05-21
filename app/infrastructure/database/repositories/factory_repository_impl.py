@@ -50,6 +50,20 @@ class FactoryRepository(IFactoryRepository):
             "total_pages": qb.total_pages(total, page_size),
         }
 
+    def get_factory_by_name(self, name: str) -> FactoryEntity:
+        query = dedent(
+            """
+            SELECT f.id as id, f.name as name, f.abbr_name as abbr_name, f.description as description, f.location as location, f.is_active as is_active
+            FROM factory f
+            WHERE f.name = %s
+            """
+        )
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (name,))
+            row = cur.fetchone()
+
+        return FactoryEntity.from_row(row) if row else None
+
     def get_factory_by_id(self, factory_id: int) -> FactoryEntity:
         query = dedent(
             """
@@ -134,3 +148,16 @@ class FactoryRepository(IFactoryRepository):
             else:
                 self.conn.rollback()
                 return False
+
+    def check_factory_is_used(self, factory_id: int) -> bool:
+        query = dedent(
+            """
+            SELECT COUNT(*) FROM department_factory WHERE factory_id = %s
+            """
+        )
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (factory_id,))
+            row = cur.fetchone()
+
+            return row.get("count") > 0

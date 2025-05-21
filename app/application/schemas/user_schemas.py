@@ -9,7 +9,7 @@ from .role_schemas import RoleDTO
 
 @dataclass(frozen=True)
 class UserDTO:
-    id: int
+    id: Optional[int] = None
     email: Optional[str] = None
     phone: Optional[str] = None
     first_name: Optional[str] = None

@@ -9,6 +9,7 @@ from presentation.schemas.user_dto import (
     ChangePasswordInputDTO,
     CreateUserInputDTO,
     UpdateStatusInputDTO,
+    UpdateUserInputDTO,
 )
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.response import Response
@@ -20,6 +21,7 @@ from presentation.api.v1.dependencies.user_dependencies import (
     GetMeUseCaseDep,
     TokenVerifyDep,
     GetListUserUseCaseDep,
+    UpdateUserUseCaseDep,
 )
 from presentation.schemas.token_dto import TokenPayloadInputDTO
 
@@ -105,7 +107,7 @@ async def get_me(token: TokenVerifyDep, get_me_use_case: GetMeUseCaseDep):
     ).get_dict()
 
 
-@router.put(
+@router.patch(
     "/{target_user_id}/password",
     summary="Change password",
     response_model_exclude_none=True,
@@ -116,11 +118,12 @@ async def change_password(
     change_password_use_case: ChangePasswordUCDep,
     target_user: GetCurrentUserDep,
 ):
-    print("O day", target_user)
+    print("actor_role_id", token.get("role_id"))
     change_password_use_case.execute(
         target_user=target_user,
         old_password=body.old_password,
         new_password=body.new_password,
+        actor_role_id=token.get("role_id"),
     )
 
     return Response.success_response(
@@ -139,7 +142,6 @@ async def change_status_user(
     change_status_use_case: ChangeStatusUseCaseDep,
     target_user: GetCurrentUserDep,
 ):
-
     change_status_use_case.execute(status=body.status, target_user=target_user)
 
     return Response.success_response(
@@ -164,4 +166,23 @@ async def create_user(
 
     return Response.success_response(
         code="ETB-tao_tai_khoan_thanh_cong", data="Success"
+    ).get_dict()
+
+
+# Update User
+@router.put(
+    "/{target_user_id}",
+    summary="Update User",
+    response_model_exclude_none=True,
+)
+async def update_user(
+    token: TokenVerifyDep,
+    body: UpdateUserInputDTO,
+    update_user_use_case: UpdateUserUseCaseDep,
+    target_user: GetCurrentUserDep,
+):
+    update_user_use_case.execute(user_id=target_user.id, user_dto=body)
+
+    return Response.success_response(
+        code="ETB-cap_nhat_thong_tin_thanh_cong", data="Success"
     ).get_dict()

@@ -30,6 +30,21 @@ class UserEntity:
     def change_is_active(self, is_active: bool):
         self.is_active = is_active
 
+    def set_department_factory_role_id(self, department_factory_role_id: int):
+        self.department_factory_role.id = department_factory_role_id
+
+    def set_email(self, email: str):
+        self.email = email
+
+    def set_phone(self, phone: str):
+        self.phone = phone
+
+    def set_first_name(self, first_name: str):
+        self.first_name = first_name
+
+    def set_last_name(self, last_name: str):
+        self.last_name = last_name
+
     def __repr__(self):
         return (
             f"<UserEntity(id={self.id}, user_name='{self.user_name}', "

@@ -49,13 +49,6 @@ class ChangePasswordInputDTO(BaseModel):
     old_password: str = Field(...)
     new_password: str = Field(...)
 
-    @field_validator("old_password")
-    @classmethod
-    def validate_old_password(cls, v: str):
-        if len(v) < 6:
-            raise ValueError("ETB-312")  # old password too short
-        return v
-
     @field_validator("new_password")
     @classmethod
     def validate_new_password(cls, v: str):
@@ -174,5 +167,48 @@ class CreateUserInputDTO(BaseModel):
     @classmethod
     def validate_first_name(cls, v: str):
         if len(v) < 3:
+            raise ValueError("ETB-ten_khong_hop_le")
+        return v
+
+
+class UpdateUserInputDTO(BaseModel):
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    department_factory_role_id: Optional[int] = None
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, v: str):
+        if v and not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", v):
+            raise ValueError("ETB-email_khong_hop_le")
+        return v
+
+    @field_validator("phone")
+    @classmethod
+    def validate_phone(cls, v: str):
+        if v and not re.match(r"^[0-9]{10}$", v):
+            raise ValueError("ETB-so_dien_thoai_khong_hop_le")
+        return v
+
+    @field_validator("department_factory_role_id")
+    @classmethod
+    def validate_department_factory_role_id(cls, v: int):
+        if v and v <= 0:
+            raise ValueError("ETB-role_phong_ban_khong_hop_le")
+        return v
+
+    @field_validator("last_name")
+    @classmethod
+    def validate_last_name(cls, v: str):
+        if v and len(v) < 3:
+            raise ValueError("ETB-ten_khong_hop_le")
+        return v
+
+    @field_validator("first_name")
+    @classmethod
+    def validate_first_name(cls, v: str):
+        if v and len(v) < 3:
             raise ValueError("ETB-ten_khong_hop_le")
         return v

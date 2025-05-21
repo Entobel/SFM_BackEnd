@@ -38,3 +38,6 @@ class IUserRepository(ABC):
 
     @abstractmethod
     def create_user(self, user: UserEntity) -> bool: ...
+
+    @abstractmethod
+    def update_user(self, user: UserEntity) -> bool: ...

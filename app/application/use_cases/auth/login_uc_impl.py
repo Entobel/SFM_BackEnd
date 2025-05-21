@@ -23,6 +23,7 @@ class LoginUC(ILoginUC):
             identifier=user_name, password=password
         )
 
+        print("user", user)
         # Phase 2: Generate token
         token_payload = TokenPayload(
             user_id=user.id,

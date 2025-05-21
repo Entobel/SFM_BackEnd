@@ -4,6 +4,8 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 import psycopg2
 
+from application.interfaces.use_cases.user.update_user_uc import IUpdateUserUC
+from application.use_cases.user.update_user_uc_imply import UpdateUserUC
 from domain.interfaces.repositories.deparment_factory_role_repository import (
     IDepartmentFactoryRoleRepository,
 )
@@ -112,6 +114,12 @@ def access_admin_role(
     return target_user
 
 
+def get_update_user_uc(
+    user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+) -> IUpdateUserUC:
+    return UpdateUserUC(user_repository=user_repository)
+
+
 CreateUserUseCaseDep = Annotated[ICreateUserUC, Depends(get_create_user_uc)]
 GetMeUseCaseDep = Annotated[IMeUC, Depends(get_me_use_case)]
 ChangePasswordUCDep = Annotated[IChangePasswordUC, Depends(change_password_use_case)]
@@ -120,3 +128,4 @@ ChangeStatusUseCaseDep = Annotated[IChangeStatusUC, Depends(change_status_use_ca
 
 GetCurrentUserDep = Annotated[UserEntity, Depends(get_current_user)]
 AccessAdminRole = Annotated[UserEntity, Depends(access_admin_role)]
+UpdateUserUseCaseDep = Annotated[IUpdateUserUC, Depends(get_update_user_uc)]

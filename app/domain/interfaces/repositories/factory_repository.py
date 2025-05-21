@@ -12,6 +12,9 @@ class IFactoryRepository(ABC):
     ) -> list[FactoryEntity]: ...
 
     @abstractmethod
+    def get_factory_by_name(self, name: str) -> FactoryEntity: ...
+
+    @abstractmethod
     def create_factory(self, factory: FactoryEntity) -> bool: ...
 
     @abstractmethod
@@ -19,3 +22,6 @@ class IFactoryRepository(ABC):
 
     @abstractmethod
     def update_status_factory(self, factory_id: int, is_active: bool) -> bool: ...
+
+    @abstractmethod
+    def check_factory_is_used(self, factory_id: int) -> bool: ...

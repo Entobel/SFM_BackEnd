@@ -18,6 +18,16 @@ class UpdateStatusFactoryUC(IUpdateStatusFactoryUC):
                 error_code="ETB-nha_may_khong_ton_tai",
             )
 
+        if not is_active:
+            is_used = self.factory_repository.check_factory_is_used(
+                factory_id=factory_id
+            )
+
+            if is_used:
+                raise BadRequestError(
+                    error_code="ETB-nha_may_dang_duoc_su_dung_khong_the_deactivate"
+                )
+
         if factory.is_active == is_active:
             return True
 

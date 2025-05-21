@@ -174,8 +174,15 @@ class UserRepository(IUserRepository):
     def get_cred_by_email_or_phone(self, identifier: str) -> Optional[UserEntity]:
         query = dedent(
             """
-            SELECT u.id, u.email, u.phone, u.password, u.is_active,
-                   dp.id, dpfr.id, f.id, r.id       
+            SELECT u.id, 
+            u.email, 
+            u.phone, 
+            u.password, 
+            u.is_active,
+            dp.id, 
+            dpfr.id, 
+            f.id, 
+            r.id       
             FROM "user" u
             JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id
             JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id
@@ -202,8 +209,8 @@ class UserRepository(IUserRepository):
             department_factory_role=DepartmentFactoryRoleEntity(
                 id=row[5],
                 department=DepartmentEntity(id=row[6]),
-                role=RoleEntity(id=row[7]),
-                factory=FactoryEntity(id=row[8]),
+                role=RoleEntity(id=row[8]),
+                factory=FactoryEntity(id=row[7]),
             ),
         )
 
@@ -402,6 +409,36 @@ class UserRepository(IUserRepository):
                 ),
             )
             created = cur.fetchone()
+
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False
+
+    def update_user(self, user: UserEntity) -> bool:
+        query = dedent(
+            """
+            UPDATE "user"
+            SET email = %s, phone = %s, first_name = %s, last_name = %s, department_factory_role_id = %s
+            WHERE id = %s
+        """
+        )
+
+        with self.conn.cursor() as cur:
+            cur.execute(
+                query,
+                (
+                    user.email,
+                    user.phone,
+                    user.first_name,
+                    user.last_name,
+                    user.department_factory_role.id,
+                    user.id,
+                ),
+            )
+            updated = cur.rowcount
 
             if cur.rowcount > 0:
                 self.conn.commit()

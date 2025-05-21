@@ -12,16 +12,17 @@ class UpdateDepartmentUC(IUpdateDepartmentUC):
 
     def execute(self, department_id: int, department_dto: DepartmentDTO) -> bool:
         department = self.department_repository.get_department_by_id(department_id)
-
+        print("department", department_dto)
         if not department:
             raise BadRequestError(error_code="ETB-phong_ban_khong_ton_tai")
 
-        is_exist_name = self.department_repository.get_department_by_name(
-            department_dto.name
-        )
+        if department_dto.name != department.name:
+            is_exist_name = self.department_repository.get_department_by_name(
+                department_dto.name
+            )
 
-        if is_exist_name:
-            raise BadRequestError(error_code="ETB-phong_ban_da_ton_tai")
+            if is_exist_name:
+                raise BadRequestError(error_code="ETB-phong_ban_da_ton_tai")
 
         if department_dto.parent_id:
             department.set_parent_id(department_dto.parent_id)
