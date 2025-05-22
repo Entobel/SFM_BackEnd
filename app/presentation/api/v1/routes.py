@@ -7,6 +7,8 @@ from presentation.api.v1.endpoints import (
     factory_endpoints,
     shift_endpoints,
     diet_endpoints,
+    production_object_endpoints,
+    production_type_endpoints,
 )
 
 routers = APIRouter()
@@ -18,6 +20,8 @@ router_list = [
     factory_endpoints.router,
     shift_endpoints.router,
     diet_endpoints.router,
+    production_object_endpoints.router,
+    production_type_endpoints.router,
 ]
 
 for router in router_list:
