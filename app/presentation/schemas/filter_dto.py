@@ -17,7 +17,14 @@ class FilterDTO(BaseModel):
     factory_id: Optional[int] = Field(default=None, description="Filter by factory ID")
     role_id: Optional[int] = Field(default=None, description="Filter by role ID")
     is_active: Optional[bool] = Field(default=None, description="Filter by is active")
-
+    production_type_id: Optional[int] = Field(
+        default=None, description="Filter by production type ID"
+    )
+    production_object_id: Optional[int] = Field(
+        default=None, description="Filter by production object ID"
+    )
+    diet_id: Optional[int] = Field(default=None, description="Filter by diet ID")
+    shift_id: Optional[int] = Field(default=None, description="Filter by shift ID")
     model_config = ConfigDict(from_attributes=True)
 
 

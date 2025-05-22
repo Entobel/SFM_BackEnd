@@ -28,7 +28,13 @@ class IUserRepository(ABC):
         factory_id: Optional[int],
         role_id: Optional[int],
         is_active: Optional[bool],
-    ) -> List[UserEntity]: ...
+    ) -> dict[
+        "items" : list[UserEntity],
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+    ]: ...
 
     @abstractmethod
     def get_basic_profile_by_id(self, id: int) -> UserEntity | None: ...
