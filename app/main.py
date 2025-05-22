@@ -36,6 +36,8 @@ class AppCreator:
                     "description": "Endpoints for managing departments",
                 },
                 {"name": "Factory", "description": "Endpoints for managing factories"},
+                {"name": "Diet", "description": "Endpoints for managing diets"},
+                {"name": "Shift", "description": "Endpoints for managing shifts"},
             ],
             # Đặt exclude_none=True mặc định cho toàn bộ ứng dụng
             response_model_exclude_none=True,
@@ -62,7 +64,7 @@ class AppCreator:
         # Health check endpoint
         @self.app.get("/", status_code=status.HTTP_200_OK)
         async def health_check():
-            return {"message": "Service is working"}
+            return {"message": "Service is working on port 8000"}
 
         # Mount API v1 routes
         self.app.include_router(v1_routers, prefix=config.API_V1)

@@ -5,6 +5,8 @@ from presentation.api.v1.endpoints import (
     department_endpoints,
     role_endpoints,
     factory_endpoints,
+    shift_endpoints,
+    diet_endpoints,
 )
 
 routers = APIRouter()
@@ -14,6 +16,8 @@ router_list = [
     department_endpoints.router,
     role_endpoints.router,
     factory_endpoints.router,
+    shift_endpoints.router,
+    diet_endpoints.router,
 ]
 
 for router in router_list:
