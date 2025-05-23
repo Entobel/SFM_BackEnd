@@ -6,6 +6,6 @@ class ShiftDTO(BaseModel):
     id: int
     name: str
     description: Optional[str] = None
-    is_active: bool
+    is_active: Optional[bool] = None
 
     model_config = ConfigDict(from_attributes=True)

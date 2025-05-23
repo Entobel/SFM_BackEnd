@@ -1,11 +1,11 @@
 from typing import Optional
-
 from pydantic import BaseModel, ConfigDict
 
 
-class DietDTO(BaseModel):
-    id: Optional[int] = None
+class ProductionTypeDTO(BaseModel):
+    id: int
     name: Optional[str] = None
+    abbr_name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
 

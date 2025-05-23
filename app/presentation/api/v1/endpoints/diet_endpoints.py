@@ -1,10 +1,20 @@
 from fastapi import APIRouter, Depends
 
-from presentation.schemas.response import Response
 from application.schemas.diet_schemas import DietDTO
+from presentation.schemas.diet_dto import (
+    CreateDietDTO,
+    UpdateDietDTO,
+    UpdateStatusDietDTO,
+)
+from presentation.schemas.response import Response
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.api.v1.dependencies.diet_dependencies import ListDietUCDep
+from presentation.api.v1.dependencies.diet_dependencies import (
+    CreateDietUCDep,
+    ListDietUCDep,
+    UpdateDietStatusUCDep,
+    UpdateDietUCDep,
+)
 
 
 router = APIRouter(prefix="/diets", tags=["Diet"])
@@ -46,4 +56,62 @@ async def list_diets(
 
     return Response.success_response(
         code="ETB-lay_danh_sach_phong_ban_thanh_cong", data=paginate_data
+    ).get_dict()
+
+
+# Create Diet
+@router.post("/")
+async def create_diet(
+    token: TokenVerifyDep,
+    use_case: CreateDietUCDep,
+    create_diet_dto: CreateDietDTO,
+):
+    diet_dto = DietDTO(
+        name=create_diet_dto.name,
+        description=create_diet_dto.description,
+    )
+
+    use_case.execute(diet_dto=diet_dto)
+
+    return Response.success_response(
+        code="ETB-tao_di_thanh_cong", data="Success"
+    ).get_dict()
+
+
+# update diet status
+@router.patch("/{diet_id}/status")
+async def update_diet_status(
+    token: TokenVerifyDep,
+    diet_id: int,
+    body: UpdateStatusDietDTO,
+    use_case: UpdateDietStatusUCDep,
+):
+    diet_dto = DietDTO(
+        id=diet_id,
+        is_active=body.is_active,
+    )
+    use_case.execute(diet_dto=diet_dto)
+
+    return Response.success_response(
+        code="ETB-cap_nhat_trang_thai_di_thanh_cong", data="Success"
+    ).get_dict()
+
+
+@router.put("/{diet_id}")
+async def update_diet(
+    token: TokenVerifyDep,
+    diet_id: int,
+    body: UpdateDietDTO,
+    use_case: UpdateDietUCDep,
+):
+    diet_dto = DietDTO(
+        id=diet_id,
+        name=body.name,
+        description=body.description,
+    )
+
+    use_case.execute(diet_dto=diet_dto)
+
+    return Response.success_response(
+        code="ETB-cap_nhat_di_thanh_cong", data="Success"
     ).get_dict()

@@ -3,11 +3,11 @@ from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from application.schemas.produciton_type_schemas import ProductionTypeDTO
+from application.schemas.production_object_schemas import ProductionObjectDTO
+from application.schemas.shift_schemas import ShiftDTO
+from application.schemas.diet_schemas import DietDTO
 from application.schemas.user_schemas import UserDTO
-from presentation.schemas.production_type_dto import ProductionTypeDTO
-from presentation.schemas.production_object_dto import ProductionObjectDTO
-from presentation.schemas.diet_dto import DietDTO
-from presentation.schemas.shift_dto import ShiftDTO
 
 
 class GrowingDTO(BaseModel):
