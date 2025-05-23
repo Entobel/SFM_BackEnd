@@ -1,5 +1,8 @@
+from datetime import date
 from math import ceil
 from typing import Any, List, Optional, Tuple
+from datetime import datetime
+from dateutil.parser import isoparse  # robust ISO 8601 parser
 
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 
@@ -28,6 +31,14 @@ class QueryHelper(IQueryHelperService):
         ilike_clauses = [f"{col} ILIKE %s" for col in cols]
         self.where_clauses.append("(" + " OR ".join(ilike_clauses) + ")")
         self.params.extend([pattern] * len(cols))
+
+    def add_between_date(self, column: str, start_date: str, end_date: str):
+        """Between date filter for timestamptz. Input: ISO 8601 strings from frontend."""
+        start_dt = isoparse(start_date)
+        end_dt = isoparse(end_date)
+
+        self.where_clauses.append(f"{column} BETWEEN %s AND %s")
+        self.params.extend([start_dt, end_dt])
 
     def where_sql(self) -> str:
         if not self.where_clauses:
