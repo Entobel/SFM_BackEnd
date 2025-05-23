@@ -50,7 +50,7 @@ class GrowingRepository(IGrowingRepository):
         JOIN production_type pt ON g.production_type_id = pt.id
         JOIN production_object po ON g.production_object_id = po.id
         JOIN diet d ON g.diet_id = d.id
-        JOIN "user" u ON g.id = u.id
+        JOIN "user" u ON g.user_id = u.id
         JOIN department_factory_role dfr ON dfr.id = u.department_factory_role_id
         JOIN role r ON r.id = dfr.role_id
         {qb.where_sql()}
@@ -106,7 +106,7 @@ class GrowingRepository(IGrowingRepository):
                 JOIN production_type pt ON g.production_type_id = pt.id
                 JOIN production_object po ON g.production_object_id = po.id
                 JOIN diet d ON g.diet_id = d.id
-                JOIN "user" u ON g.id = u.id
+                JOIN "user" u ON g.user_id = u.id
                 JOIN department_factory_role dfr ON dfr.id = u.department_factory_role_id
                 JOIN role r ON r.id = dfr.role_id
         {qb.where_sql()}
@@ -122,9 +122,6 @@ class GrowingRepository(IGrowingRepository):
 
         # 3) Build your entities…
         growings = [GrowingEntity.from_row(row) for row in rows]
-
-        print("GROWINGS", growings)
-
         return {
             "items": growings,
             "total": total,
@@ -132,3 +129,52 @@ class GrowingRepository(IGrowingRepository):
             "page_size": page_size,
             "total_pages": qb.total_pages(total, page_size),
         }
+
+    def create_new_growing(self, growing_entity: GrowingEntity) -> bool:
+        query = """
+        INSERT INTO growing (date_produced, shift_id, production_object_id, production_type_id, diet_id, user_id, number_crates, substrate_moisture, location_1, location_2, location_3, location_4, location_5, notes)
+        VALUES (%s, %s, %s, %s, %s ,%s ,%s ,%s ,%s, %s, %s ,%s ,%s, %s)
+        """
+
+        date_produced = growing_entity.date_produced
+        shift_id = growing_entity.shift.id
+        production_object_id = growing_entity.production_object.id
+        production_type_id = growing_entity.production_type.id
+        diet_id = growing_entity.diet.id
+        user_id = growing_entity.user.id
+        number_crates = growing_entity.number_crates
+        substrate_moisture = growing_entity.substrate_moisture
+        location_1 = growing_entity.location_1
+        location_2 = growing_entity.location_2
+        location_3 = growing_entity.location_3
+        location_4 = growing_entity.location_4
+        location_5 = growing_entity.location_5
+        notes = growing_entity.notes
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                query,
+                (
+                    date_produced,
+                    shift_id,
+                    production_object_id,
+                    production_type_id,
+                    diet_id,
+                    user_id,
+                    number_crates,
+                    substrate_moisture,
+                    location_1,
+                    location_2,
+                    location_3,
+                    location_4,
+                    location_5,
+                    notes,
+                ),
+            )
+
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False

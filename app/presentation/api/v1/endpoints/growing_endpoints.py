@@ -7,8 +7,11 @@ from presentation.schemas.production_type_dto import ProductionTypeDTO
 from presentation.schemas.shift_dto import ShiftDTO
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
-from presentation.schemas.growing_dto import GrowingDTO
-from presentation.api.v1.dependencies.grow_dependencies import ListGrowingUCDep
+from presentation.schemas.growing_dto import CreateGrowingDTO, GrowingDTO
+from presentation.api.v1.dependencies.growing_dependencies import (
+    CreateGrowingUCDep,
+    ListGrowingUCDep,
+)
 
 router = APIRouter(prefix="/growings", tags=["Growing"])
 
@@ -34,10 +37,9 @@ def list_growings(
     growings = []
 
     for growing in result["items"]:
-        print("DATA", growing.shift.id)
         growing_dto = GrowingDTO(
             id=growing.id,
-            date_produced=growing.date_produced.date(),
+            date_produced=growing.date_produced,
             shift=ShiftDTO(
                 id=growing.shift.id,
                 name=growing.shift.name,
@@ -86,4 +88,17 @@ def list_growings(
 
     return Response.success_response(
         code="ETB-lay_danh_sach_thanh_cong", data=paginate_data
+    ).get_dict()
+
+
+@router.post("/", response_model_exclude_none=True)
+def create_growing(
+    token: TokenVerifyDep,
+    body: CreateGrowingDTO,
+    use_case: CreateGrowingUCDep,
+):
+    use_case.execute(body)
+
+    return Response.success_response(
+        code="ETB-tao_thanh_cong", data="Success"
     ).get_dict()

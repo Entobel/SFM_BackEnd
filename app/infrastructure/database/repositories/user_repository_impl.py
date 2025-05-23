@@ -281,7 +281,7 @@ class UserRepository(IUserRepository):
         dpfr.id AS dept_fry_role_id,
         dp.id AS department_id, dp.name AS department_name, dp.description AS department_description, dp.abbr_name AS department_abbr_name, dp.is_active AS department_active,
         f.id AS factory_id, f.name AS factory_name, f.abbr_name AS factory_abbr, f.description AS factory_description, f.location AS factory_location, f.is_active AS factory_active,
-        r.id AS role_id, r.name AS role_name, r.description AS role_desc, r.is_active AS role_active
+        r.id AS r_id, r.name AS r_name, r.description AS r_description, r.is_active AS r_is_active
         FROM "user" u
         JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id
         JOIN department_factory dpf      ON dpf.id = dpfr.department_factory_id

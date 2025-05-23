@@ -48,7 +48,6 @@ class DepartmentRepository(IDepartmentRepository):
         data_sql = f"""SELECT dp.id as id, dp.name as name, dp.abbr_name as abbr_name, dp.description as description, dp.parent_id as parent_id, dp.is_active as is_active
             FROM department dp {qb.where_sql()} ORDER BY dp.id {limit_sql}"""
 
-        print(data_sql)
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(data_sql, qb.all_params(limit_params))
             rows = cur.fetchall()

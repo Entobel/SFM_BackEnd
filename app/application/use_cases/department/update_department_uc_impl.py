@@ -12,7 +12,7 @@ class UpdateDepartmentUC(IUpdateDepartmentUC):
 
     def execute(self, department_id: int, department_dto: DepartmentDTO) -> bool:
         department = self.department_repository.get_department_by_id(department_id)
-        print("department", department_dto)
+
         if not department:
             raise BadRequestError(error_code="ETB-phong_ban_khong_ton_tai")
 

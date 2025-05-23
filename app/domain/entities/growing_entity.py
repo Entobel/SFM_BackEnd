@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime
 from typing import Optional
 
 from domain.entities.department_factory_role_entity import (
@@ -16,7 +16,7 @@ from domain.entities.user_entity import UserEntity
 @dataclass
 class GrowingEntity:
     id: Optional[int] = None
-    date_produced: Optional[date] = None
+    date_produced: Optional[datetime] = None
     shift: Optional[ShiftEntity] = None
     production_type: Optional[ProductionTypeEntity] = None
     production_object: Optional[ProductionObjectEntity] = None

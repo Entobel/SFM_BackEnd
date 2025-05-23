@@ -23,3 +23,6 @@ class IGrowingRepository(ABC):
         "page_size":int,
         "total_pages":int,
     ]: ...
+
+    @abstractmethod
+    def create_new_growing(self, growing_entity: GrowingEntity) -> bool: ...

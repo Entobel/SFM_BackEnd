@@ -24,11 +24,18 @@ class Database:
             logger.error("[DATABASE]:: Failed to create connection pool", exc_info=True)
             raise
 
+    def _set_timezone(self, conn):
+        """Set timezone for connection to Asia/Ho_Chi_Minh"""
+        with conn.cursor() as cursor:
+            cursor.execute("SET TIME ZONE 'Asia/Ho_Chi_Minh'")
+            logger.info(f"[DATABASE]:: Timezone set to Asia/Ho_Chi_Minh")
+
     @contextmanager
     def session(self) -> Generator[psycopg2.extensions.connection, None, None]:
         conn = None
         try:
             conn = self.connection_pool.getconn()
+            self._set_timezone(conn)
             yield conn
             conn.commit()
         except Exception:
@@ -61,6 +68,7 @@ class Database:
         """
         conn = self.connection_pool.getconn()
         try:
+            self._set_timezone(conn)
             yield conn
         finally:
             self.connection_pool.putconn(conn)

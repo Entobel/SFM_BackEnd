@@ -99,7 +99,7 @@ async def get_list_users(
 )
 async def get_me(token: TokenVerifyDep, get_me_use_case: GetMeUseCaseDep):
     token_input_dto = TokenPayloadInputDTO(**token)
-    print(token_input_dto)
+
     user_dto = get_me_use_case.execute(user_id=token_input_dto.sub)
 
     return Response.success_response(
@@ -118,7 +118,6 @@ async def change_password(
     change_password_use_case: ChangePasswordUCDep,
     target_user: GetCurrentUserDep,
 ):
-    print("actor_role_id", token.get("role_id"))
     change_password_use_case.execute(
         target_user=target_user,
         old_password=body.old_password,
