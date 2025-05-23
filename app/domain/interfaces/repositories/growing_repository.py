@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from domain.entities.growing_entity import GrowingEntity
+from typing import Optional
 
 
 class IGrowingRepository(ABC):
@@ -8,11 +9,13 @@ class IGrowingRepository(ABC):
         self,
         page: int,
         page_size: int,
-        search: str,
-        shift_id: int,
-        production_type_id: int,
-        production_object_id: int,
-        diet_id: int,
+        search: Optional[str],
+        shift_id: Optional[int],
+        production_type_id: Optional[int],
+        production_object_id: Optional[int],
+        start_date: Optional[str],
+        end_date: Optional[str],
+        diet_id: Optional[int],
     ) -> dict[
         "items" : list[GrowingEntity],
         "total":int,
