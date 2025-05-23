@@ -10,7 +10,7 @@ from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.growing_dto import GrowingDTO
 from presentation.api.v1.dependencies.grow_dependencies import ListGrowingUCDep
 
-router = APIRouter(prefix="/growings", tags=["growings"])
+router = APIRouter(prefix="/growings", tags=["Growing"])
 
 
 @router.get("/")

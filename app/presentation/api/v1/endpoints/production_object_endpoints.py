@@ -6,7 +6,7 @@ from presentation.api.v1.dependencies.production_object_dependencies import (
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from presentation.schemas.response import Response
 
-router = APIRouter(prefix="/production-objects", tags=["Production Objects"])
+router = APIRouter(prefix="/production-objects", tags=["Production Object"])
 
 
 # List Production Objects

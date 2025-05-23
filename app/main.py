@@ -38,6 +38,18 @@ class AppCreator:
                 {"name": "Factory", "description": "Endpoints for managing factories"},
                 {"name": "Diet", "description": "Endpoints for managing diets"},
                 {"name": "Shift", "description": "Endpoints for managing shifts"},
+                {
+                    "name": "Production Type",
+                    "description": "Endpoints for managing production types",
+                },
+                {
+                    "name": "Production Object",
+                    "description": "Endpoints for managing production objects",
+                },
+                {
+                    "name": "Growing",
+                    "description": "Endpoints for managing growings",
+                },
             ],
             # Đặt exclude_none=True mặc định cho toàn bộ ứng dụng
             response_model_exclude_none=True,

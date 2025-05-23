@@ -6,7 +6,7 @@ from presentation.api.v1.dependencies.production_type_denpendencies import (
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from presentation.schemas.response import Response
 
-router = APIRouter(prefix="/production-types", tags=["Production Types"])
+router = APIRouter(prefix="/production-types", tags=["Production Type"])
 
 
 @router.get("/")

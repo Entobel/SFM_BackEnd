@@ -27,13 +27,13 @@ class ListGrowingUC(IListGrowingUC):
         "total_pages":int,
     ]:
         return self.growing_repository.get_all_growings(
-            page,
-            page_size,
-            search,
-            shift_id,
-            production_type_id,
-            production_object_id,
-            diet_id,
-            start_date,
-            end_date,
+            page=page,
+            page_size=page_size,
+            search=search,
+            shift_id=shift_id,
+            production_type_id=production_type_id,
+            production_object_id=production_object_id,
+            diet_id=diet_id,
+            start_date=start_date,
+            end_date=end_date,
         )
