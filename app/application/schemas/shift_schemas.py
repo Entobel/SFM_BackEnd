@@ -3,8 +3,8 @@ from pydantic import BaseModel, ConfigDict
 
 
 class ShiftDTO(BaseModel):
-    id: int
-    name: str
+    id: Optional[int] = None
+    name: Optional[int] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
 

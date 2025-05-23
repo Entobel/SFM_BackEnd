@@ -24,7 +24,9 @@ class ShiftRepository(IShiftRepository):
         """
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (name,))
-            return ShiftEntity.from_row(cur.fetchone())
+            row = cur.fetchone()
+
+        return ShiftEntity.from_row(row) if row else None
 
     def update_status_shift(self, shift_entity: ShiftEntity) -> bool:
         query = """
@@ -35,6 +37,23 @@ class ShiftRepository(IShiftRepository):
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (shift_is_active, shift_id))
+
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False
+
+    def create_shift(self, shift_entity: ShiftEntity) -> bool:
+        query = """
+            INSERT INTO shift (name, description) VALUES (%s, %s)
+        """
+        shift_name = shift_entity.name
+        shift_description = shift_entity.description
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (shift_name, shift_description))
 
             if cur.rowcount > 0:
                 self.conn.commit()
@@ -63,7 +82,7 @@ class ShiftRepository(IShiftRepository):
 
     def get_all_shifts(self) -> list[ShiftEntity]:
         query = """
-            SELECT id as s_id, name as s_name, description as s_description, is_active as s_is_active FROM shift WHERE is_active = TRUE
+            SELECT id as s_id, name as s_name, description as s_description, is_active as s_is_active FROM shift
         """
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query)

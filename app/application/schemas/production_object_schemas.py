@@ -3,7 +3,7 @@ from typing import Optional
 
 
 class ProductionObjectDTO(BaseModel):
-    id: int
+    id: Optional[int] = None
     name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None

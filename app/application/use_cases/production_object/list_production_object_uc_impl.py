@@ -1,6 +1,6 @@
 from domain.entities.production_object_entity import ProductionObjectEntity
 from domain.interfaces.repositories.production_object_repository import (
-    IProductionRepository,
+    IProductionObjectRepository,
 )
 from application.interfaces.use_cases.production_object.list_production_object_uc import (
     IListProductionObjectUC,
@@ -8,7 +8,7 @@ from application.interfaces.use_cases.production_object.list_production_object_u
 
 
 class ListProductionObjectUC(IListProductionObjectUC):
-    def __init__(self, repo: IProductionRepository):
+    def __init__(self, repo: IProductionObjectRepository):
         self.repo = repo
 
     def execute(self) -> list[ProductionObjectEntity]:

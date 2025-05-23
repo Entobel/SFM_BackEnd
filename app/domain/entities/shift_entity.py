@@ -4,7 +4,7 @@ from typing import Optional
 
 @dataclass
 class ShiftEntity:
-    id: int
+    id: Optional[int] = None
     name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = True
@@ -21,8 +21,8 @@ class ShiftEntity:
     @classmethod
     def from_row(cls, row: dict) -> "ShiftEntity":
         return cls(
-            id=row["shift_id"],
-            name=row["shift_name"],
-            description=row["shift_description"],
-            is_active=row["shift_is_active"],
+            id=row["s_id"],
+            name=row["s_name"],
+            description=row["s_description"],
+            is_active=row["s_is_active"],
         )
