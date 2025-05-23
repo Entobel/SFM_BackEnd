@@ -1,12 +1,13 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class ProductionObjectEntity:
     id: int
-    name: str
-    description: str
-    is_active: bool
+    name: Optional[str] = None
+    description: Optional[str] = None
+    is_active: Optional[bool] = None
 
     @classmethod
     def from_row(cls, row: dict) -> "ProductionObjectEntity":

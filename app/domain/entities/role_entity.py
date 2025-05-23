@@ -21,8 +21,8 @@ class RoleEntity:
     @classmethod
     def from_row(cls, row: dict) -> "RoleEntity":
         return cls(
-            id=row["id"],
-            name=row["name"],
-            description=row["description"],
-            is_active=row["is_active"],
+            id=row["r_id"],
+            name=row["r_name"],
+            description=row["r_description"],
+            is_active=row["r_is_active"],
         )

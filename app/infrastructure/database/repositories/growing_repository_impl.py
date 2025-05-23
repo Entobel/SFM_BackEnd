@@ -27,16 +27,6 @@ class GrowingRepository(IGrowingRepository):
     ) -> Dict[str, Any]:
         qb = self.query_helper
 
-        if search is not None:
-            qb.add_search(
-                cols=[
-                    "g.number_crates",
-                    "g.substrate_moisture",
-                    "g.notes",
-                ],
-                query=search,
-            )
-
         if shift_id is not None:
             qb.add_eq("s.id", shift_id)
 
@@ -73,7 +63,8 @@ class GrowingRepository(IGrowingRepository):
         # 2) FETCH page
         limit_sql, limit_params = qb.paginate(page, page_size)
 
-        data_sql = f"""SELECT g.id                 as g_id,
+        data_sql = f"""SELECT 
+            g.id                 as g_id,
             g.date_produced      as g_date_produced,
             g.number_crates      as g_number_crates,
             g.substrate_moisture as g_substrate_moisture,
@@ -84,30 +75,32 @@ class GrowingRepository(IGrowingRepository):
             g.location_5         as g_location_5,
             g.notes              as g_notes,
 
-            s.id                 as shift_id,
-            s.description        as shift_description,
-            s.name               as shift_name,
+            s.id                 as s_id,
+            s.description        as s_description,
+            s.name               as s_name,
 
-            pt.id                as production_type_id,
-            pt.name              as production_type_name,
-            pt.description       as production_type_description,
+            pt.id                as pt_id,
+            pt.name              as pt_name,
+            pt.description       as pt_description,
+            pt.abbr_name         as pt_abbr_name,
 
-            po.id                as production_object_id,
-            po.name              as production_object_name,
-            po.description       as production_object_description,
+            po.id                as po_id,
+            po.name              as po_name,
+            po.description       as po_description,
 
-            d.id                 as diet_id,
-            d.name               as diet_name,
-            d.description        as diet_description,
+            d.id                 as d_id,
+            d.name               as d_name,
+            d.description        as d_description,
 
             u.id                 as user_id,
-            u.email              as user_email,
-            u.phone              as user_phone,
-            u.first_name         as user_first_name,
-            u.last_name          as user_last_name,
+            u.email              as email,
+            u.phone              as phone,
+            u.first_name         as first_name,
+            u.last_name          as last_name,
 
-            r.id                 as role_id,
-            r.name               as role_name
+            r.id                 as r_id,
+            r.name               as r_name
+      
         FROM growing g
                 JOIN shift s ON g.shift_id = s.id
                 JOIN production_type pt ON g.production_type_id = pt.id
@@ -129,6 +122,8 @@ class GrowingRepository(IGrowingRepository):
 
         # 3) Build your entities…
         growings = [GrowingEntity.from_row(row) for row in rows]
+
+        print("GROWINGS", growings)
 
         return {
             "items": growings,

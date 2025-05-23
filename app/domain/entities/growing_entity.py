@@ -2,6 +2,9 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Optional
 
+from domain.entities.department_factory_role_entity import (
+    DepartmentFactoryRoleEntity,
+)
 from domain.entities.role_entity import RoleEntity
 from domain.entities.production_object_entity import ProductionObjectEntity
 from domain.entities.diet_entity import DietEntity
@@ -21,12 +24,12 @@ class GrowingEntity:
     user: Optional[UserEntity] = None
     number_crates: Optional[int] = None
     substrate_moisture: Optional[float] = None
-    location_1: Optional[str]
-    location_2: Optional[str]
-    location_3: Optional[str]
-    location_4: Optional[str]
-    location_5: Optional[str]
-    notes: Optional[str]
+    location_1: Optional[str] = None
+    location_2: Optional[str] = None
+    location_3: Optional[str] = None
+    location_4: Optional[str] = None
+    location_5: Optional[str] = None
+    notes: Optional[str] = None
 
     @classmethod
     def from_row(cls, row: dict) -> "GrowingEntity":
@@ -34,35 +37,37 @@ class GrowingEntity:
             id=row["g_id"],
             date_produced=row["g_date_produced"],
             shift=ShiftEntity(
-                id="shift_id",
-                description="shift_description",
-                name="shift_name",
+                id=row["s_id"],
+                description=row["s_description"],
+                name=row["s_name"],
             ),
             production_type=ProductionTypeEntity(
-                id="production_type_id",
-                description="production_type_description",
-                name="production_type_name",
+                id=row["pt_id"],
+                description=row["pt_description"],
+                abbr_name=row["pt_abbr_name"],
+                name=row["pt_name"],
             ),
             production_object=ProductionObjectEntity(
-                id="production_object_id",
-                description="production_object_description",
-                is_active="production_object_is_active",
-                name="production_object_name",
+                id=row["po_id"],
+                description=row["po_description"],
+                name=row["po_name"],
             ),
             diet=DietEntity(
-                id="diet_id",
-                description="diet_description",
-                name="diet_name",
+                id=row["d_id"],
+                description=row["d_description"],
+                name=row["d_name"],
             ),
             user=UserEntity(
-                id="user_id",
-                email="user_email",
-                phone="user_phone",
-                first_name="user_first_name",
-                last_name="user_last_name",
-                role=RoleEntity(
-                    id="role_id",
-                    name="role_name",
+                id=row["user_id"],
+                email=row["email"],
+                phone=row["phone"],
+                first_name=row["first_name"],
+                last_name=row["last_name"],
+                department_factory_role=DepartmentFactoryRoleEntity(
+                    role=RoleEntity(
+                        id=row["r_id"],
+                        name=row["r_name"],
+                    ),
                 ),
             ),
             number_crates=row["g_number_crates"],

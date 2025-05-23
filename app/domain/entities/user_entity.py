@@ -80,10 +80,10 @@ class UserEntity:
                     is_active=row["factory_active"],
                 ),
                 role=RoleEntity(
-                    id=row["role_id"],
-                    name=row["role_name"],
-                    description=row["role_desc"],
-                    is_active=row["role_active"],
+                    id=row["r_id"],
+                    name=row["r_name"],
+                    description=row["r_description"],
+                    is_active=row["r_is_active"],
                 ),
             ),
         )

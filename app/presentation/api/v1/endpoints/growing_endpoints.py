@@ -1,7 +1,13 @@
 from fastapi import APIRouter, Depends
-from app.application.schemas.shift_schemas import ShiftDTO
-from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from app.presentation.schemas.filter_dto import FilterDTO
+from presentation.schemas.response import Response
+from application.schemas.diet_schemas import DietDTO
+from application.schemas.user_schemas import UserDTO
+from presentation.schemas.production_object_dto import ProductionObjectDTO
+from presentation.schemas.production_type_dto import ProductionTypeDTO
+from presentation.schemas.shift_dto import ShiftDTO
+from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
+from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.growing_dto import GrowingDTO
 from presentation.api.v1.dependencies.grow_dependencies import ListGrowingUCDep
 
 router = APIRouter(prefix="/growings", tags=["growings"])
@@ -28,9 +34,10 @@ def list_growings(
     growings = []
 
     for growing in result["items"]:
+        print("DATA", growing.shift.id)
         growing_dto = GrowingDTO(
             id=growing.id,
-            date_produced=growing.date_produced,
+            date_produced=growing.date_produced.date(),
             shift=ShiftDTO(
                 id=growing.shift.id,
                 name=growing.shift.name,
@@ -41,4 +48,42 @@ def list_growings(
                 name=growing.production_type.name,
                 description=growing.production_type.description,
             ),
+            production_object=ProductionObjectDTO(
+                id=growing.production_object.id,
+                name=growing.production_object.name,
+                description=growing.production_object.description,
+            ),
+            diet=DietDTO(
+                id=growing.diet.id,
+                name=growing.diet.name,
+                description=growing.diet.description,
+            ),
+            user=UserDTO(
+                id=growing.user.id,
+                email=growing.user.email,
+                phone=growing.user.phone,
+                first_name=growing.user.first_name,
+                last_name=growing.user.last_name,
+            ),
+            number_crates=growing.number_crates,
+            substrate_moisture=growing.substrate_moisture,
+            location_1=growing.location_1,
+            location_2=growing.location_2,
+            location_3=growing.location_3,
+            location_4=growing.location_4,
+            location_5=growing.location_5,
+            notes=growing.notes,
         )
+        growings.append(growing_dto)
+
+    paginate_data = PaginateDTO(
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"],
+        total_pages=result["total_pages"],
+        items=growings,
+    )
+
+    return Response.success_response(
+        code="ETB-lay_danh_sach_thanh_cong", data=paginate_data
+    ).get_dict()

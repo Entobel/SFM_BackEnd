@@ -4,8 +4,8 @@ from pydantic import BaseModel, ConfigDict
 
 class DietDTO(BaseModel):
     id: int
-    name: str
+    name: Optional[str] = None
     description: Optional[str] = None
-    is_active: bool
+    is_active: Optional[bool] = None
 
     model_config = ConfigDict(from_attributes=True)

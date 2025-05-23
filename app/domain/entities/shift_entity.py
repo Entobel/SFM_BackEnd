@@ -12,8 +12,8 @@ class ShiftEntity:
     @classmethod
     def from_row(cls, row: dict) -> "ShiftEntity":
         return cls(
-            id=row["id"],
-            name=row["name"],
-            description=row["description"],
-            is_active=row["is_active"],
+            id=row["shift_id"],
+            name=row["shift_name"],
+            description=row["shift_description"],
+            is_active=row["shift_is_active"],
         )

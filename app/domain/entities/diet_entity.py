@@ -5,8 +5,8 @@ from typing import Optional
 @dataclass
 class DietEntity:
     id: int
-    name: str
-    is_active: bool
+    name: Optional[str] = None
+    is_active: Optional[bool] = None
     description: Optional[str] = None
 
     @classmethod
