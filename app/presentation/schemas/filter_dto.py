@@ -23,6 +23,8 @@ class FilterDTO(BaseModel):
     production_object_id: Optional[int] = Field(
         default=None, description="Filter by production object ID"
     )
+    start_date: Optional[str] = Field(default=None, description="Filter by start date")
+    end_date: Optional[str] = Field(default=None, description="Filter by end date")
     diet_id: Optional[int] = Field(default=None, description="Filter by diet ID")
     shift_id: Optional[int] = Field(default=None, description="Filter by shift ID")
     model_config = ConfigDict(from_attributes=True)
