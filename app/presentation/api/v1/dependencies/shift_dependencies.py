@@ -14,12 +14,17 @@ from application.interfaces.use_cases.shift.list_shift_uc import IListShiftUC
 from infrastructure.database.repositories.shift_repository_impl import (
     ShiftRepository,
 )
-from presentation.api.v1.dependencies.common_dependencies import DatabaseDep
+from presentation.api.v1.dependencies.common_dependencies import (
+    DatabaseDep,
+    QueryHelperDep,
+)
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 
 
-def get_shift_repository(db: DatabaseDep) -> IShiftRepository:
-    return ShiftRepository(conn=db)
+def get_shift_repository(
+    db: DatabaseDep, query_helper: QueryHelperDep
+) -> IShiftRepository:
+    return ShiftRepository(conn=db, query_helper=query_helper)
 
 
 def get_list_shift_use_case(
