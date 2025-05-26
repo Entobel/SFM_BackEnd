@@ -25,10 +25,12 @@ class Database:
             raise
 
     def _set_timezone(self, conn):
-        """Set timezone for connection to Asia/Ho_Chi_Minh"""
         with conn.cursor() as cursor:
-            cursor.execute("SET TIME ZONE 'Asia/Ho_Chi_Minh'")
-            logger.info(f"[DATABASE]:: Timezone set to Asia/Ho_Chi_Minh")
+            cursor.execute("SHOW TIME ZONE")
+            current_tz = cursor.fetchone()[0]
+            if current_tz != "Asia/Ho_Chi_Minh":
+                cursor.execute("SET TIME ZONE 'Asia/Ho_Chi_Minh'")
+                logger.info(f"[DATABASE]:: Timezone set to Asia/Ho_Chi_Minh")
 
     @contextmanager
     def session(self) -> Generator[psycopg2.extensions.connection, None, None]:
