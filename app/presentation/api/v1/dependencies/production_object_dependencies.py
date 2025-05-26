@@ -33,11 +33,14 @@ from infrastructure.database.repositories.production_object_repository_impl impo
 from domain.interfaces.repositories.production_object_repository import (
     IProductionObjectRepository,
 )
-from presentation.api.v1.dependencies.common_dependencies import DatabaseDep
+from presentation.api.v1.dependencies.common_dependencies import (
+    DatabaseDep,
+    QueryHelperDep,
+)
 
 
-def get_production_object_repository(db: DatabaseDep):
-    return ProductionObjectRepository(conn=db)
+def get_production_object_repository(db: DatabaseDep, query_helper: QueryHelperDep):
+    return ProductionObjectRepository(conn=db, query_helper=query_helper)
 
 
 def get_list_production_object_uc(
