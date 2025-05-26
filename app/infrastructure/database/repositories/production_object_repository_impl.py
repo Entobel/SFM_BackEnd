@@ -72,7 +72,7 @@ class ProductionObjectRepository(IProductionObjectRepository):
             cur.execute(query, (id,))
             row = cur.fetchone()
 
-        return ProductionObjectEntity.from_row(row)
+        return ProductionObjectEntity.from_row(row) if row else None
 
     def get_production_object_by_name(self, name: str) -> ProductionObjectEntity:
         query = """
@@ -83,7 +83,7 @@ class ProductionObjectRepository(IProductionObjectRepository):
             cur.execute(query, (name,))
             row = cur.fetchone()
 
-        return ProductionObjectEntity.from_row(row)
+        return ProductionObjectEntity.from_row(row) if row else None
 
     def create_production_object(
         self, production_object_entity: ProductionObjectEntity

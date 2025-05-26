@@ -14,6 +14,10 @@ class UpdateShiftUC(IUpdateShiftUC):
             raise BadRequestError("ETB-shift_khong_ton_tai")
 
         if shift_dto.name is not None and shift_dto.name != shift_entity.name:
+
+            if self.shift_repository.get_shift_by_name(shift_dto.name):
+                raise BadRequestError("ETB-ten_ca_lam_da_ton_tai")
+
             shift_entity.change_name(shift_dto.name)
 
         if (

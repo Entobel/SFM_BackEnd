@@ -74,6 +74,7 @@ async def create_production_object(
 
     return Response.success_response(
         code="ETB_create_production_object_success",
+        data="Success",
     ).get_dict()
 
 
@@ -94,6 +95,7 @@ async def update_production_object(
 
     return Response.success_response(
         code="ETB_update_production_object_success",
+        data="Success",
     ).get_dict()
 
 

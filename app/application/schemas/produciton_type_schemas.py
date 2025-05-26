@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class ProductionTypeDTO(BaseModel):
-    id: int
+    id: Optional[int] = None
     name: Optional[str] = None
     abbr_name: Optional[str] = None
     description: Optional[str] = None

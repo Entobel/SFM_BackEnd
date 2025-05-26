@@ -56,7 +56,7 @@ def get_create_production_object_uc(
         IProductionObjectRepository, Depends(get_production_object_repository)
     ],
 ):
-    return CreateProductionObjectUC(repo=repo)
+    return CreateProductionObjectUC(production_object_repository=repo)
 
 
 def get_update_production_object_uc(

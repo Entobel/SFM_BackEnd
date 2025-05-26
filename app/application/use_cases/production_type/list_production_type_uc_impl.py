@@ -11,5 +11,17 @@ class ListProductionTypeUC(IListProductionTypeUC):
     def __init__(self, repo: IProductionTypeRepository):
         self.repo = repo
 
-    def execute(self) -> list[ProductionTypeEntity]:
-        return self.repo.get_all_production_types()
+    def execute(
+        self,
+        page: int,
+        page_size: int,
+        search: str,
+        is_active: bool,
+    ) -> dict[
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+        "items" : list[ProductionTypeEntity],
+    ]:
+        return self.repo.get_all_production_types(page, page_size, search, is_active)
