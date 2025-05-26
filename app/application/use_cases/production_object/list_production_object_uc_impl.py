@@ -11,5 +11,13 @@ class ListProductionObjectUC(IListProductionObjectUC):
     def __init__(self, repo: IProductionObjectRepository):
         self.repo = repo
 
-    def execute(self) -> list[ProductionObjectEntity]:
-        return self.repo.get_all_production_objects()
+    def execute(
+        self, page: int, page_size: int, search: str, is_active: bool
+    ) -> dict[
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+        "items" : list[ProductionObjectEntity],
+    ]:
+        return self.repo.get_all_production_objects(page, page_size, search, is_active)
