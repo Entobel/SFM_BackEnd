@@ -8,7 +8,17 @@ class ListShiftUC(IListShiftUC):
     def __init__(self, shift_repository: IShiftRepository):
         self.shift_repository = shift_repository
 
-    def execute(self) -> list[ShiftEntity]:
-        shifts = self.shift_repository.get_all_shifts()
-
-        return [ShiftDTO.model_validate(shift) for shift in shifts]
+    def execute(
+        self,
+        page: int,
+        page_size: int,
+        search: str,
+        is_active: bool,
+    ) -> dict[
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+        "items" : list[ShiftEntity],
+    ]:
+        return self.shift_repository.get_all_shifts(page, page_size, search, is_active)
