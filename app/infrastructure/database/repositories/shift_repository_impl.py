@@ -1,13 +1,17 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+from domain.interfaces.services.query_helper_service import IQueryHelperService
 from domain.entities.shift_entity import ShiftEntity
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 
 
 class ShiftRepository(IShiftRepository):
-    def __init__(self, conn: psycopg2.extensions.connection):
+    def __init__(
+        self, conn: psycopg2.extensions.connection, query_helper: IQueryHelperService
+    ):
         self.conn = conn
+        self.query_helper = query_helper
 
     def get_shift_by_id(self, id: int) -> ShiftEntity:
         query = """
@@ -80,10 +84,55 @@ class ShiftRepository(IShiftRepository):
                 self.conn.rollback()
                 return False
 
-    def get_all_shifts(self) -> list[ShiftEntity]:
-        query = """
-            SELECT id as s_id, name as s_name, description as s_description, is_active as s_is_active FROM shift
+    def get_all_shifts(
+        self,
+        page: int,
+        page_size: int,
+        search: str,
+        is_active: bool,
+    ) -> dict[
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+        "items" : list[ShiftEntity],
+    ]:
+        qb = self.query_helper
+
+        if search:
+            qb.add_search(cols=["name"], query=search)
+
+        if is_active is not None:
+            qb.add_bool("is_active", is_active)
+
+        # count
+        count_sql = f"""
+        SELECT COUNT(*) FROM shift {qb.where_sql()}
         """
+
+        with self.conn.cursor() as cur:
+            cur.execute(count_sql, qb.all_params())
+            total = cur.fetchone()[0]
+
+        # fetch page
+        limit_sql, limit_params = qb.paginate(page, page_size)
+        data_sql = f"""
+        SELECT id as s_id, name as s_name, description as s_description, is_active as s_is_active FROM shift {qb.where_sql()} ORDER BY created_at DESC {limit_sql}
+        """
+
+        params = qb.all_params(limit_params)
+
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(query)
-            return [ShiftEntity.from_row(row) for row in cur.fetchall()]
+            cur.execute(data_sql, params)
+            rows = cur.fetchall()
+
+        # build entities
+        shifts = [ShiftEntity.from_row(row) for row in rows]
+
+        return {
+            "items": shifts,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": qb.total_pages(total, page_size),
+        }
