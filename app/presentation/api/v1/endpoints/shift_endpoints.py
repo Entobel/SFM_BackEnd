@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from application.schemas.shift_schemas import ShiftDTO
 from presentation.schemas.shift_dto import (
     CreateShiftDTO,
@@ -23,13 +24,38 @@ router = APIRouter(prefix="/shifts", tags=["Shift"])
 async def get_all_shifts(
     token: TokenVerifyDep,
     list_shift_uc: ListShiftUCDep,
+    filter_params: FilterDTO = Depends(),
 ):
 
-    shifts = list_shift_uc.execute()
+    result = list_shift_uc.execute(
+        page=filter_params.page,
+        page_size=filter_params.page_size,
+        search=filter_params.search,
+        is_active=filter_params.is_active,
+    )
+
+    shifts = []
+
+    for shift in result["items"]:
+        shift_dto = ShiftDTO(
+            id=shift.id,
+            name=shift.name,
+            description=shift.description,
+            is_active=shift.is_active,
+        )
+        shifts.append(shift_dto)
+
+    paginate_data = PaginateDTO(
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"],
+        total_pages=result["total_pages"],
+        items=shifts,
+    )
 
     return Response.success_response(
         code="ETB_get_list_shift_success",
-        data=shifts,
+        data=paginate_data,
     ).get_dict()
 
 

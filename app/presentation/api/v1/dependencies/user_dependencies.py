@@ -6,12 +6,6 @@ import psycopg2
 
 from application.interfaces.use_cases.user.update_user_uc import IUpdateUserUC
 from application.use_cases.user.update_user_uc_imply import UpdateUserUC
-from domain.interfaces.repositories.deparment_factory_role_repository import (
-    IDepartmentFactoryRoleRepository,
-)
-from infrastructure.database.repositories.department_factory_role_repository_impl import (
-    DepartmentFactoryRoleRepository,
-)
 from application.interfaces.use_cases.user.create_user_uc import ICreateUserUC
 from application.use_cases.user.create_user_uc_impl import CreateUserUC
 from core.exception import NotFoundError

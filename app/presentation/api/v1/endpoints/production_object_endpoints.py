@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from application.schemas.production_object_schemas import ProductionObjectDTO
 from presentation.schemas.production_object_dto import (
@@ -6,6 +6,7 @@ from presentation.schemas.production_object_dto import (
     UpdateProductionObjectDTO,
     UpdateStatusProductionObjectDTO,
 )
+from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.api.v1.dependencies.production_object_dependencies import (
     CreateProductionObjectUCDep,
     ListProductionObjectUCDep,
@@ -23,12 +24,38 @@ router = APIRouter(prefix="/production-objects", tags=["Production Object"])
 async def get_production_objects(
     token: TokenVerifyDep,
     use_case: ListProductionObjectUCDep,
+    filter_params: FilterDTO = Depends(),
 ):
-    production_objects = use_case.execute()
+    result = use_case.execute(
+        page=filter_params.page,
+        page_size=filter_params.page_size,
+        search=filter_params.search,
+        is_active=filter_params.is_active,
+    )
+
+    production_objects = []
+
+    for production_object in result["items"]:
+        production_objects.append(
+            ProductionObjectDTO(
+                id=production_object.id,
+                name=production_object.name,
+                description=production_object.description,
+                is_active=production_object.is_active,
+            )
+        )
+
+    paginate_data = PaginateDTO(
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"],
+        total_pages=result["total_pages"],
+        items=production_objects,
+    )
 
     return Response.success_response(
         code="ETB_get_production_objects_success",
-        data=production_objects,
+        data=paginate_data,
     ).get_dict()
 
 
@@ -86,4 +113,5 @@ async def update_status_production_object(
 
     return Response.success_response(
         code="ETB_update_status_production_object_success",
+        data="Success",
     ).get_dict()
