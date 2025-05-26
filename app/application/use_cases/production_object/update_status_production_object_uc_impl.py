@@ -9,14 +9,12 @@ from application.schemas.production_object_schemas import ProductionObjectDTO
 
 
 class UpdateStatusProductionObjectUC(IUpdateStatusProductionObjectUC):
-    def __init__(self, production_object_repository: IProductionObjectRepository):
-        self.production_object_repository = production_object_repository
+    def __init__(self, repo: IProductionObjectRepository):
+        self.repo = repo
 
     def execute(self, production_object_dto: ProductionObjectDTO) -> bool:
-        production_object_entity = (
-            self.production_object_repository.get_production_object_by_id(
-                id=production_object_dto.id
-            )
+        production_object_entity = self.repo.get_production_object_by_id(
+            id=production_object_dto.id
         )
 
         if production_object_entity is None:
@@ -29,7 +27,7 @@ class UpdateStatusProductionObjectUC(IUpdateStatusProductionObjectUC):
             is_active=production_object_dto.is_active
         )
 
-        is_success = self.production_object_repository.update_status_production_object(
+        is_success = self.repo.update_status_production_object(
             production_object_entity=production_object_entity
         )
 
