@@ -1,27 +1,21 @@
 from fastapi import APIRouter, Depends
 
-from application.schemas.role_schemas import RoleDTO
-from presentation.schemas.department_factory_role_dto import DepartmentFactoryRoleDTO
-from application.schemas.factory_schemas import FactoryDTO
 from application.schemas.department_schemas import DepartmentDTO
-from presentation.schemas.department_factory_dto import DepartmentFactoryDTO
-from presentation.schemas.department_dto import (
-    CreateDepartmentDTO,
-    UpdateDepartmentDTO,
-    UpdateStatusDepartmentDTO,
-)
-from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.response import Response
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from application.schemas.factory_schemas import FactoryDTO
+from application.schemas.role_schemas import RoleDTO
 from presentation.api.v1.dependencies.department_dependencies import (
-    CreateDepartmentUseCaseDep,
-    ListDepartmentFactoryRoleUseCaseDep,
-    ListDepartmentFactoryUseCaseDep,
-    ListDepartmentUseCaseDep,
-    UpdateDepartmentUseCaseDep,
-    UpdateStatusDepartmentUseCaseDep,
-)
-
+    CreateDepartmentUseCaseDep, ListDepartmentFactoryRoleUseCaseDep,
+    ListDepartmentFactoryUseCaseDep, ListDepartmentUseCaseDep,
+    UpdateDepartmentUseCaseDep, UpdateStatusDepartmentUseCaseDep)
+from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
+from presentation.schemas.department_dto import (CreateDepartmentDTO,
+                                                 UpdateDepartmentDTO,
+                                                 UpdateStatusDepartmentDTO)
+from presentation.schemas.department_factory_dto import DepartmentFactoryDTO
+from presentation.schemas.department_factory_role_dto import \
+    DepartmentFactoryRoleDTO
+from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/departments", tags=["Department"])
 
