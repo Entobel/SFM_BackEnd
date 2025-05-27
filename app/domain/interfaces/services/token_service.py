@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from domain.value_objects.token_payload import TokenPayload
 
 
