@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from domain.entities.growing_entity import GrowingEntity
 from typing import Optional
+
+from domain.entities.growing_entity import GrowingEntity
 
 
 class IGrowingRepository(ABC):
