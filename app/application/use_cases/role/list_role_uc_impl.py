@@ -1,5 +1,5 @@
-from domain.entities.role_entity import RoleEntity
 from application.interfaces.use_cases.role.list_role_uc import IListRoleUC
+from domain.entities.role_entity import RoleEntity
 from domain.interfaces.repositories.role_repository import IRoleRepository
 
 
