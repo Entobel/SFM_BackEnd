@@ -1,8 +1,8 @@
-from core.exception import BadRequestError
+from application.interfaces.use_cases.role.create_role_uc import ICreateRoleUC
 from application.schemas.role_schemas import RoleDTO
+from core.exception import BadRequestError
 from domain.entities.role_entity import RoleEntity
 from domain.interfaces.repositories.role_repository import IRoleRepository
-from application.interfaces.use_cases.role.create_role_uc import ICreateRoleUC
 
 
 class CreateRoleUC(ICreateRoleUC):
