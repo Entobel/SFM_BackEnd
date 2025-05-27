@@ -1,8 +1,8 @@
+from application.interfaces.use_cases.factory.update_status_factory_uc import \
+    IUpdateStatusFactoryUC
 from core.exception import BadRequestError
-from domain.interfaces.repositories.factory_repository import IFactoryRepository
-from application.interfaces.use_cases.factory.update_status_factory_uc import (
-    IUpdateStatusFactoryUC,
-)
+from domain.interfaces.repositories.factory_repository import \
+    IFactoryRepository
 
 
 class UpdateStatusFactoryUC(IUpdateStatusFactoryUC):
