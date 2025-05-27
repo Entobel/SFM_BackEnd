@@ -1,11 +1,9 @@
-from core.exception import BadRequestError
-from domain.interfaces.repositories.production_object_repository import (
-    IProductionObjectRepository,
-)
-from application.interfaces.use_cases.production_object.update_status_production_object_uc import (
-    IUpdateStatusProductionObjectUC,
-)
+from application.interfaces.use_cases.production_object.update_status_production_object_uc import \
+    IUpdateStatusProductionObjectUC
 from application.schemas.production_object_schemas import ProductionObjectDTO
+from core.exception import BadRequestError
+from domain.interfaces.repositories.production_object_repository import \
+    IProductionObjectRepository
 
 
 class UpdateStatusProductionObjectUC(IUpdateStatusProductionObjectUC):
