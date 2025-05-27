@@ -19,6 +19,9 @@ class ProductionTypeEntity:
     def change_description(self, description: str):
         self.description = description
 
+    def change_is_active(self, is_active: bool):
+        self.is_active = is_active
+
     @classmethod
     def from_row(cls, row: dict) -> "ProductionTypeEntity":
         return cls(
