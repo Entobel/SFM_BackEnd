@@ -1,6 +1,7 @@
 from typing import Optional
+
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, field_validator, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class UpdateRoleDTO(BaseModel):
