@@ -1,9 +1,7 @@
-from application.interfaces.use_cases.department.list_department_factory_uc import (
-    IListDepartmentFactoryUC,
-)
-from domain.interfaces.repositories.department_factory_repository import (
-    IDepartmentFactoryRepository,
-)
+from application.interfaces.use_cases.department.list_department_factory_uc import \
+    IListDepartmentFactoryUC
+from domain.interfaces.repositories.department_factory_repository import \
+    IDepartmentFactoryRepository
 
 
 class ListDepartmentFactoryUC(IListDepartmentFactoryUC):
