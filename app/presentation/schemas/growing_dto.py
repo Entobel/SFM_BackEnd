@@ -1,12 +1,14 @@
 from datetime import datetime
 from typing import Optional
-from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from fastapi.exceptions import RequestValidationError
+from pydantic import (BaseModel, ConfigDict, Field, field_validator,
+                      model_validator)
+
+from application.schemas.diet_schemas import DietDTO
 from application.schemas.produciton_type_schemas import ProductionTypeDTO
 from application.schemas.production_object_schemas import ProductionObjectDTO
 from application.schemas.shift_schemas import ShiftDTO
-from application.schemas.diet_schemas import DietDTO
 from application.schemas.user_schemas import UserDTO
 
 
