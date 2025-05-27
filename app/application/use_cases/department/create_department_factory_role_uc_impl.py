@@ -1,12 +1,14 @@
-from application.interfaces.use_cases.department.create_department_factory_role_uc import \
-    ICreateDepartmentFactoryRoleUC
-from application.schemas.department_factory_role_schemas import \
-    DepartmentFactoryRoleDTO
+from application.interfaces.use_cases.department.create_department_factory_role_uc import (
+    ICreateDepartmentFactoryRoleUC,
+)
+from application.schemas.department_factory_role_schemas import DepartmentFactoryRoleDTO
 from core.exception import BadRequestError, NotFoundError
-from domain.entities.department_factory_role_entity import \
-    DepartmentFactoryRoleEntity
-from domain.interfaces.repositories.deparment_factory_role_repository import \
-    IDepartmentFactoryRoleRepository
+from domain.entities.department_factory_entity import DepartmentFactoryEntity
+from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from domain.entities.role_entity import RoleEntity
+from domain.interfaces.repositories.deparment_factory_role_repository import (
+    IDepartmentFactoryRoleRepository,
+)
 from domain.interfaces.repositories.role_repository import IRoleRepository
 
 
@@ -24,14 +26,22 @@ class CreateDepartmentFactoryRoleUC(ICreateDepartmentFactoryRoleUC):
 
         # Check exist role by id
         role_entity = self.role_repository.get_role_by_id(id=role_id)
+
         if role_entity is None:
             raise NotFoundError("ETB-role_khong_ton_tai")
+
+        department_factory_id = department_factory_role_dto.department_factory.id
+        role_id = department_factory_role_dto.role.id
 
         # Check if exist department factory
         is_exist = self.department_factory_role_repository.check_department_factory_role_exists(
             department_factory_role_entity=DepartmentFactoryRoleEntity(
-                department_factory_id=department_factory_role_dto.department.id,
-                role_id=department_factory_role_dto.role.id,
+                department_factory=DepartmentFactoryEntity(
+                    id=department_factory_id,
+                ),
+                role=RoleEntity(
+                    id=role_id,
+                ),
             )
         )
 
@@ -40,8 +50,12 @@ class CreateDepartmentFactoryRoleUC(ICreateDepartmentFactoryRoleUC):
 
         # Create department factory role
         department_factory_role_entity = DepartmentFactoryRoleEntity(
-            department_factory_id=department_factory_role_dto.department_factory_id,
-            role_id=department_factory_role_dto.role_id,
+            department_factory=DepartmentFactoryEntity(
+                id=department_factory_id,
+            ),
+            role=RoleEntity(
+                id=role_id,
+            ),
         )
 
         is_created = (
