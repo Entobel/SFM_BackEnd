@@ -1,17 +1,14 @@
 from fastapi import APIRouter, Depends
 
-from presentation.schemas.production_type_dto import (
-    CreateProductionTypeDTO,
-    UpdateProductionTypeDTO,
-)
 from application.schemas.produciton_type_schemas import ProductionTypeDTO
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.api.v1.dependencies.production_type_denpendencies import (
-    CreateProductionTypeUCDep,
-    ListProductionTypeUCDep,
-    UpdateProductionTypeUCDep,
-)
+    CreateProductionTypeUCDep, ListProductionTypeUCDep,
+    UpdateProductionTypeUCDep, UpdateStatusProductionTypeUCDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
+from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.production_type_dto import (
+    CreateProductionTypeDTO, UpdateProductionTypeDTO,
+    UpdateStatusProductionTypeDTO)
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/production-types", tags=["Production Type"])
@@ -99,5 +96,26 @@ async def update_production_type(
 
     return Response.success_response(
         code="ETB-cap_nhat_loai_san_pham_thanh_cong",
+        data="Success",
+    ).get_dict()
+
+
+# Update status production type
+@router.patch("/{production_type_id}/status")
+async def update_status_production_type(
+    token: TokenVerifyDep,
+    use_case: UpdateStatusProductionTypeUCDep,
+    production_type_id: int,
+    body: UpdateStatusProductionTypeDTO,
+):
+    production_type_dto = ProductionTypeDTO(
+        id=production_type_id,
+        is_active=body.is_active,
+    )
+
+    use_case.execute(production_type_dto=production_type_dto)
+
+    return Response.success_response(
+        code="ETB-cap_nhat_trang_thai_loai_san_pham_thanh_cong",
         data="Success",
     ).get_dict()
