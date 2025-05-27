@@ -1,5 +1,6 @@
-from domain.entities.shift_entity import ShiftEntity
 from abc import ABC, abstractmethod
+
+from domain.entities.shift_entity import ShiftEntity
 
 
 class IShiftRepository(ABC):
