@@ -79,7 +79,7 @@ class DietRepository(IDietRepository):
         ORDER BY d.id DESC
         {limit_sql}
         """
-        print(data_sql)
+
         params = qb.all_params(limit_params)
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(data_sql, params)
