@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 
 class ICursorQueryHelperService(ABC):
