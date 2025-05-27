@@ -1,11 +1,11 @@
 from typing import Optional
-from psycopg2.extras import RealDictCursor
 
 import psycopg2
+from psycopg2.extras import RealDictCursor
+
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
-from domain.interfaces.repositories.department_factory_repository import (
-    IDepartmentFactoryRepository,
-)
+from domain.interfaces.repositories.department_factory_repository import \
+    IDepartmentFactoryRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
