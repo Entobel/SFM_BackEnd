@@ -1,13 +1,13 @@
+from application.interfaces.use_cases.user.create_user_uc import ICreateUserUC
 from core.exception import BadRequestError
 from domain.entities.department_entity import DepartmentEntity
-from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from domain.entities.department_factory_role_entity import \
+    DepartmentFactoryRoleEntity
 from domain.entities.factory_entity import FactoryEntity
 from domain.entities.role_entity import RoleEntity
-
-from domain.interfaces.services.password_service import IPasswordService
-from application.interfaces.use_cases.user.create_user_uc import ICreateUserUC
-from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.entities.user_entity import UserEntity
+from domain.interfaces.repositories.user_repository import IUserRepository
+from domain.interfaces.services.password_service import IPasswordService
 from presentation.schemas.user_dto import CreateUserInputDTO
 
 
