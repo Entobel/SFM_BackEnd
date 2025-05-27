@@ -1,17 +1,18 @@
 import math
-import psycopg2
-from typing import Any, Dict, List, Optional
 from textwrap import dedent
+from typing import Any, Dict, List, Optional
+
+import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from domain.interfaces.services.query_helper_service import IQueryHelperService
-from domain.entities.user_entity import UserEntity
 from domain.entities.department_entity import DepartmentEntity
-from domain.entities.role_entity import RoleEntity
+from domain.entities.department_factory_role_entity import \
+    DepartmentFactoryRoleEntity
 from domain.entities.factory_entity import FactoryEntity
-from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
-
+from domain.entities.role_entity import RoleEntity
+from domain.entities.user_entity import UserEntity
 from domain.interfaces.repositories.user_repository import IUserRepository
+from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class UserRepository(IUserRepository):
