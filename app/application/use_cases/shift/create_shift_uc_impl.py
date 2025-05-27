@@ -1,7 +1,8 @@
-from domain.entities.shift_entity import ShiftEntity
-from core.exception import BadRequestError
-from application.interfaces.use_cases.shift.create_shift_uc import ICreateShiftUC
+from application.interfaces.use_cases.shift.create_shift_uc import \
+    ICreateShiftUC
 from application.schemas.shift_schemas import ShiftDTO
+from core.exception import BadRequestError
+from domain.entities.shift_entity import ShiftEntity
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 
 
