@@ -1,8 +1,11 @@
 from textwrap import dedent
+
 import psycopg2
 from psycopg2.extras import RealDictCursor
+
 from domain.entities.factory_entity import FactoryEntity
-from domain.interfaces.repositories.factory_repository import IFactoryRepository
+from domain.interfaces.repositories.factory_repository import \
+    IFactoryRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
