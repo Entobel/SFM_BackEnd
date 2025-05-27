@@ -1,21 +1,16 @@
 from fastapi import APIRouter, Depends
 
-from domain.entities.factory_entity import FactoryEntity
-from presentation.schemas.factory_dto import (
-    CreateFactoryDTO,
-    UpdateFactoryDTO,
-    UpdateStatusFactoryDTO,
-)
-from presentation.schemas.response import Response
 from application.schemas.factory_schemas import FactoryDTO
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from domain.entities.factory_entity import FactoryEntity
 from presentation.api.v1.dependencies.factory_dependencies import (
-    CreateFactoryUseCaseDep,
-    ListFactoryUseCaseDep,
-    UpdateFactoryUseCaseDep,
-    UpdateStatusFactoryUseCaseDep,
-)
+    CreateFactoryUseCaseDep, ListFactoryUseCaseDep, UpdateFactoryUseCaseDep,
+    UpdateStatusFactoryUseCaseDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
+from presentation.schemas.factory_dto import (CreateFactoryDTO,
+                                              UpdateFactoryDTO,
+                                              UpdateStatusFactoryDTO)
+from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/factories", tags=["Factory"])
 
