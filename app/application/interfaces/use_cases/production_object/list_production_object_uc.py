@@ -1,5 +1,6 @@
-from domain.entities.production_object_entity import ProductionObjectEntity
 from abc import ABC, abstractmethod
+
+from domain.entities.production_object_entity import ProductionObjectEntity
 
 
 class IListProductionObjectUC(ABC):
