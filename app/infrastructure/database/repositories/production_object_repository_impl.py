@@ -1,10 +1,10 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from domain.interfaces.services.query_helper_service import IQueryHelperService
+
 from domain.entities.production_object_entity import ProductionObjectEntity
-from domain.interfaces.repositories.production_object_repository import (
-    IProductionObjectRepository,
-)
+from domain.interfaces.repositories.production_object_repository import \
+    IProductionObjectRepository
+from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class ProductionObjectRepository(IProductionObjectRepository):
@@ -43,7 +43,7 @@ class ProductionObjectRepository(IProductionObjectRepository):
         # 2) Get data
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_object {qb.where_sql()} ORDER BY created_at DESC {limit_sql}
+        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_object {qb.where_sql()} ORDER BY po_id DESC {limit_sql}
         """
 
         params = qb.all_params(limit_params)
