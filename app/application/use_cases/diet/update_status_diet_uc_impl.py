@@ -1,10 +1,9 @@
+from application.interfaces.use_cases.diet.update_status_diet_uc import \
+    IUpdateStatusDietUC
+from application.schemas.diet_schemas import DietDTO
 from core.exception import BadRequestError
 from domain.entities.diet_entity import DietEntity
 from domain.interfaces.repositories.diet_repository import IDietRepository
-from application.interfaces.use_cases.diet.update_status_diet_uc import (
-    IUpdateStatusDietUC,
-)
-from application.schemas.diet_schemas import DietDTO
 
 
 class UpdateStatusDietUC(IUpdateStatusDietUC):
