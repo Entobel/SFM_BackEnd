@@ -1,8 +1,7 @@
-from core.exception import BadRequestError
-from application.interfaces.use_cases.shift.update_status_shift_uc import (
-    IUpdateStatusShiftUC,
-)
+from application.interfaces.use_cases.shift.update_status_shift_uc import \
+    IUpdateStatusShiftUC
 from application.schemas.shift_schemas import ShiftDTO
+from core.exception import BadRequestError
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 
 
