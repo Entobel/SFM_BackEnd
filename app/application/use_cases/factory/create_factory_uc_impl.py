@@ -1,7 +1,9 @@
+from application.interfaces.use_cases.factory.create_factory_uc import \
+    ICreateFactoryUC
 from core.exception import BadRequestError
-from application.interfaces.use_cases.factory.create_factory_uc import ICreateFactoryUC
 from domain.entities.factory_entity import FactoryEntity
-from domain.interfaces.repositories.factory_repository import IFactoryRepository
+from domain.interfaces.repositories.factory_repository import \
+    IFactoryRepository
 
 
 class CreateFactoryUC(ICreateFactoryUC):
