@@ -1,9 +1,10 @@
-import os
 import logging
-from typing import List, Dict, Optional
-from pydantic_settings import BaseSettings
-from pydantic import Field, field_validator
+import os
+from typing import Dict, List, Optional
+
 from dotenv import load_dotenv
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings
 
 # Configure logging
 logger = logging.getLogger(__name__)
