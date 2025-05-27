@@ -1,6 +1,6 @@
+from application.interfaces.use_cases.diet.list_diet_uc import IListDietUC
 from domain.entities.diet_entity import DietEntity
 from domain.interfaces.repositories.diet_repository import IDietRepository
-from application.interfaces.use_cases.diet.list_diet_uc import IListDietUC
 
 
 class ListDietUC(IListDietUC):
@@ -8,7 +8,7 @@ class ListDietUC(IListDietUC):
         self.diet_repository = diet_repository
 
     def execute(
-        self, page: int, page_size: int, search: str, is_active: bool
+        self, page: int, page_size: int, search: str, is_active: bool = None
     ) -> dict[
         "total":int,
         "page":int,
