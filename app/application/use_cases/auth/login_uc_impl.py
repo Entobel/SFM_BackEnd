@@ -1,10 +1,9 @@
 from datetime import timedelta
 
-from application.schemas.auth_schemas import LoginResponse
 from application.interfaces.use_cases.auth.login_uc import ILoginUC
-
-from domain.services.auth_service import AuthService
+from application.schemas.auth_schemas import LoginResponse
 from domain.interfaces.services.token_service import ITokenService
+from domain.services.auth_service import AuthService
 from domain.value_objects.token_payload import TokenPayload
 
 
