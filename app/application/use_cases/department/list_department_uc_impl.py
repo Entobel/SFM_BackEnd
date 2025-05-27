@@ -1,8 +1,8 @@
+from application.interfaces.use_cases.department.list_department_uc import \
+    IListDepartmentUC
 from domain.entities.department_entity import DepartmentEntity
-from domain.interfaces.repositories.department_repository import IDepartmentRepository
-from application.interfaces.use_cases.department.list_department_uc import (
-    IListDepartmentUC,
-)
+from domain.interfaces.repositories.department_repository import \
+    IDepartmentRepository
 
 
 class ListDepartmentUC(IListDepartmentUC):
