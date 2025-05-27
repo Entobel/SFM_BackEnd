@@ -1,10 +1,9 @@
-from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
-from domain.interfaces.repositories.deparment_factory_role_repository import (
-    IDepartmentFactoryRoleRepository,
-)
-from application.interfaces.use_cases.department.list_department_factory_role_uc import (
-    IListDepartmentFactoryRoleUC,
-)
+from application.interfaces.use_cases.department.list_department_factory_role_uc import \
+    IListDepartmentFactoryRoleUC
+from domain.entities.department_factory_role_entity import \
+    DepartmentFactoryRoleEntity
+from domain.interfaces.repositories.deparment_factory_role_repository import \
+    IDepartmentFactoryRoleRepository
 
 
 class ListDepartmentFactoryRoleUC(IListDepartmentFactoryRoleUC):
