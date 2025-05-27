@@ -1,19 +1,25 @@
-from fastapi import APIRouter, Depends
-
+from application.schemas.department_factory_role_schemas import \
+    DepartmentFactoryRoleDTO
+from application.schemas.department_factory_schemas import DepartmentFactoryDTO
 from application.schemas.department_schemas import DepartmentDTO
 from application.schemas.factory_schemas import FactoryDTO
 from application.schemas.role_schemas import RoleDTO
+from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.department_dependencies import (
+    CreateDepartmentFactoryRoleUseCaseDep, CreateDepartmentFactoryUseCaseDep,
     CreateDepartmentUseCaseDep, ListDepartmentFactoryRoleUseCaseDep,
     ListDepartmentFactoryUseCaseDep, ListDepartmentUseCaseDep,
-    UpdateDepartmentUseCaseDep, UpdateStatusDepartmentUseCaseDep)
+    UpdateDepartmentUseCaseDep, UpdateStatusDepartmentFactoryRoleUseCaseDep,
+    UpdateStatusDepartmentFactoryUseCaseDep, UpdateStatusDepartmentUseCaseDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from presentation.schemas.department_dto import (CreateDepartmentDTO,
                                                  UpdateDepartmentDTO,
                                                  UpdateStatusDepartmentDTO)
-from presentation.schemas.department_factory_dto import DepartmentFactoryDTO
-from presentation.schemas.department_factory_role_dto import \
-    DepartmentFactoryRoleDTO
+from presentation.schemas.department_factory_dto import (
+    CreateDepartmentFactoryDTO, UpdateStatusDepartmentFactoryDTO)
+from presentation.schemas.department_factory_role_dto import (
+    CreateDepartmentFactoryRoleDTO, DepartmentFactoryRoleDTOResponse,
+    UpdateStatusDepartmentFactoryRoleDTO)
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.response import Response
 
@@ -169,6 +175,7 @@ async def get_department_factory(
     ).get_dict()
 
 
+# get list department factory role
 @router.get("/department-factory-role", response_model_exclude_none=True)
 async def get_department_factory_role(
     token: TokenVerifyDep,
@@ -187,27 +194,23 @@ async def get_department_factory_role(
     department_factory_roles = []
 
     for department_factory_role in result["items"]:
-        department_factory_role_dto = DepartmentFactoryRoleDTO(
+        department_factory_role_dto = DepartmentFactoryRoleDTOResponse(
             id=department_factory_role.id,
+            department=DepartmentDTO(
+                id=department_factory_role.department_factory.department.id,
+                name=department_factory_role.department_factory.department.name,
+                abbr_name=department_factory_role.department_factory.department.abbr_name,
+                description=department_factory_role.department_factory.department.description,
+                parent_id=department_factory_role.department_factory.department.parent_id,
+            ),
+            factory=FactoryDTO(
+                id=department_factory_role.department_factory.factory.id,
+                name=department_factory_role.department_factory.factory.name,
+                abbr_name=department_factory_role.department_factory.factory.abbr_name,
+            ),
             role=RoleDTO(
                 id=department_factory_role.role.id,
                 name=department_factory_role.role.name,
-            ),
-            department=DepartmentDTO(
-                id=department_factory_role.department.id,
-                name=department_factory_role.department.name,
-                abbr_name=department_factory_role.department.abbr_name,
-                description=department_factory_role.department.description,
-                parent_id=department_factory_role.department.parent_id,
-                is_active=department_factory_role.department.is_active,
-            ),
-            factory=FactoryDTO(
-                id=department_factory_role.factory.id,
-                name=department_factory_role.factory.name,
-                abbr_name=department_factory_role.factory.abbr_name,
-                description=department_factory_role.factory.description,
-                location=department_factory_role.factory.location,
-                is_active=department_factory_role.factory.is_active,
             ),
             is_active=department_factory_role.is_active,
         )
@@ -224,4 +227,92 @@ async def get_department_factory_role(
     return Response.success_response(
         code="ETB-lay_danh_sach_phong_ban_nha_may_vai_tro_thanh_cong",
         data=paginate_data,
+    ).get_dict()
+
+
+@router.post("/department-factory", response_model_exclude_none=True)
+async def create_department_factory(
+    token: TokenVerifyDep,
+    body: CreateDepartmentFactoryDTO,
+    use_case: CreateDepartmentFactoryUseCaseDep,
+):
+    factory_dto = FactoryDTO(
+        id=body.factory_id,
+    )
+
+    department_dto = DepartmentDTO(
+        id=body.department_id,
+    )
+
+    use_case.execute(factory_dto=factory_dto, department_dto=department_dto)
+
+    return Response.success_response(
+        code="ETB-tao_phong_ban_cua_nha_may_thanh_cong", data="Success"
+    ).get_dict()
+
+
+@router.patch(
+    "/department-factory/{department_factory_id}/status",
+    response_model_exclude_none=True,
+)
+async def update_status_department_factory(
+    token: TokenVerifyDep,
+    department_factory_id: int,
+    body: UpdateStatusDepartmentFactoryDTO,
+    use_case: UpdateStatusDepartmentFactoryUseCaseDep,
+):
+    department_factory_dto = DepartmentFactoryDTO(
+        id=department_factory_id,
+        is_active=body.is_active,
+    )
+
+    use_case.execute(department_factory_dto=department_factory_dto)
+
+    return Response.success_response(
+        code="ETB-cap_nhat_trang_thai_phong_ban_nha_may_thanh_cong", data="Success"
+    ).get_dict()
+
+
+@router.post("/department-factory-role", response_model_exclude_none=True)
+async def create_department_factory_role(
+    token: TokenVerifyDep,
+    body: CreateDepartmentFactoryRoleDTO,
+    use_case: CreateDepartmentFactoryRoleUseCaseDep,
+):
+    department_factory_role_dto = DepartmentFactoryRoleDTO(
+        department_factory=DepartmentFactoryDTO(
+            id=body.department_factory_id,
+        ),
+        role=RoleDTO(
+            id=body.role_id,
+        ),
+    )
+
+    use_case.execute(department_factory_role_dto=department_factory_role_dto)
+
+    return Response.success_response(
+        code="ETB-tao_phong_ban_cua_nha_may_vai_tro_thanh_cong", data="Success"
+    ).get_dict()
+
+
+@router.patch(
+    "/department-factory-role/{department_factory_role_id}/status",
+    response_model_exclude_none=True,
+)
+async def update_status_department_factory_role(
+    token: TokenVerifyDep,
+    department_factory_role_id: int,
+    body: UpdateStatusDepartmentFactoryRoleDTO,
+    use_case: UpdateStatusDepartmentFactoryRoleUseCaseDep,
+):
+    department_factory_role_dto = DepartmentFactoryRoleDTO(
+        id=department_factory_role_id,
+        is_active=body.is_active,
+    )
+
+    use_case.execute(department_factory_role_dto=department_factory_role_dto)
+
+    return Response.success_response(
+        code="ETB-cap_nhat_trang_thai_phong_ban_nha_may_vai_tro_thanh_cong",
+        data="Success",
     ).get_dict()

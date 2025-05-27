@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from domain.entities.department_factory_entity import DepartmentFactoryEntity
+
 from .department_entity import DepartmentEntity
 from .department_factory_role_entity import DepartmentFactoryRoleEntity
 from .factory_entity import FactoryEntity
@@ -64,20 +66,23 @@ class UserEntity:
             is_active=row["is_active"],
             department_factory_role=DepartmentFactoryRoleEntity(
                 id=row["dept_fry_role_id"],
-                department=DepartmentEntity(
-                    id=row["department_id"],
-                    name=row["department_name"],
-                    description=row["department_description"],
-                    abbr_name=row["department_abbr_name"],
-                    is_active=row["department_active"],
-                ),
-                factory=FactoryEntity(
-                    id=row["factory_id"],
-                    name=row["factory_name"],
-                    description=row["factory_description"],
-                    abbr_name=row["factory_abbr"],
-                    location=row["factory_location"],
-                    is_active=row["factory_active"],
+                department_factory=DepartmentFactoryEntity(
+                    id=row["department_factory_id"],
+                    department=DepartmentEntity(
+                        id=row["department_id"],
+                        name=row["department_name"],
+                        description=row["department_description"],
+                        abbr_name=row["department_abbr_name"],
+                        is_active=row["department_active"],
+                    ),
+                    factory=FactoryEntity(
+                        id=row["factory_id"],
+                        name=row["factory_name"],
+                        description=row["factory_description"],
+                        abbr_name=row["factory_abbr"],
+                        location=row["factory_location"],
+                        is_active=row["factory_active"],
+                    ),
                 ),
                 role=RoleEntity(
                     id=row["r_id"],

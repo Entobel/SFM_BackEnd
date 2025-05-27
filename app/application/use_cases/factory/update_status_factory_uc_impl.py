@@ -11,7 +11,7 @@ class UpdateStatusFactoryUC(IUpdateStatusFactoryUC):
 
     def execute(self, factory_id: int, is_active: bool) -> bool:
 
-        factory = self.factory_repository.get_factory_by_id(factory_id=factory_id)
+        factory = self.factory_repository.get_factory_by_id(id=factory_id)
 
         if not factory:
             raise BadRequestError(

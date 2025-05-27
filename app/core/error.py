@@ -7,9 +7,8 @@ from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from psycopg2 import errorcodes as pg_errorcodes
-
 from presentation.schemas.response import Response
+from psycopg2 import errorcodes as pg_errorcodes
 
 from .exception import DomainError
 

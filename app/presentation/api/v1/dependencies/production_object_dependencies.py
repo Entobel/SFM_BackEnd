@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import Depends
-
 from application.interfaces.use_cases.production_object.create_production_object_uc import \
     ICreateProductionObjectUC
 from application.interfaces.use_cases.production_object.list_production_object_uc import \
@@ -20,6 +18,7 @@ from application.use_cases.production_object.update_status_production_object_uc_
     UpdateStatusProductionObjectUC
 from domain.interfaces.repositories.production_object_repository import \
     IProductionObjectRepository
+from fastapi import Depends
 from infrastructure.database.repositories.production_object_repository_impl import \
     ProductionObjectRepository
 from presentation.api.v1.dependencies.common_dependencies import (

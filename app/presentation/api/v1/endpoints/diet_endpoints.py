@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends
-
 from application.schemas.diet_schemas import DietDTO
+from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.diet_dependencies import (
     CreateDietUCDep, ListDietUCDep, UpdateDietStatusUCDep, UpdateDietUCDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep

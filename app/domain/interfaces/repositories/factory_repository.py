@@ -6,7 +6,7 @@ from domain.entities.factory_entity import FactoryEntity
 
 class IFactoryRepository(ABC):
     @abstractmethod
-    def get_factory_by_id(self, factory_id: int) -> FactoryEntity | None: ...
+    def get_factory_by_id(self, id: int) -> FactoryEntity | None: ...
     @abstractmethod
     def get_list_factory(
         self, page: int, page_size: int, search: str, is_active: Optional[bool] = None

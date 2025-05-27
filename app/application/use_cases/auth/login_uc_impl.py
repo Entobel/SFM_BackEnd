@@ -27,7 +27,7 @@ class LoginUC(ILoginUC):
             user_id=user.id,
             user_name=user.user_name,
             role_id=user.department_factory_role.role.id,
-            department_id=user.department_factory_role.department.id,
+            department_id=user.department_factory_role.department_factory.department.id,
             department_factory_role_id=user.department_factory_role.id,
             expires_delta=timedelta(days=7),
         )

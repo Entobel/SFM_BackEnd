@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends
-
 from application.schemas.factory_schemas import FactoryDTO
 from domain.entities.factory_entity import FactoryEntity
+from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.factory_dependencies import (
     CreateFactoryUseCaseDep, ListFactoryUseCaseDep, UpdateFactoryUseCaseDep,
     UpdateStatusFactoryUseCaseDep)

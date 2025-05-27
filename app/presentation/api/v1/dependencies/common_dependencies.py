@@ -1,9 +1,6 @@
 from typing import Annotated
 
 import psycopg2.extensions
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
-
 from core.database import db
 from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.access_policy_service import \
@@ -11,6 +8,8 @@ from domain.interfaces.services.access_policy_service import \
 from domain.interfaces.services.password_service import IPasswordService
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 from domain.interfaces.services.token_service import ITokenService
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 from infrastructure.database.repositories.user_repository_impl import \
     UserRepository
 from infrastructure.services.access_policy_service_impl import \

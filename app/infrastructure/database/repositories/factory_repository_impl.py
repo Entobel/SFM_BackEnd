@@ -1,12 +1,11 @@
 from textwrap import dedent
 
 import psycopg2
-from psycopg2.extras import RealDictCursor
-
 from domain.entities.factory_entity import FactoryEntity
 from domain.interfaces.repositories.factory_repository import \
     IFactoryRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
+from psycopg2.extras import RealDictCursor
 
 
 class FactoryRepository(IFactoryRepository):
@@ -67,7 +66,7 @@ class FactoryRepository(IFactoryRepository):
 
         return FactoryEntity.from_row(row) if row else None
 
-    def get_factory_by_id(self, factory_id: int) -> FactoryEntity:
+    def get_factory_by_id(self, id: int) -> FactoryEntity:
         query = dedent(
             """
             SELECT f.id as id, f.name as name, f.abbr_name as abbr_name, f.description as description, f.location as location, f.is_active as is_active
@@ -77,7 +76,7 @@ class FactoryRepository(IFactoryRepository):
         )
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(query, (factory_id,))
+            cur.execute(query, (id,))
             row = cur.fetchone()
 
         return FactoryEntity.from_row(row) if row else None

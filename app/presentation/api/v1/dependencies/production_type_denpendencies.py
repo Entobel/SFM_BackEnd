@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import Depends
-
 from application.interfaces.use_cases.production_type.create_production_type_uc import \
     ICreateProductionTypeUC
 from application.interfaces.use_cases.production_type.list_production_type_uc import \
@@ -20,6 +18,7 @@ from application.use_cases.production_type.update_status_production_type_uc_impl
     UpdateStatusProductionTypeUC
 from domain.interfaces.repositories.production_type_repository import \
     IProductionTypeRepository
+from fastapi import Depends
 from infrastructure.database.repositories.production_type_repository_impl import \
     ProductionTypeRepository
 from presentation.api.v1.dependencies.common_dependencies import (

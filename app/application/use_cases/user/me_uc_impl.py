@@ -22,8 +22,8 @@ class GetMeUseCase(IMeUC):
             phone=user.phone,
             first_name=user.first_name,
             last_name=user.last_name,
-            factory=user.department_factory_role.factory,
-            department=user.department_factory_role.department,
+            factory=user.department_factory_role.department_factory.factory,
+            department=user.department_factory_role.department_factory.department,
             role=user.department_factory_role.role,
             is_active=user.is_active,
         )

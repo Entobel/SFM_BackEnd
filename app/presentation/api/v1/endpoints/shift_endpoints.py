@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends
-
 from application.schemas.shift_schemas import ShiftDTO
+from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.shift_dependencies import (
     CreateShiftUCDep, ListShiftUCDep, UpdateShiftUCDep, UpdateStatusShiftUCDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep

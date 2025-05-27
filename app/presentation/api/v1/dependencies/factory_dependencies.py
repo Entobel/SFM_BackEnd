@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import Depends
-
 from application.interfaces.use_cases.factory.create_factory_uc import \
     ICreateFactoryUC
 from application.interfaces.use_cases.factory.list_factory_uc import \
@@ -20,6 +18,7 @@ from application.use_cases.factory.update_status_factory_uc_impl import \
     UpdateStatusFactoryUC
 from domain.interfaces.repositories.factory_repository import \
     IFactoryRepository
+from fastapi import Depends
 from infrastructure.database.repositories.factory_repository_impl import \
     FactoryRepository
 from presentation.api.v1.dependencies.common_dependencies import (

@@ -1,5 +1,4 @@
 from fastapi import APIRouter, status
-
 from presentation.api.v1.dependencies.auth_dependencies import (
     LoginOauth2Dep, LoginUseCaseDep)
 from presentation.schemas.auth_dto import LoginInputDTO, LoginResponseDTO
@@ -25,6 +24,8 @@ async def login(
     result = login_use_case.execute(
         user_name=login_input_dto.username, password=login_input_dto.password
     )
+
+    print(result)
 
     response = Response.success_response(
         code="ETB-dang_nhap_thanh_cong",

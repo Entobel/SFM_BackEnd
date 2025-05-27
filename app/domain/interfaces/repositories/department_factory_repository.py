@@ -3,7 +3,9 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+from domain.entities.department_entity import DepartmentEntity
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
+from domain.entities.factory_entity import FactoryEntity
 
 
 class IDepartmentFactoryRepository(ABC):
@@ -22,3 +24,19 @@ class IDepartmentFactoryRepository(ABC):
         "total_pages":int,
         "items" : list[DepartmentFactoryEntity],
     ]: ...
+
+    def create_department_factory(
+        self, department_factory_entity: DepartmentFactoryEntity
+    ) -> bool: ...
+
+    def get_department_factory_by_id(
+        self, id: int
+    ) -> DepartmentFactoryEntity | None: ...
+
+    def update_status_department_factory(
+        self, department_factory_entity: DepartmentFactoryEntity
+    ) -> bool: ...
+
+    def get_department_factory_by_department_id_and_factory_id(
+        self, department_factory_entity: DepartmentFactoryEntity
+    ) -> bool: ...

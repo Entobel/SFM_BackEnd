@@ -12,11 +12,8 @@ class DepartmentFactoryEntity:
     department: Optional[DepartmentEntity] = None
     is_active: Optional[bool] = None
 
-    def set_factory(self, factory: FactoryEntity):
-        self.factory = factory
-
-    def set_department(self, department: DepartmentEntity):
-        self.department = department
+    def set_status(self, is_active: bool):
+        self.is_active = is_active
 
     @classmethod
     def from_row(cls, row: dict) -> "DepartmentFactoryEntity":

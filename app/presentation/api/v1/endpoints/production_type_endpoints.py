@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends
-
 from application.schemas.produciton_type_schemas import ProductionTypeDTO
+from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.production_type_denpendencies import (
     CreateProductionTypeUCDep, ListProductionTypeUCDep,
     UpdateProductionTypeUCDep, UpdateStatusProductionTypeUCDep)

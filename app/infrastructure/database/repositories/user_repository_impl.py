@@ -3,9 +3,8 @@ from textwrap import dedent
 from typing import Any, Dict, List, Optional
 
 import psycopg2
-from psycopg2.extras import RealDictCursor
-
 from domain.entities.department_entity import DepartmentEntity
+from domain.entities.department_factory_entity import DepartmentFactoryEntity
 from domain.entities.department_factory_role_entity import \
     DepartmentFactoryRoleEntity
 from domain.entities.factory_entity import FactoryEntity
@@ -13,6 +12,7 @@ from domain.entities.role_entity import RoleEntity
 from domain.entities.user_entity import UserEntity
 from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
+from psycopg2.extras import RealDictCursor
 
 
 class UserRepository(IUserRepository):
@@ -98,103 +98,85 @@ class UserRepository(IUserRepository):
     def get_profile_by_id(self, id: int) -> Optional[UserEntity]:
         query = dedent(
             """
-                    SELECT u.id,
+            select
+            u.id as user_id,
             u.email,
             u.phone,
             u.first_name,
             u.last_name,
             u.is_active,
-            u.password,
-            dpfr.id,
-            dp.id,
-            dp.name,
-            dp.description,
-            dp.abbr_name,
-            dp.is_active,
-            f.id,
-            f.name,
-            f.abbr_name,
-            f.description,
-            f.location,
-            f.is_active,
-            r.id,
-            r.name,
-            r.description,
-            r.is_active
-        FROM "user" u
-                JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id
-                JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id
-                JOIN factory f ON f.id = dpf.factory_id
-                JOin role r on dpfr.role_id = r.id
-                JOIN department dp ON dp.id = dpf.department_id
-        WHERE u.id = %s
+            dpfr.id as dept_fry_role_id,
+            dp.id as department_id,
+            dp.name as department_name,
+            dp.description as department_description,
+            dp.abbr_name as department_abbr_name,
+            dp.is_active as department_active,
+            f.id as factory_id,
+            f.name as factory_name,
+            f.abbr_name as factory_abbr,
+            f.description as factory_description,
+            f.location as factory_location,
+            f.is_active as factory_active,
+            r.id as r_id,
+            r.name as r_name,
+            r.description as r_description,
+            r.is_active as r_is_active,
+            dpf.id  as department_factory_id
+            from
+                "user" u
+            join department_factory_role dpfr on
+                u.department_factory_role_id = dpfr.id
+            join department_factory dpf on
+                dpf.id = dpfr.department_factory_id
+            join factory f on
+                f.id = dpf.factory_id
+            join role r on
+                dpfr.role_id = r.id
+            join department dp on
+                dp.id = dpf.department_id
+            WHERE u.id = %s
         """
         )
 
-        with self.conn.cursor() as cur:
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (id,))
             row = cur.fetchone()
 
         if not row:
             return None
 
-        return UserEntity(
-            id=row[0],
-            email=row[1],
-            phone=row[2],
-            first_name=row[3],
-            last_name=row[4],
-            is_active=row[5],
-            password=row[6],
-            department_factory_role=DepartmentFactoryRoleEntity(
-                id=row[7],
-                department=DepartmentEntity(
-                    id=row[8],
-                    name=row[9],
-                    description=row[10],
-                    abbr_name=row[11],
-                    is_active=row[12],
-                ),
-                factory=FactoryEntity(
-                    id=row[13],
-                    name=row[14],
-                    abbr_name=row[15],
-                    description=row[16],
-                    location=row[17],
-                    is_active=row[18],
-                ),
-                role=RoleEntity(
-                    id=row[19],
-                    name=row[20],
-                    description=row[21],
-                    is_active=row[22],
-                ),
-            ),
-        )
+        return UserEntity.from_row(row)
 
     def get_cred_by_email_or_phone(self, identifier: str) -> Optional[UserEntity]:
-        query = dedent(
-            """
-            SELECT u.id, 
-            u.email, 
-            u.phone, 
-            u.password, 
-            u.is_active,
-            dp.id, 
-            dpfr.id, 
-            f.id, 
-            r.id       
-            FROM "user" u
-            JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id
-            JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id
-            JOIN factory f ON f.id = dpf.factory_id
-            JOIN role r ON r.id = dpfr.role_id
-            JOIN department dp ON dp.id = dpf.department_id
-            WHERE u.is_active = true AND (u.email = %s OR u.phone = %s)
+        query = """select
+        u.id as user_id,
+        u.email as email,
+        u.phone as phone,
+        u.password as password,
+        u.is_active as is_active,
+        dp.id as department_id,
+        dpfr.id as dept_fry_role_id,
+        f.id as factory_id,
+        r.id as r_id
+        from
+        "user" u
+        join department_factory_role dpfr on
+        u.department_factory_role_id = dpfr.id
+        join department_factory dpf on
+        dpf.id = dpfr.department_factory_id
+        join factory f on
+        f.id = dpf.factory_id
+        join role r on
+        r.id = dpfr.role_id
+        join department dp on
+        dp.id = dpf.department_id
+        where
+        u.is_active = true
+        and (u.email = %s
+        or u.phone = %s)
         """
-        )
 
-        with self.conn.cursor() as cur:
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (identifier, identifier))
             row = cur.fetchone()
 
@@ -202,16 +184,18 @@ class UserRepository(IUserRepository):
             return None
 
         return UserEntity(
-            id=row[0],
-            email=row[1],
-            phone=row[2],
-            password=row[3],
-            is_active=row[4],
+            id=row["user_id"],
+            email=row["email"],
+            phone=row["phone"],
+            password=row["password"],
+            is_active=row["is_active"],
             department_factory_role=DepartmentFactoryRoleEntity(
-                id=row[5],
-                department=DepartmentEntity(id=row[6]),
-                role=RoleEntity(id=row[8]),
-                factory=FactoryEntity(id=row[7]),
+                id=row["dept_fry_role_id"],
+                department_factory=DepartmentFactoryEntity(
+                    department=DepartmentEntity(id=row["department_id"]),
+                    factory=FactoryEntity(id=row["factory_id"]),
+                ),
+                role=RoleEntity(id=row["r_id"]),
             ),
         )
 
@@ -277,21 +261,45 @@ class UserRepository(IUserRepository):
         # 2) FETCH page
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT
-        u.id AS user_id, u.email, u.phone, u.first_name, u.last_name, u.is_active,
-        dpfr.id AS dept_fry_role_id,
-        dp.id AS department_id, dp.name AS department_name, dp.description AS department_description, dp.abbr_name AS department_abbr_name, dp.is_active AS department_active,
-        f.id AS factory_id, f.name AS factory_name, f.abbr_name AS factory_abbr, f.description AS factory_description, f.location AS factory_location, f.is_active AS factory_active,
-        r.id AS r_id, r.name AS r_name, r.description AS r_description, r.is_active AS r_is_active
-        FROM "user" u
-        JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id
-        JOIN department_factory dpf      ON dpf.id = dpfr.department_factory_id
-        JOIN factory f                   ON f.id = dpf.factory_id
-        JOIN role r                      ON dpfr.role_id = r.id
-        JOIN department dp               ON dp.id = dpf.department_id
-        {qb.where_sql()}
-        ORDER BY u.created_at DESC
-        {limit_sql}
+            select
+            u.id as user_id,
+            u.email,
+            u.phone,
+            u.first_name,
+            u.last_name,
+            u.is_active,
+            dpfr.id as dept_fry_role_id,
+            dp.id as department_id,
+            dp.name as department_name,
+            dp.description as department_description,
+            dp.abbr_name as department_abbr_name,
+            dp.is_active as department_active,
+            f.id as factory_id,
+            f.name as factory_name,
+            f.abbr_name as factory_abbr,
+            f.description as factory_description,
+            f.location as factory_location,
+            f.is_active as factory_active,
+            r.id as r_id,
+            r.name as r_name,
+            r.description as r_description,
+            r.is_active as r_is_active,
+            dpf.id  as department_factory_id
+            from
+                "user" u
+            join department_factory_role dpfr on
+                u.department_factory_role_id = dpfr.id
+            join department_factory dpf on
+                dpf.id = dpfr.department_factory_id
+            join factory f on
+                f.id = dpf.factory_id
+            join role r on
+                dpfr.role_id = r.id
+            join department dp on
+                dp.id = dpf.department_id
+            {qb.where_sql()}
+            ORDER BY u.created_at DESC
+            {limit_sql}
         """
         params = qb.all_params(limit_params)
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:

@@ -12,7 +12,7 @@ class UpdateFactoryUC(IUpdateFactoryUC):
         self.factory_repository = factory_repository
 
     def execute(self, factory_id: int, factory_dto: FactoryDTO) -> bool:
-        factory = self.factory_repository.get_factory_by_id(factory_id=factory_id)
+        factory = self.factory_repository.get_factory_by_id(id=factory_id)
 
         if not factory:
             raise BadRequestError(
