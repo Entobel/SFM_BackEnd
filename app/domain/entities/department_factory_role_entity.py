@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
+
 from .department_entity import DepartmentEntity
 from .factory_entity import FactoryEntity
 from .role_entity import RoleEntity
