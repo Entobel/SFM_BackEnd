@@ -1,7 +1,8 @@
 # presentation/schemas/response.py
 
-from typing import Generic, TypeVar, Optional, List, Any, Dict
-from pydantic import BaseModel, model_validator, ConfigDict
+from typing import Any, Dict, Generic, List, Optional, TypeVar
+
+from pydantic import BaseModel, ConfigDict, model_validator
 
 T = TypeVar("T")
 
