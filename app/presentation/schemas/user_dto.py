@@ -1,13 +1,9 @@
-from fastapi.exceptions import RequestValidationError
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    field_validator,
-    model_validator,
-)
-from typing import Optional, List
 import re
+from typing import List, Optional
+
+from fastapi.exceptions import RequestValidationError
+from pydantic import (BaseModel, ConfigDict, Field, field_validator,
+                      model_validator)
 
 from application.schemas.department_schemas import DepartmentDTO
 from application.schemas.factory_schemas import FactoryDTO
