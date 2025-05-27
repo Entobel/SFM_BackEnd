@@ -1,7 +1,7 @@
 from application.interfaces.use_cases.user.me_uc import IMeUC
 from application.schemas.user_schemas import UserDTO
-from domain.interfaces.repositories.user_repository import IUserRepository
 from core.exception import NotFoundError
+from domain.interfaces.repositories.user_repository import IUserRepository
 
 
 class GetMeUseCase(IMeUC):
