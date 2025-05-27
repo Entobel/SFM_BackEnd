@@ -1,7 +1,8 @@
 from core.exception import ForbiddenError
-from domain.value_objects.access_policy import AccessPolicyContext
 from domain.enums.role_enum import Role
-from domain.interfaces.services.access_policy_service import IAccessPolicyService
+from domain.interfaces.services.access_policy_service import \
+    IAccessPolicyService
+from domain.value_objects.access_policy import AccessPolicyContext
 
 
 class AccessPolicyService(IAccessPolicyService):
