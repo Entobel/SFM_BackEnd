@@ -2,13 +2,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from domain.entities.department_factory_role_entity import (
-    DepartmentFactoryRoleEntity,
-)
-from domain.entities.role_entity import RoleEntity
-from domain.entities.production_object_entity import ProductionObjectEntity
+from domain.entities.department_factory_role_entity import \
+    DepartmentFactoryRoleEntity
 from domain.entities.diet_entity import DietEntity
+from domain.entities.production_object_entity import ProductionObjectEntity
 from domain.entities.production_type_entity import ProductionTypeEntity
+from domain.entities.role_entity import RoleEntity
 from domain.entities.shift_entity import ShiftEntity
 from domain.entities.user_entity import UserEntity
 
