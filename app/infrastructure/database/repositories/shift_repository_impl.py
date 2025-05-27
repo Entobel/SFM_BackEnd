@@ -1,9 +1,9 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from domain.interfaces.services.query_helper_service import IQueryHelperService
 from domain.entities.shift_entity import ShiftEntity
 from domain.interfaces.repositories.shift_repository import IShiftRepository
+from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class ShiftRepository(IShiftRepository):
@@ -117,7 +117,7 @@ class ShiftRepository(IShiftRepository):
         # fetch page
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT id as s_id, name as s_name, description as s_description, is_active as s_is_active FROM shift {qb.where_sql()} ORDER BY created_at DESC {limit_sql}
+        SELECT id as s_id, name as s_name, description as s_description, is_active as s_is_active FROM shift {qb.where_sql()} ORDER BY s_id DESC {limit_sql}
         """
 
         params = qb.all_params(limit_params)
