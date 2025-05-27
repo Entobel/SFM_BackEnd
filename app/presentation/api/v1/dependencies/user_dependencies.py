@@ -1,38 +1,31 @@
 from typing import Annotated
 
+import psycopg2
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-import psycopg2
 
-from application.interfaces.use_cases.user.update_user_uc import IUpdateUserUC
-from application.use_cases.user.update_user_uc_imply import UpdateUserUC
+from application.interfaces.use_cases.user.change_password_uc import \
+    IChangePasswordUC
+from application.interfaces.use_cases.user.change_status_uc import \
+    IChangeStatusUC
 from application.interfaces.use_cases.user.create_user_uc import ICreateUserUC
-from application.use_cases.user.create_user_uc_impl import CreateUserUC
-from core.exception import NotFoundError
-from domain.interfaces.services.password_service import IPasswordService
-from presentation.api.v1.dependencies.common_dependencies import (
-    DatabaseDep,
-    get_password_service,
-    get_token_service,
-    get_user_repository,
-)
-
 from application.interfaces.use_cases.user.list_user_uc import IListUserUC
-from application.interfaces.use_cases.user.change_password_uc import IChangePasswordUC
-from application.interfaces.use_cases.user.change_status_uc import IChangeStatusUC
 from application.interfaces.use_cases.user.me_uc import IMeUC
-
-from application.use_cases.user.change_status_uc_impl import ChangeStatusUC
-from application.use_cases.user.me_uc_impl import GetMeUseCase
+from application.interfaces.use_cases.user.update_user_uc import IUpdateUserUC
 from application.use_cases.user.change_password_uc_impl import ChangePasswordUC
+from application.use_cases.user.change_status_uc_impl import ChangeStatusUC
+from application.use_cases.user.create_user_uc_impl import CreateUserUC
 from application.use_cases.user.list_user_uc_impl import ListUserUC
-
-
-from domain.interfaces.repositories.user_repository import IUserRepository
-from domain.interfaces.services.token_service import ITokenService
-
-from domain.value_objects.token_payload import TokenPayload
+from application.use_cases.user.me_uc_impl import GetMeUseCase
+from application.use_cases.user.update_user_uc_imply import UpdateUserUC
+from core.exception import NotFoundError
 from domain.entities.user_entity import UserEntity
+from domain.interfaces.repositories.user_repository import IUserRepository
+from domain.interfaces.services.password_service import IPasswordService
+from domain.interfaces.services.token_service import ITokenService
+from domain.value_objects.token_payload import TokenPayload
+from presentation.api.v1.dependencies.common_dependencies import (
+    DatabaseDep, get_password_service, get_token_service, get_user_repository)
 
 get_oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
