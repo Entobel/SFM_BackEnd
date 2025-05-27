@@ -1,4 +1,5 @@
 from typing import Optional
+
 from domain.entities.department_entity import DepartmentEntity
 
 
