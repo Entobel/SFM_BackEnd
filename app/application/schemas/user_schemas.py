@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from pydantic import ConfigDict
+
 from .department_schemas import DepartmentDTO
 from .factory_schemas import FactoryDTO
 from .role_schemas import RoleDTO
