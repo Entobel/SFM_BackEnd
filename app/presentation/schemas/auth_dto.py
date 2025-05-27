@@ -1,5 +1,6 @@
-from .user_dto import UserLoginResponseDTO
 from pydantic import BaseModel
+
+from .user_dto import UserLoginResponseDTO
 
 
 class LoginInputDTO(BaseModel):
