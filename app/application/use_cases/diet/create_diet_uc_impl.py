@@ -1,8 +1,8 @@
+from application.interfaces.use_cases.diet.create_diet_uc import ICreateDietUC
 from application.schemas.diet_schemas import DietDTO
 from core.exception import BadRequestError
 from domain.entities.diet_entity import DietEntity
 from domain.interfaces.repositories.diet_repository import IDietRepository
-from application.interfaces.use_cases.diet.create_diet_uc import ICreateDietUC
 
 
 class CreateDietUC(ICreateDietUC):
