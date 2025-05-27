@@ -1,5 +1,6 @@
+from application.interfaces.use_cases.user.change_status_uc import \
+    IChangeStatusUC
 from domain.entities.user_entity import UserEntity
-from application.interfaces.use_cases.user.change_status_uc import IChangeStatusUC
 from domain.interfaces.repositories.user_repository import IUserRepository
 
 
