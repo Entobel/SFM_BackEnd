@@ -1,8 +1,8 @@
 import psycopg2
-from domain.entities.department_factory_role_entity import \
-    DepartmentFactoryRoleEntity
-from domain.interfaces.repositories.deparment_factory_role_repository import \
-    IDepartmentFactoryRoleRepository
+from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from domain.interfaces.repositories.deparment_factory_role_repository import (
+    IDepartmentFactoryRoleRepository,
+)
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 from psycopg2.extras import RealDictCursor
 
@@ -62,8 +62,8 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
                 DFR.DEPARTMENT_FACTORY_ID = %s
                 OR DFR.ROLE_ID = %s
         """
-        department_factory_id = department_factory_role_entity.department_factory_id
-        role_id = department_factory_role_entity.role_id
+        department_factory_id = department_factory_role_entity.department_factory.id
+        role_id = department_factory_role_entity.role.id
 
         with self.conn.cursor() as cur:
             cur.execute(query, (department_factory_id, role_id))
@@ -80,8 +80,8 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
             VALUES (%s, %s)
             RETURNING id
         """
-        department_factory_id = department_factory_role_entity.department_factory_id
-        role_id = department_factory_role_entity.role_id
+        department_factory_id = department_factory_role_entity.department_factory.id
+        role_id = department_factory_role_entity.role.id
 
         with self.conn.cursor() as cur:
             cur.execute(query, (department_factory_id, role_id))
