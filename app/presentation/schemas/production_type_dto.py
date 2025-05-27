@@ -1,6 +1,7 @@
+from typing import Any, Optional
+
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, field_validator, model_validator
-from typing import Any, Optional
 
 
 class CreateProductionTypeDTO(BaseModel):
