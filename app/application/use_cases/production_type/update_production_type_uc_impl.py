@@ -1,11 +1,9 @@
-from core.exception import BadRequestError
-from domain.interfaces.repositories.production_type_repository import (
-    IProductionTypeRepository,
-)
-from application.interfaces.use_cases.production_type.update_production_type_uc import (
-    IUpdateProductionTypeUC,
-)
+from application.interfaces.use_cases.production_type.update_production_type_uc import \
+    IUpdateProductionTypeUC
 from application.schemas.produciton_type_schemas import ProductionTypeDTO
+from core.exception import BadRequestError
+from domain.interfaces.repositories.production_type_repository import \
+    IProductionTypeRepository
 
 
 class UpdateProductionTypeUC(IUpdateProductionTypeUC):
@@ -17,7 +15,7 @@ class UpdateProductionTypeUC(IUpdateProductionTypeUC):
             production_type_dto.id
         )
         if not production_type_entity:
-            raise BadRequestError("ETB-san_phan_khong_ton_tai")
+            raise BadRequestError("ETB-loai_san_pham_khong_ton_tai")
 
         if (
             production_type_dto.name is not None
@@ -40,9 +38,10 @@ class UpdateProductionTypeUC(IUpdateProductionTypeUC):
         ):
             production_type_entity.change_description(production_type_dto.description)
 
+        print(production_type_entity)
         is_success = self.repo.update_production_type(production_type_entity)
 
         if not is_success:
-            raise BadRequestError("ETB-cap_nhat_san_phan_that_bai")
+            raise BadRequestError("ETB-cap_nhat_loai_san_pham_that_bai")
 
         return True
