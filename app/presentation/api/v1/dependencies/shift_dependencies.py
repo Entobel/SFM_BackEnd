@@ -1,24 +1,24 @@
 from typing import Annotated
 
 from fastapi import Depends
-from application.interfaces.use_cases.shift.update_shift_uc import IUpdateShiftUC
-from application.use_cases.shift.update_shift_uc_impl import UpdateShiftUC
-from application.interfaces.use_cases.shift.update_status_shift_uc import (
-    IUpdateStatusShiftUC,
-)
-from application.use_cases.shift.update_status_shift_uc_imply import UpdateStatusShiftUC
-from application.use_cases.shift.create_shift_uc_impl import CreateShiftUC
-from application.interfaces.use_cases.shift.create_shift_uc import ICreateShiftUC
-from application.use_cases.shift.list_shift_uc_impl import ListShiftUC
+
+from application.interfaces.use_cases.shift.create_shift_uc import \
+    ICreateShiftUC
 from application.interfaces.use_cases.shift.list_shift_uc import IListShiftUC
-from infrastructure.database.repositories.shift_repository_impl import (
-    ShiftRepository,
-)
-from presentation.api.v1.dependencies.common_dependencies import (
-    DatabaseDep,
-    QueryHelperDep,
-)
+from application.interfaces.use_cases.shift.update_shift_uc import \
+    IUpdateShiftUC
+from application.interfaces.use_cases.shift.update_status_shift_uc import \
+    IUpdateStatusShiftUC
+from application.use_cases.shift.create_shift_uc_impl import CreateShiftUC
+from application.use_cases.shift.list_shift_uc_impl import ListShiftUC
+from application.use_cases.shift.update_shift_uc_impl import UpdateShiftUC
+from application.use_cases.shift.update_status_shift_uc_imply import \
+    UpdateStatusShiftUC
 from domain.interfaces.repositories.shift_repository import IShiftRepository
+from infrastructure.database.repositories.shift_repository_impl import \
+    ShiftRepository
+from presentation.api.v1.dependencies.common_dependencies import (
+    DatabaseDep, QueryHelperDep)
 
 
 def get_shift_repository(
