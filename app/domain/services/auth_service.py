@@ -17,6 +17,7 @@ class AuthService:
         self.password_service = password_service
 
     def get_credentials(self, identifier: str) -> UserEntity | None:
+
         # Phase 1: Get user account by email or phone
         user = self.user_repository.get_cred_by_email_or_phone(identifier=identifier)
 
