@@ -31,7 +31,7 @@ class RoleRepository(IRoleRepository):
             total = cur.fetchone()[0]
 
         limit_sql, limit_params = qb.paginate(page, page_size)
-        data_sql = f"""SELECT r.id as r_id, r.name as r_name, r.description as r_description, r.is_active as r_is_active FROM role r {qb.where_sql()} ORDER BY r.id {limit_sql}"""
+        data_sql = f"""SELECT r.id as r_id, r.name as r_name, r.description as r_description, r.is_active as r_is_active FROM role r {qb.where_sql()} ORDER BY r.id DESC {limit_sql}"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(data_sql, qb.all_params(limit_params))
