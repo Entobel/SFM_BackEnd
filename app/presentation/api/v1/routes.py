@@ -1,16 +1,13 @@
 from fastapi import APIRouter
-from presentation.api.v1.endpoints import (
-    auth_endpoints,
-    user_endpoints,
-    department_endpoints,
-    role_endpoints,
-    factory_endpoints,
-    shift_endpoints,
-    diet_endpoints,
-    production_object_endpoints,
-    production_type_endpoints,
-    growing_endpoints,
-)
+
+from presentation.api.v1.endpoints import (auth_endpoints,
+                                           department_endpoints,
+                                           diet_endpoints, factory_endpoints,
+                                           growing_endpoints,
+                                           production_object_endpoints,
+                                           production_type_endpoints,
+                                           role_endpoints, shift_endpoints,
+                                           user_endpoints)
 
 routers = APIRouter()
 router_list = [
