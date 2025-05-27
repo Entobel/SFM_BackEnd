@@ -1,6 +1,6 @@
+from application.interfaces.use_cases.shift.list_shift_uc import IListShiftUC
 from application.schemas.shift_schemas import ShiftDTO
 from domain.entities.shift_entity import ShiftEntity
-from application.interfaces.use_cases.shift.list_shift_uc import IListShiftUC
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 
 
