@@ -1,10 +1,10 @@
+from dataclasses import dataclass
 from typing import Optional
 
-from .department_factory_role_entity import DepartmentFactoryRoleEntity
 from .department_entity import DepartmentEntity
+from .department_factory_role_entity import DepartmentFactoryRoleEntity
 from .factory_entity import FactoryEntity
 from .role_entity import RoleEntity
-from dataclasses import dataclass
 
 
 @dataclass
