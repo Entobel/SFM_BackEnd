@@ -1,10 +1,11 @@
 from textwrap import dedent
+
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from domain.interfaces.services.query_helper_service import IQueryHelperService
 from domain.entities.diet_entity import DietEntity
 from domain.interfaces.repositories.diet_repository import IDietRepository
+from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class DietRepository(IDietRepository):
@@ -46,7 +47,7 @@ class DietRepository(IDietRepository):
         page: int,
         page_size: int,
         search: str,
-        is_active: bool,
+        is_active: bool = None,
     ) -> dict[
         "total":int,
         "page":int,
@@ -76,10 +77,10 @@ class DietRepository(IDietRepository):
         data_sql = f"""
         SELECT d.id as d_id, d.name as d_name, d.description as d_description, d.is_active as d_is_active FROM diet d
         {qb.where_sql()}
-        ORDER BY d.created_at DESC
+        ORDER BY d.id DESC
         {limit_sql}
         """
-
+        print(data_sql)
         params = qb.all_params(limit_params)
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(data_sql, params)
