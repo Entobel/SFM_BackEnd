@@ -1,9 +1,9 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
+
 from domain.entities.production_type_entity import ProductionTypeEntity
-from domain.interfaces.repositories.production_type_repository import (
-    IProductionTypeRepository,
-)
+from domain.interfaces.repositories.production_type_repository import \
+    IProductionTypeRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
@@ -67,7 +67,7 @@ class ProductionTypeRepository(IProductionTypeRepository):
         # fetch page
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT id as pt_id, name as pt_name, abbr_name as pt_abbr_name, description as pt_description, is_active as pt_is_active FROM production_type {qb.where_sql()} ORDER BY created_at DESC {limit_sql}
+        SELECT id as pt_id, name as pt_name, abbr_name as pt_abbr_name, description as pt_description, is_active as pt_is_active FROM production_type {qb.where_sql()} ORDER BY pt_id DESC {limit_sql}
         """
 
         params = qb.all_params(limit_params)
@@ -117,9 +117,45 @@ class ProductionTypeRepository(IProductionTypeRepository):
     def update_production_type(
         self, production_type_entity: ProductionTypeEntity
     ) -> bool:
-        pass
+        query = """
+        UPDATE production_type SET name = %s, abbr_name = %s, description = %s WHERE id = %s
+        """
+        production_type_name = production_type_entity.name
+        production_type_abbr_name = production_type_entity.abbr_name
+        production_type_description = production_type_entity.description
+        production_type_id = production_type_entity.id
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                query,
+                (
+                    production_type_name,
+                    production_type_abbr_name,
+                    production_type_description,
+                    production_type_id,
+                ),
+            )
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False
 
     def update_status_production_type(
         self, production_type_entity: ProductionTypeEntity
     ) -> bool:
-        pass
+        query = """
+        UPDATE production_type SET is_active = %s WHERE id = %s
+        """
+        production_type_is_active = production_type_entity.is_active
+        production_type_id = production_type_entity.id
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (production_type_is_active, production_type_id))
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False
