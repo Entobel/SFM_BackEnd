@@ -1,8 +1,9 @@
-from application.interfaces.use_cases.user.change_password_uc import IChangePasswordUC
+from application.interfaces.use_cases.user.change_password_uc import \
+    IChangePasswordUC
+from core.exception import AuthenticationError, BadRequestError
 from domain.entities.user_entity import UserEntity
 from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.password_service import IPasswordService
-from core.exception import AuthenticationError, BadRequestError
 
 
 class ChangePasswordUC(IChangePasswordUC):
