@@ -1,10 +1,8 @@
-from application.interfaces.use_cases.production_type.list_production_type_uc import (
-    IListProductionTypeUC,
-)
-from domain.interfaces.repositories.production_type_repository import (
-    IProductionTypeRepository,
-)
+from application.interfaces.use_cases.production_type.list_production_type_uc import \
+    IListProductionTypeUC
 from domain.entities.production_type_entity import ProductionTypeEntity
+from domain.interfaces.repositories.production_type_repository import \
+    IProductionTypeRepository
 
 
 class ListProductionTypeUC(IListProductionTypeUC):
