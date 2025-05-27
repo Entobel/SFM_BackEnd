@@ -1,8 +1,10 @@
-import psycopg2
-from psycopg2 import pool, OperationalError
+import logging
 from contextlib import contextmanager
 from typing import Generator
-import logging
+
+import psycopg2
+from psycopg2 import OperationalError, pool
+
 from .config import config
 
 # Configure logging
