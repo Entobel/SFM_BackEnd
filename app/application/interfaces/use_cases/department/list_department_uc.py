@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
+
 from domain.entities.department_entity import DepartmentEntity
 
 
