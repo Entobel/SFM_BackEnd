@@ -1,6 +1,8 @@
+from application.interfaces.use_cases.factory.list_factory_uc import \
+    IListFactoryUC
 from domain.entities.department_entity import DepartmentEntity
-from domain.interfaces.repositories.factory_repository import IFactoryRepository
-from application.interfaces.use_cases.factory.list_factory_uc import IListFactoryUC
+from domain.interfaces.repositories.factory_repository import \
+    IFactoryRepository
 
 
 class ListFactoryUCImpl(IListFactoryUC):
