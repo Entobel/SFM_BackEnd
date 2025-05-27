@@ -1,7 +1,8 @@
+from application.interfaces.use_cases.growing.list_growing_uc import \
+    IListGrowingUC
 from domain.entities.growing_entity import GrowingEntity
-from application.interfaces.use_cases.growing.list_growing_uc import IListGrowingUC
-
-from domain.interfaces.repositories.growing_repository import IGrowingRepository
+from domain.interfaces.repositories.growing_repository import \
+    IGrowingRepository
 
 
 class ListGrowingUC(IListGrowingUC):
