@@ -2,8 +2,7 @@ from textwrap import dedent
 
 import psycopg2
 from domain.entities.factory_entity import FactoryEntity
-from domain.interfaces.repositories.factory_repository import \
-    IFactoryRepository
+from domain.interfaces.repositories.factory_repository import IFactoryRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 from psycopg2.extras import RealDictCursor
 
@@ -36,7 +35,7 @@ class FactoryRepository(IFactoryRepository):
         # Fetch page
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""SELECT f.id as id, f.name as name, f.abbr_name as abbr_name, f.description as description, f.location as location, f.is_active as is_active
-            FROM factory f {qb.where_sql()} ORDER BY f.id {limit_sql}"""
+            FROM factory f {qb.where_sql()} ORDER BY f.id DESC {limit_sql}"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(data_sql, qb.all_params(limit_params))
