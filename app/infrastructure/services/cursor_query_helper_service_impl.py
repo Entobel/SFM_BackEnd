@@ -1,5 +1,7 @@
-from domain.interfaces.services.cursor_query_helper import ICursorQueryHelperService
 from typing import Any, List, Optional, Tuple
+
+from domain.interfaces.services.cursor_query_helper import \
+    ICursorQueryHelperService
 
 
 class CursorQueryHelperService(ICursorQueryHelperService):
