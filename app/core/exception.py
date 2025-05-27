@@ -1,4 +1,4 @@
-from typing import Dict, List, Any, Union
+from typing import Any, Dict, List, Union
 
 
 class DomainError(Exception):
