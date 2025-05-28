@@ -9,6 +9,7 @@ from domain.entities.factory_entity import FactoryEntity
 
 
 class IDepartmentFactoryRepository(ABC):
+    @abstractmethod
     def get_list_department_factory(
         self,
         page: int,
@@ -25,18 +26,27 @@ class IDepartmentFactoryRepository(ABC):
         "items" : list[DepartmentFactoryEntity],
     ]: ...
 
+    @abstractmethod
     def create_department_factory(
         self, department_factory_entity: DepartmentFactoryEntity
     ) -> bool: ...
 
+    @abstractmethod
     def get_department_factory_by_id(
         self, id: int
     ) -> DepartmentFactoryEntity | None: ...
 
+    @abstractmethod
     def update_status_department_factory(
         self, department_factory_entity: DepartmentFactoryEntity
     ) -> bool: ...
 
+    @abstractmethod
     def get_department_factory_by_department_id_and_factory_id(
+        self, department_factory_entity: DepartmentFactoryEntity
+    ) -> bool: ...
+
+    @abstractmethod
+    def is_department_factory_in_use(
         self, department_factory_entity: DepartmentFactoryEntity
     ) -> bool: ...

@@ -1,7 +1,6 @@
 import psycopg2
 from domain.entities.department_entity import DepartmentEntity
-from domain.interfaces.repositories.department_repository import \
-    IDepartmentRepository
+from domain.interfaces.repositories.department_repository import IDepartmentRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 from psycopg2.extras import RealDictCursor
 
@@ -151,3 +150,23 @@ class DepartmentRepository(IDepartmentRepository):
             else:
                 self.conn.rollback()
                 return False
+
+    def is_department_in_use(self, department: DepartmentEntity) -> bool:
+        query = """
+            SELECT
+            COUNT(*) > 0 AS is_in_use
+            FROM
+            DEPARTMENT_FACTORY DF
+            JOIN DEPARTMENT D ON
+            D.ID = DF.DEPARTMENT_ID
+            WHERE
+            D.ID = %s
+        """
+
+        department_id = department.id
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (department_id,))
+            row = cur.fetchone()
+
+            return row["is_in_use"]

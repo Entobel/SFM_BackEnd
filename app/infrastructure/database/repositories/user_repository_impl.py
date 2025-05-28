@@ -5,8 +5,7 @@ from typing import Any, Dict, List, Optional
 import psycopg2
 from domain.entities.department_entity import DepartmentEntity
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
-from domain.entities.department_factory_role_entity import \
-    DepartmentFactoryRoleEntity
+from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
 from domain.entities.factory_entity import FactoryEntity
 from domain.entities.role_entity import RoleEntity
 from domain.entities.user_entity import UserEntity
@@ -333,8 +332,8 @@ class UserRepository(IUserRepository):
 
     def create_user(self, user: UserEntity) -> bool:
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            dept_id = user.department_factory_role.department.id
-            fac_id = user.department_factory_role.factory.id
+            dept_id = user.department_factory_role.department_factory.department.id
+            fac_id = user.department_factory_role.department_factory.factory.id
             role_id = user.department_factory_role.role.id
 
             cur.execute(

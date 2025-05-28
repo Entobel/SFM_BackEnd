@@ -140,8 +140,11 @@ class FactoryRepository(IFactoryRepository):
             """
         )
 
+        factory_id = factory.id
+        is_active = factory.is_active
+
         with self.conn.cursor() as cur:
-            cur.execute(query, (factory.is_active, factory.id))
+            cur.execute(query, (is_active, factory_id))
 
             if cur.rowcount > 0:
                 self.conn.commit()
@@ -150,15 +153,20 @@ class FactoryRepository(IFactoryRepository):
                 self.conn.rollback()
                 return False
 
-    def check_factory_is_used(self, factory_id: int) -> bool:
-        query = dedent(
-            """
-            SELECT COUNT(*) FROM department_factory WHERE factory_id = %s
-            """
-        )
+    def is_factory_in_use(self, factory: FactoryEntity) -> bool:
+        query = """
+            SELECT
+            COUNT(*) > 0 AS is_in_use
+            FROM
+            DEPARTMENT_FACTORY
+            WHERE
+            FACTORY_ID = %s
+        """
+
+        factory_id = factory.id
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (factory_id,))
             row = cur.fetchone()
 
-            return row.get("count") > 0
+            return row["is_in_use"]

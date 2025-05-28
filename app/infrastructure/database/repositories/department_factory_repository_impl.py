@@ -244,3 +244,23 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
             else:
                 self.conn.rollback()
                 return False
+
+    def is_department_factory_in_use(
+        self, department_factory_entity: DepartmentFactoryEntity
+    ) -> bool:
+        query = """
+        SELECT
+        count(*) > 0 as is_in_use
+        FROM
+        DEPARTMENT_FACTORY DF
+        JOIN DEPARTMENT_FACTORY_ROLE DFR ON
+        DF.ID = DFR.DEPARTMENT_FACTORY_ID
+        where df.id = %s
+        """
+        department_factory_id = department_factory_entity.id
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (department_factory_id,))
+            row = cur.fetchone()
+
+            return row["is_in_use"]

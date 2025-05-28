@@ -103,3 +103,21 @@ class RoleRepository(IRoleRepository):
             else:
                 self.conn.rollback()
                 return False
+
+    def is_role_in_use(self, role: RoleEntity) -> bool:
+        query = """
+            SELECT
+            COUNT(*) > 0 AS is_in_use
+            FROM
+            DEPARTMENT_FACTORY_ROLE DFR
+            JOIN ROLE R ON
+            DFR.ROLE_ID = R.ID
+            WHERE
+            R.ID = %s
+            """
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (role.id,))
+            row = cur.fetchone()
+
+            return row["is_in_use"]

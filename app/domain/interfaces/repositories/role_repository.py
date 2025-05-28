@@ -27,3 +27,6 @@ class IRoleRepository(ABC):
 
     @abstractmethod
     def change_status_role(self, role: RoleEntity) -> bool: ...
+
+    @abstractmethod
+    def is_role_in_use(self, role: RoleEntity) -> bool: ...

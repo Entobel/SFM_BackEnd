@@ -33,6 +33,8 @@ class CreateDepartmentFactoryRoleUC(ICreateDepartmentFactoryRoleUC):
         department_factory_id = department_factory_role_dto.department_factory.id
         role_id = department_factory_role_dto.role.id
 
+        print("Department factory id", department_factory_id, "Role", role_id)
+
         # Check if exist department factory
         is_exist = self.department_factory_role_repository.check_department_factory_role_exists(
             department_factory_role_entity=DepartmentFactoryRoleEntity(

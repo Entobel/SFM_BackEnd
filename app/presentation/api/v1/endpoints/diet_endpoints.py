@@ -1,10 +1,17 @@
 from application.schemas.diet_schemas import DietDTO
 from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.diet_dependencies import (
-    CreateDietUCDep, ListDietUCDep, UpdateDietStatusUCDep, UpdateDietUCDep)
+    CreateDietUCDep,
+    ListDietUCDep,
+    UpdateDietStatusUCDep,
+    UpdateDietUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.diet_dto import (CreateDietDTO, UpdateDietDTO,
-                                           UpdateStatusDietDTO)
+from presentation.schemas.diet_dto import (
+    CreateDietDTO,
+    UpdateDietDTO,
+    UpdateStatusDietDTO,
+)
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.response import Response
 
@@ -65,7 +72,7 @@ async def create_diet(
     use_case.execute(diet_dto=diet_dto)
 
     return Response.success_response(
-        code="ETB-tao_di_thanh_cong", data="Success"
+        code="ETB-tao_diet_thanh_cong", data="Success"
     ).get_dict()
 
 

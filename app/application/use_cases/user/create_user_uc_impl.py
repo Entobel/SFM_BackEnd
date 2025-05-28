@@ -1,8 +1,8 @@
+from domain.entities.department_factory_entity import DepartmentFactoryEntity
 from application.interfaces.use_cases.user.create_user_uc import ICreateUserUC
 from core.exception import BadRequestError
 from domain.entities.department_entity import DepartmentEntity
-from domain.entities.department_factory_role_entity import \
-    DepartmentFactoryRoleEntity
+from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
 from domain.entities.factory_entity import FactoryEntity
 from domain.entities.role_entity import RoleEntity
 from domain.entities.user_entity import UserEntity
@@ -42,12 +42,17 @@ class CreateUserUC(ICreateUserUC):
             last_name=user_dto.last_name,
             password=hashed_password,
             department_factory_role=DepartmentFactoryRoleEntity(
-                department=DepartmentEntity(id=user_dto.department_id),
-                factory=FactoryEntity(id=user_dto.factory_id),
+                department_factory=DepartmentFactoryEntity(
+                    department=DepartmentEntity(id=user_dto.department_id),
+                    factory=FactoryEntity(id=user_dto.factory_id),
+                ),
                 role=RoleEntity(id=user_dto.role_id),
             ),
         )
 
-        self.user_repository.create_user(user)
+        is_success = self.user_repository.create_user(user)
 
-        return True
+        if not is_success:
+            raise BadRequestError("ETB-tao_tai_khoan_that_bai")
+
+        return user

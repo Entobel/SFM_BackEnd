@@ -60,7 +60,7 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
                 DEPARTMENT_FACTORY_ROLE DFR
             WHERE
                 DFR.DEPARTMENT_FACTORY_ID = %s
-                OR DFR.ROLE_ID = %s
+                AND DFR.ROLE_ID = %s
         """
         department_factory_id = department_factory_role_entity.department_factory.id
         role_id = department_factory_role_entity.role.id
@@ -196,3 +196,25 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
             else:
                 self.conn.rollback()
                 return False
+
+    def is_department_factory_role_in_use(
+        self, department_factory_role_entity: DepartmentFactoryRoleEntity
+    ) -> bool:
+        query = """
+        SELECT
+        count(*) > 0 as is_in_use
+        FROM
+        "user" U
+        JOIN DEPARTMENT_FACTORY_ROLE DFR ON
+        U.DEPARTMENT_FACTORY_ROLE_ID = DFR.ID
+        WHERE
+        DFR.ID = %s
+        """
+
+        department_factory_role_id = department_factory_role_entity.id
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (department_factory_role_id,))
+            row = cur.fetchone()
+
+            return row["is_in_use"]

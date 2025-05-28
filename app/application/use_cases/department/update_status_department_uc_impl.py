@@ -1,8 +1,8 @@
-from application.interfaces.use_cases.department.update_status_department_uc import \
-    IUpdateStatusDepartmentUC
+from application.interfaces.use_cases.department.update_status_department_uc import (
+    IUpdateStatusDepartmentUC,
+)
 from core.exception import BadRequestError
-from domain.interfaces.repositories.department_repository import \
-    IDepartmentRepository
+from domain.interfaces.repositories.department_repository import IDepartmentRepository
 
 
 class UpdateStatusDepartmentUC(IUpdateStatusDepartmentUC):
@@ -17,6 +17,16 @@ class UpdateStatusDepartmentUC(IUpdateStatusDepartmentUC):
 
         if department.is_active == is_active:
             return True
+
+        if not is_active:
+            is_in_use = self.department_repository.is_department_in_use(
+                department=department
+            )
+
+            if is_in_use:
+                raise BadRequestError(
+                    error_code="ETB-phong_ban_dang_duoc_su_dung_khong_the_deactivate"
+                )
 
         department.set_is_active(is_active)
 

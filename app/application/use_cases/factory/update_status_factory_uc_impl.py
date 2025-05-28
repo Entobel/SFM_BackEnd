@@ -1,8 +1,8 @@
-from application.interfaces.use_cases.factory.update_status_factory_uc import \
-    IUpdateStatusFactoryUC
+from application.interfaces.use_cases.factory.update_status_factory_uc import (
+    IUpdateStatusFactoryUC,
+)
 from core.exception import BadRequestError
-from domain.interfaces.repositories.factory_repository import \
-    IFactoryRepository
+from domain.interfaces.repositories.factory_repository import IFactoryRepository
 
 
 class UpdateStatusFactoryUC(IUpdateStatusFactoryUC):
@@ -19,11 +19,9 @@ class UpdateStatusFactoryUC(IUpdateStatusFactoryUC):
             )
 
         if not is_active:
-            is_used = self.factory_repository.check_factory_is_used(
-                factory_id=factory_id
-            )
+            is_in_use = self.factory_repository.is_factory_in_use(factory=factory)
 
-            if is_used:
+            if is_in_use:
                 raise BadRequestError(
                     error_code="ETB-nha_may_dang_duoc_su_dung_khong_the_deactivate"
                 )

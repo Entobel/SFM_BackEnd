@@ -1,10 +1,11 @@
-from application.interfaces.use_cases.department.update_status_department_factory_role_uc import \
-    IUpdateStatusDepartmentFactoryRoleUC
-from application.schemas.department_factory_role_schemas import \
-    DepartmentFactoryRoleDTO
+from application.interfaces.use_cases.department.update_status_department_factory_role_uc import (
+    IUpdateStatusDepartmentFactoryRoleUC,
+)
+from application.schemas.department_factory_role_schemas import DepartmentFactoryRoleDTO
 from core.exception import BadRequestError, NotFoundError
-from domain.interfaces.repositories.deparment_factory_role_repository import \
-    IDepartmentFactoryRoleRepository
+from domain.interfaces.repositories.deparment_factory_role_repository import (
+    IDepartmentFactoryRoleRepository,
+)
 
 
 class UpdateStatusDepartmentFactoryRoleUC(IUpdateStatusDepartmentFactoryRoleUC):
@@ -28,6 +29,17 @@ class UpdateStatusDepartmentFactoryRoleUC(IUpdateStatusDepartmentFactoryRoleUC):
             == department_factory_role_dto.is_active
         ):
             return True
+
+        if not department_factory_role_dto.is_active:
+
+            is_in_use = self.department_factory_role_repository.is_department_factory_role_in_use(
+                department_factory_role_entity=department_factory_role_entity
+            )
+
+            if is_in_use:
+                raise BadRequestError(
+                    "ETB-phong_ban_nha_may_dang_duoc_su_dung_khong_the_deactivate"
+                )
 
         department_factory_role_entity.change_status(
             department_factory_role_dto.is_active

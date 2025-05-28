@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.department_factory_role_entity import \
-    DepartmentFactoryRoleEntity
+from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
 
 
 class IDepartmentFactoryRoleRepository(ABC):
@@ -42,3 +41,8 @@ class IDepartmentFactoryRoleRepository(ABC):
         "total_pages":int,
         "items" : list[DepartmentFactoryRoleEntity],
     ]: ...
+
+    @abstractmethod
+    def is_department_factory_role_in_use(
+        self, department_factory_role_entity: DepartmentFactoryRoleEntity
+    ) -> bool: ...

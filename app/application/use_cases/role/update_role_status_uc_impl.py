@@ -1,5 +1,6 @@
-from application.interfaces.use_cases.role.update_status_role_uc import \
-    IUpdateStatusRoleUC
+from application.interfaces.use_cases.role.update_status_role_uc import (
+    IUpdateStatusRoleUC,
+)
 from core.exception import BadRequestError, NotFoundError
 from domain.interfaces.repositories.role_repository import IRoleRepository
 
@@ -18,6 +19,14 @@ class UpdateRoleStatusUc(IUpdateStatusRoleUC):
 
         if role.is_active == is_active:
             return True
+
+        if not is_active:
+            is_in_use = self.role_repo.is_role_in_use(role=role)
+
+            if is_in_use:
+                raise BadRequestError(
+                    error_code="ETB-vai_tro_dang_duoc_su_dung_khong_the_deactivate"
+                )
 
         role.set_is_active(is_active=is_active)
 
