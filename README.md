@@ -1,6 +1,6 @@
 <div align="center">
 
-# SFM_BACKEND
+# 🚀 SFM_BACKEND
 
 *Empowering seamless connections for innovative solutions.*
 
@@ -22,88 +22,105 @@
 
 ---
 
-## Table of Contents
+## 📚 Table of Contents
 
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Testing](#testing)
-
----
-
-## Overview
-
-SFM_BackEnd is a powerful backend framework designed to streamline the development of robust web applications.
-
-**Why SFM_BackEnd?**
-
-This project simplifies backend development while ensuring security and scalability. The core features include:
-
-- 🛠️ **Dependency Management:** Ensures a consistent development environment with specified package versions.
-- 📡 **Modular API Structure:** Easily manage user roles, production processes, and more through organized API endpoints.
-- 📊 **Data Transfer Objects (DTOs):** Enhance data handling and validation, promoting clear communication between client and server.
-- 🔄 **Database Migration:** Seamlessly manage database schema changes with Alembic for effective version control.
-- 🔒 **Security Features:** Robust authentication and authorization mechanisms to protect sensitive data.
+- [🧩 Overview](#overview)
+- [🛠️ Getting Started](#getting-started)
+  - [📌 Prerequisites](#prerequisites)
+  - [⚙️ Installation](#installation)
+  - [🚦 Usage](#usage)
+  - [✅ Testing](#testing)
+- [🏛️ Clean Architecture](#clean-architecture)
 
 ---
 
-## Getting Started
+## 🧩 Overview
 
-### Prerequisites
+**SFM_BackEnd** is a modern backend framework built with **FastAPI** and aligned with **Clean Architecture** principles. It emphasizes scalability, maintainability, and modularity in building backend systems.
 
-This project requires the following dependencies:
+### 🔍 Why SFM_BackEnd?
 
-- **Programming Language:** Python
-- **Package Manager:** Pip
+This project simplifies backend development with a strong focus on:
 
-### Installation
+- 🛠️ **Dependency Management**: Stable environments through pinned package versions.
+- 📡 **Modular API Structure**: Organized endpoints for handling user roles, production workflows, etc.
+- 📊 **DTOs (Data Transfer Objects)**: Clean, validated request and response models using Pydantic.
+- 🔄 **Database Migration**: Alembic integration for version-controlled schema updates.
+- 🔒 **Security**: JWT authentication and role-based access control.
+- 🧼 **Clean Architecture**: Clear separation of domain logic and infrastructure code.
 
-Build SFM_BackEnd from the source and install dependencies:
+---
 
-1. **Clone the repository:**
+## 🛠️ Getting Started
 
-    ```sh
-    ❯ git clone https://github.com/qminh011002/SFM_BackEnd
-    ```
+### 📌 Prerequisites
 
-2. **Navigate to the project directory:**
+Ensure you have the following installed:
 
-    ```sh
-    ❯ cd SFM_BackEnd
-    ```
+- **Python 3.9+**
+- **Pip**
 
-3. **Install the dependencies:**
+### ⚙️ Installation
 
-**Using [pip](https://pypi.org/project/pip/):**
+```bash
+# Clone the repository
+git clone https://github.com/qminh011002/SFM_BackEnd
 
-```sh
-❯ pip install -r requirements.txt
+# Navigate into the project
+cd SFM_BackEnd
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-### Usage
+### 🚦 Usage
 
-Run the project with:
+To run the application:
 
-**Using [pip](https://pypi.org/project/pip/):**
-
-```sh
-python {entrypoint}
+```bash
+python main.py
 ```
 
-### Testing
+Replace `main.py` if your actual entrypoint differs.
 
-Sfm_backend uses the **{test_framework}** test framework. Run the test suite with:
+### ✅ Testing
 
-**Using [pip](https://pypi.org/project/pip/):**
+To run the test suite using Pytest:
 
-```sh
+```bash
 pytest
 ```
 
 ---
 
-[⬆ Return](#top)
+## 🏛️ Clean Architecture
+
+This project follows **Clean Architecture** to ensure a scalable and testable codebase.
+
+### 🧱 Directory Structure
+
+```
+SFM_BACKEND/
+├── app/
+│   ├── alembic/          # Alembic migration scripts
+│   ├── application/      # Use cases and business workflows
+│   ├── core/             # Shared configs and utility constants
+│   ├── domain/           # Entities and domain logic
+│   ├── infrastructure/   # External services, DB implementations
+│   └── presentation/     # API endpoints, controllers, schemas
+├── .env                  # Environment variables
+├── alembic.ini           # Alembic configuration
+├── main.py               # Application entrypoint
+├── commit-each.sh        # Dev script for streamlined commits
+├── requirements.txt      # Dependency list
+├── README.md             # Project documentation
+└── .gitignore            # Git ignore rules
+```
+
+> 🧠 **Note**: This structure enforces separation of concerns, improving testability and adaptability over time.
+
+---
+
+[⬆ Return to Top](#top)
 
 ---
