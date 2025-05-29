@@ -1,13 +1,18 @@
-from application.schemas.produciton_type_schemas import ProductionTypeDTO
+from application.schemas.produciton_type_dto import ProductionTypeDTO
 from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.production_type_denpendencies import (
-    CreateProductionTypeUCDep, ListProductionTypeUCDep,
-    UpdateProductionTypeUCDep, UpdateStatusProductionTypeUCDep)
+    CreateProductionTypeUCDep,
+    ListProductionTypeUCDep,
+    UpdateProductionTypeUCDep,
+    UpdateStatusProductionTypeUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.production_type_dto import (
-    CreateProductionTypeDTO, UpdateProductionTypeDTO,
-    UpdateStatusProductionTypeDTO)
+    CreateProductionTypeDTO,
+    UpdateProductionTypeDTO,
+    UpdateStatusProductionTypeDTO,
+)
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/production-types", tags=["Production Type"])

@@ -1,6 +1,5 @@
-from application.interfaces.use_cases.shift.update_shift_uc import \
-    IUpdateShiftUC
-from application.schemas.shift_schemas import ShiftDTO
+from application.interfaces.use_cases.shift.update_shift_uc import IUpdateShiftUC
+from application.schemas.shift_dto import ShiftDTO
 from core.exception import BadRequestError
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 

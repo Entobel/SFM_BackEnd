@@ -3,9 +3,10 @@ from typing import Optional
 
 from pydantic import ConfigDict
 
-from .department_schemas import DepartmentDTO
-from .factory_schemas import FactoryDTO
-from .role_schemas import RoleDTO
+from application.schemas.department_dto import DepartmentDTO
+
+from .factory_dto import FactoryDTO
+from .role_dto import RoleDTO
 
 
 @dataclass(frozen=True)

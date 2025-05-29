@@ -1,8 +1,8 @@
-from application.schemas.department_factory_role_schemas import DepartmentFactoryRoleDTO
-from application.schemas.department_factory_schemas import DepartmentFactoryDTO
-from application.schemas.department_schemas import DepartmentDTO
-from application.schemas.factory_schemas import FactoryDTO
-from application.schemas.role_schemas import RoleDTO
+from application.schemas.department_factory_role_dto import DepartmentFactoryRoleDTO
+from application.schemas.department_factory_dto import DepartmentFactoryDTO
+from application.schemas.department_dto import DepartmentDTO
+from application.schemas.factory_dto import FactoryDTO
+from application.schemas.role_dto import RoleDTO
 from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.department_dependencies import (
     CreateDepartmentFactoryRoleUseCaseDep,

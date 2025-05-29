@@ -1,12 +1,19 @@
-from application.schemas.role_schemas import RoleDTO
+from application.schemas.role_dto import RoleDTO
 from fastapi import APIRouter, Depends, Path
 from presentation.api.v1.dependencies.role_dependencies import (
-    CreateRoleUCDep, ListRoleUCDep, UpdateRoleUCDep, UpdateStatusRoleUCDep)
+    CreateRoleUCDep,
+    ListRoleUCDep,
+    UpdateRoleUCDep,
+    UpdateStatusRoleUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.response import Response
-from presentation.schemas.role_dto import (CreateRoleDTO, UpdateRoleDTO,
-                                           UpdateStatusRoleDTO)
+from presentation.schemas.role_dto import (
+    CreateRoleDTO,
+    UpdateRoleDTO,
+    UpdateStatusRoleDTO,
+)
 
 router = APIRouter(prefix="/roles", tags=["Role"])
 

@@ -1,4 +1,4 @@
-from application.schemas.diet_schemas import DietDTO
+from application.schemas.diet_dto import DietDTO
 from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.diet_dependencies import (
     CreateDietUCDep,

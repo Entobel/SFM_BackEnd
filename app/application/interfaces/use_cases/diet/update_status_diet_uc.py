@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.schemas.diet_schemas import DietDTO
+from application.schemas.diet_dto import DietDTO
 
 
 class IUpdateStatusDietUC(ABC):

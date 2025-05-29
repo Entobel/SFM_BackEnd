@@ -1,5 +1,5 @@
 from application.interfaces.use_cases.diet.update_diet_uc import IUpdateDietUC
-from application.schemas.diet_schemas import DietDTO
+from application.schemas.diet_dto import DietDTO
 from core.exception import BadRequestError
 from domain.interfaces.repositories.diet_repository import IDietRepository
 

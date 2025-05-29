@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.schemas.produciton_type_schemas import ProductionTypeDTO
+from application.schemas.produciton_type_dto import ProductionTypeDTO
 
 
 class ICreateProductionTypeUC(ABC):

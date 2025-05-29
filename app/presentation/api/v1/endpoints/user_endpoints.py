@@ -1,19 +1,27 @@
-from application.schemas.department_schemas import DepartmentDTO
-from application.schemas.factory_schemas import FactoryDTO
-from application.schemas.role_schemas import RoleDTO
-from application.schemas.user_schemas import UserDTO
+from application.schemas.department_dto import DepartmentDTO
+from application.schemas.factory_dto import FactoryDTO
+from application.schemas.role_dto import RoleDTO
+from application.schemas.user_dto import UserDTO
 from fastapi import APIRouter, Depends, status
 from presentation.api.v1.dependencies.user_dependencies import (
-    ChangePasswordUCDep, ChangeStatusUseCaseDep, CreateUserUseCaseDep,
-    GetCurrentUserDep, GetListUserUseCaseDep, GetMeUseCaseDep, TokenVerifyDep,
-    UpdateUserUseCaseDep)
+    ChangePasswordUCDep,
+    ChangeStatusUseCaseDep,
+    CreateUserUseCaseDep,
+    GetCurrentUserDep,
+    GetListUserUseCaseDep,
+    GetMeUseCaseDep,
+    TokenVerifyDep,
+    UpdateUserUseCaseDep,
+)
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.response import Response
 from presentation.schemas.token_dto import TokenPayloadInputDTO
-from presentation.schemas.user_dto import (ChangePasswordInputDTO,
-                                           CreateUserInputDTO,
-                                           UpdateStatusInputDTO,
-                                           UpdateUserInputDTO)
+from presentation.schemas.user_dto import (
+    ChangePasswordInputDTO,
+    CreateUserInputDTO,
+    UpdateStatusInputDTO,
+    UpdateUserInputDTO,
+)
 
 router = APIRouter(prefix="/users", tags=["Users"])
 

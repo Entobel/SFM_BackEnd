@@ -6,7 +6,7 @@ from domain.entities.user_entity import UserEntity
 from ..interfaces.repositories.user_repository import IUserRepository
 from ..interfaces.services.password_service import IPasswordService
 
-logger = logging.getLogger("app.auth_service")
+logger = logging.getLogger("auth_service")
 
 
 class AuthService:

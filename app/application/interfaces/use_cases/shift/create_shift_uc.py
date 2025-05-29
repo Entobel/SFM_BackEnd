@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.schemas.shift_schemas import ShiftDTO
+from application.schemas.shift_dto import ShiftDTO
 
 
 class ICreateShiftUC(ABC):

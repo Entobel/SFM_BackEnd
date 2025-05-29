@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.schemas.department_factory_schemas import DepartmentFactoryDTO
+from application.schemas.department_factory_dto import DepartmentFactoryDTO
 
 
 class IUpdateStatusDepartmentFactoryUC(ABC):

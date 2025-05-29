@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.schemas.factory_schemas import FactoryDTO
+from application.schemas.factory_dto import FactoryDTO
 
 
 class IUpdateFactoryUC(ABC):
