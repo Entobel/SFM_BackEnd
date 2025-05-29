@@ -1,9 +1,9 @@
-from application.interfaces.use_cases.department.update_department_uc import (
-    IUpdateDepartmentUC,
-)
+from application.interfaces.use_cases.department.update_department_uc import \
+    IUpdateDepartmentUC
 from application.schemas.department_dto import DepartmentDTO
 from core.exception import BadRequestError
-from domain.interfaces.repositories.department_repository import IDepartmentRepository
+from domain.interfaces.repositories.department_repository import \
+    IDepartmentRepository
 
 
 class UpdateDepartmentUC(IUpdateDepartmentUC):

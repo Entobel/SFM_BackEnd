@@ -1,8 +1,9 @@
-from domain.entities.department_factory_entity import DepartmentFactoryEntity
 from application.interfaces.use_cases.user.create_user_uc import ICreateUserUC
 from core.exception import BadRequestError
 from domain.entities.department_entity import DepartmentEntity
-from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from domain.entities.department_factory_entity import DepartmentFactoryEntity
+from domain.entities.department_factory_role_entity import \
+    DepartmentFactoryRoleEntity
 from domain.entities.factory_entity import FactoryEntity
 from domain.entities.role_entity import RoleEntity
 from domain.entities.user_entity import UserEntity

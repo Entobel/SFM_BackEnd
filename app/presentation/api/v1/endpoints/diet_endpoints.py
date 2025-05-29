@@ -1,17 +1,11 @@
-from application.schemas.diet_dto import DietDTO
 from fastapi import APIRouter, Depends
+
+from application.schemas.diet_dto import DietDTO
 from presentation.api.v1.dependencies.diet_dependencies import (
-    CreateDietUCDep,
-    ListDietUCDep,
-    UpdateDietStatusUCDep,
-    UpdateDietUCDep,
-)
+    CreateDietUCDep, ListDietUCDep, UpdateDietStatusUCDep, UpdateDietUCDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.diet_dto import (
-    CreateDietDTO,
-    UpdateDietDTO,
-    UpdateStatusDietDTO,
-)
+from presentation.schemas.diet_dto import (CreateDietDTO, UpdateDietDTO,
+                                           UpdateStatusDietDTO)
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.response import Response
 

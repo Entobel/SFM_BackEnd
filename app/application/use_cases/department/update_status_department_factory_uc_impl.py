@@ -1,11 +1,9 @@
-from application.interfaces.use_cases.department.update_status_department_factory_uc import (
-    IUpdateStatusDepartmentFactoryUC,
-)
+from application.interfaces.use_cases.department.update_status_department_factory_uc import \
+    IUpdateStatusDepartmentFactoryUC
 from application.schemas.department_factory_dto import DepartmentFactoryDTO
 from core.exception import BadRequestError, NotFoundError
-from domain.interfaces.repositories.department_factory_repository import (
-    IDepartmentFactoryRepository,
-)
+from domain.interfaces.repositories.department_factory_repository import \
+    IDepartmentFactoryRepository
 
 
 class UpdateStatusDepartmentFactoryUC(IUpdateStatusDepartmentFactoryUC):

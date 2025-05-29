@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from fastapi import Depends
+
 from application.interfaces.use_cases.growing.create_growing_uc import \
     ICreateGrowingUC
 from application.interfaces.use_cases.growing.list_growing_uc import \
@@ -9,7 +11,6 @@ from application.use_cases.growing.create_growing_uc_impl import \
 from application.use_cases.growing.list_growing_uc_impl import ListGrowingUC
 from domain.interfaces.repositories.growing_repository import \
     IGrowingRepository
-from fastapi import Depends
 from infrastructure.database.repositories.growing_repository_impl import \
     GrowingRepository
 from presentation.api.v1.dependencies.common_dependencies import (

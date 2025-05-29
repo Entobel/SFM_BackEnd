@@ -1,18 +1,14 @@
-from application.schemas.production_object_dto import ProductionObjectDTO
 from fastapi import APIRouter, Depends
+
+from application.schemas.production_object_dto import ProductionObjectDTO
 from presentation.api.v1.dependencies.production_object_dependencies import (
-    CreateProductionObjectUCDep,
-    ListProductionObjectUCDep,
-    UpdateProductionObjectUCDep,
-    UpdateStatusProductionObjectUCDep,
-)
+    CreateProductionObjectUCDep, ListProductionObjectUCDep,
+    UpdateProductionObjectUCDep, UpdateStatusProductionObjectUCDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.production_object_dto import (
-    CreateProductionObjectDTO,
-    UpdateProductionObjectDTO,
-    UpdateStatusProductionObjectDTO,
-)
+    CreateProductionObjectDTO, UpdateProductionObjectDTO,
+    UpdateStatusProductionObjectDTO)
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/production-objects", tags=["Production Object"])

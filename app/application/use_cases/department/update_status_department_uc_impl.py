@@ -1,8 +1,8 @@
-from application.interfaces.use_cases.department.update_status_department_uc import (
-    IUpdateStatusDepartmentUC,
-)
+from application.interfaces.use_cases.department.update_status_department_uc import \
+    IUpdateStatusDepartmentUC
 from core.exception import BadRequestError
-from domain.interfaces.repositories.department_repository import IDepartmentRepository
+from domain.interfaces.repositories.department_repository import \
+    IDepartmentRepository
 
 
 class UpdateStatusDepartmentUC(IUpdateStatusDepartmentUC):

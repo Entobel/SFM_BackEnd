@@ -1,9 +1,8 @@
-from infrastructure.database.repositories.zone_repository_impl import ZoneRepository
 from domain.interfaces.repositories.zone_repository import IZoneRepository
+from infrastructure.database.repositories.zone_repository_impl import \
+    ZoneRepository
 from presentation.api.v1.dependencies.common_dependencies import (
-    DatabaseDep,
-    QueryHelperDep,
-)
+    DatabaseDep, QueryHelperDep)
 
 
 def get_zone_repository(

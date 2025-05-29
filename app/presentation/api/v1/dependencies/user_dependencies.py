@@ -1,6 +1,9 @@
 from typing import Annotated
 
 import psycopg2
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
+
 from application.interfaces.use_cases.user.change_password_uc import \
     IChangePasswordUC
 from application.interfaces.use_cases.user.change_status_uc import \
@@ -21,8 +24,6 @@ from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.password_service import IPasswordService
 from domain.interfaces.services.token_service import ITokenService
 from domain.value_objects.token_payload import TokenPayload
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
 from presentation.api.v1.dependencies.common_dependencies import (
     DatabaseDep, get_password_service, get_token_service, get_user_repository)
 

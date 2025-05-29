@@ -1,87 +1,66 @@
 from typing import Annotated
 
-from application.interfaces.use_cases.department.create_department_factory_role_uc import (
-    ICreateDepartmentFactoryRoleUC,
-)
-from application.interfaces.use_cases.department.create_department_factory_uc import (
-    ICreateDepartmentFactoryUC,
-)
-from application.interfaces.use_cases.department.create_department_uc import (
-    ICreateDepartmentUC,
-)
-from application.interfaces.use_cases.department.list_department_factory_role_uc import (
-    IListDepartmentFactoryRoleUC,
-)
-from application.interfaces.use_cases.department.list_department_factory_uc import (
-    IListDepartmentFactoryUC,
-)
-from application.interfaces.use_cases.department.list_department_uc import (
-    IListDepartmentUC,
-)
-from application.interfaces.use_cases.department.update_department_uc import (
-    IUpdateDepartmentUC,
-)
-from application.interfaces.use_cases.department.update_status_department_factory_role_uc import (
-    IUpdateStatusDepartmentFactoryRoleUC,
-)
-from application.interfaces.use_cases.department.update_status_department_factory_uc import (
-    IUpdateStatusDepartmentFactoryUC,
-)
-from application.interfaces.use_cases.department.update_status_department_uc import (
-    IUpdateStatusDepartmentUC,
-)
-from application.use_cases.department.create_department_factory_role_uc_impl import (
-    CreateDepartmentFactoryRoleUC,
-)
-from application.use_cases.department.create_department_factory_uc_impl import (
-    CreateDepartmentFactoryUC,
-)
-from application.use_cases.department.create_department_uc_impl import (
-    CreateDepartmentUC,
-)
-from application.use_cases.department.list_department_factory_role_uc_impl import (
-    ListDepartmentFactoryRoleUC,
-)
-from application.use_cases.department.list_department_factory_uc_impl import (
-    ListDepartmentFactoryUC,
-)
-from application.use_cases.department.list_department_uc_impl import ListDepartmentUC
-from application.use_cases.department.update_department_uc_impl import (
-    UpdateDepartmentUC,
-)
-from application.use_cases.department.update_status_department_factory_role_uc_impl import (
-    UpdateStatusDepartmentFactoryRoleUC,
-)
-from application.use_cases.department.update_status_department_factory_uc_impl import (
-    UpdateStatusDepartmentFactoryUC,
-)
-from application.use_cases.department.update_status_department_uc_impl import (
-    UpdateStatusDepartmentUC,
-)
-from domain.interfaces.repositories.deparment_factory_role_repository import (
-    IDepartmentFactoryRoleRepository,
-)
-from domain.interfaces.repositories.department_factory_repository import (
-    IDepartmentFactoryRepository,
-)
-from domain.interfaces.repositories.department_repository import IDepartmentRepository
-from domain.interfaces.repositories.role_repository import IRoleRepository
 from fastapi import Depends
-from infrastructure.database.repositories.department_factory_repository_impl import (
-    DepartmentFactoryRepository,
-)
-from infrastructure.database.repositories.department_factory_role_repository_impl import (
-    DepartmentFactoryRoleRepository,
-)
-from infrastructure.database.repositories.department_repository_impl import (
-    DepartmentRepository,
-)
+
+from application.interfaces.use_cases.department.create_department_factory_role_uc import \
+    ICreateDepartmentFactoryRoleUC
+from application.interfaces.use_cases.department.create_department_factory_uc import \
+    ICreateDepartmentFactoryUC
+from application.interfaces.use_cases.department.create_department_uc import \
+    ICreateDepartmentUC
+from application.interfaces.use_cases.department.list_department_factory_role_uc import \
+    IListDepartmentFactoryRoleUC
+from application.interfaces.use_cases.department.list_department_factory_uc import \
+    IListDepartmentFactoryUC
+from application.interfaces.use_cases.department.list_department_uc import \
+    IListDepartmentUC
+from application.interfaces.use_cases.department.update_department_uc import \
+    IUpdateDepartmentUC
+from application.interfaces.use_cases.department.update_status_department_factory_role_uc import \
+    IUpdateStatusDepartmentFactoryRoleUC
+from application.interfaces.use_cases.department.update_status_department_factory_uc import \
+    IUpdateStatusDepartmentFactoryUC
+from application.interfaces.use_cases.department.update_status_department_uc import \
+    IUpdateStatusDepartmentUC
+from application.use_cases.department.create_department_factory_role_uc_impl import \
+    CreateDepartmentFactoryRoleUC
+from application.use_cases.department.create_department_factory_uc_impl import \
+    CreateDepartmentFactoryUC
+from application.use_cases.department.create_department_uc_impl import \
+    CreateDepartmentUC
+from application.use_cases.department.list_department_factory_role_uc_impl import \
+    ListDepartmentFactoryRoleUC
+from application.use_cases.department.list_department_factory_uc_impl import \
+    ListDepartmentFactoryUC
+from application.use_cases.department.list_department_uc_impl import \
+    ListDepartmentUC
+from application.use_cases.department.update_department_uc_impl import \
+    UpdateDepartmentUC
+from application.use_cases.department.update_status_department_factory_role_uc_impl import \
+    UpdateStatusDepartmentFactoryRoleUC
+from application.use_cases.department.update_status_department_factory_uc_impl import \
+    UpdateStatusDepartmentFactoryUC
+from application.use_cases.department.update_status_department_uc_impl import \
+    UpdateStatusDepartmentUC
+from domain.interfaces.repositories.deparment_factory_role_repository import \
+    IDepartmentFactoryRoleRepository
+from domain.interfaces.repositories.department_factory_repository import \
+    IDepartmentFactoryRepository
+from domain.interfaces.repositories.department_repository import \
+    IDepartmentRepository
+from domain.interfaces.repositories.role_repository import IRoleRepository
+from infrastructure.database.repositories.department_factory_repository_impl import \
+    DepartmentFactoryRepository
+from infrastructure.database.repositories.department_factory_role_repository_impl import \
+    DepartmentFactoryRoleRepository
+from infrastructure.database.repositories.department_repository_impl import \
+    DepartmentRepository
 from presentation.api.v1.dependencies.common_dependencies import (
-    DatabaseDep,
-    QueryHelperDep,
-)
-from presentation.api.v1.dependencies.factory_dependencies import FactoryRepositoryDep
-from presentation.api.v1.dependencies.role_dependencies import get_role_repository
+    DatabaseDep, QueryHelperDep)
+from presentation.api.v1.dependencies.factory_dependencies import \
+    FactoryRepositoryDep
+from presentation.api.v1.dependencies.role_dependencies import \
+    get_role_repository
 
 
 def get_department_repository(

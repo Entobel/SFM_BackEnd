@@ -1,13 +1,15 @@
 from datetime import datetime
 from typing import Optional
 
+from fastapi.exceptions import RequestValidationError
+from pydantic import (BaseModel, ConfigDict, Field, field_validator,
+                      model_validator)
+
 from application.schemas.diet_dto import DietDTO
 from application.schemas.produciton_type_dto import ProductionTypeDTO
 from application.schemas.production_object_dto import ProductionObjectDTO
 from application.schemas.shift_dto import ShiftDTO
 from application.schemas.user_dto import UserDTO
-from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class GrowingDTO(BaseModel):

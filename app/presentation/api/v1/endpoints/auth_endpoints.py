@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status
+
 from presentation.api.v1.dependencies.auth_dependencies import (
     LoginOauth2Dep,
     LoginUseCaseDep,

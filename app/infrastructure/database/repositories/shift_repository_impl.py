@@ -1,8 +1,9 @@
 import psycopg2
+from psycopg2.extras import RealDictCursor
+
 from domain.entities.shift_entity import ShiftEntity
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
-from psycopg2.extras import RealDictCursor
 
 
 class ShiftRepository(IShiftRepository):

@@ -1,14 +1,14 @@
-from application.interfaces.use_cases.department.create_department_factory_role_uc import (
-    ICreateDepartmentFactoryRoleUC,
-)
-from application.schemas.department_factory_role_dto import DepartmentFactoryRoleDTO
+from application.interfaces.use_cases.department.create_department_factory_role_uc import \
+    ICreateDepartmentFactoryRoleUC
+from application.schemas.department_factory_role_dto import \
+    DepartmentFactoryRoleDTO
 from core.exception import BadRequestError, NotFoundError
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
-from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from domain.entities.department_factory_role_entity import \
+    DepartmentFactoryRoleEntity
 from domain.entities.role_entity import RoleEntity
-from domain.interfaces.repositories.deparment_factory_role_repository import (
-    IDepartmentFactoryRoleRepository,
-)
+from domain.interfaces.repositories.deparment_factory_role_repository import \
+    IDepartmentFactoryRoleRepository
 from domain.interfaces.repositories.role_repository import IRoleRepository
 
 

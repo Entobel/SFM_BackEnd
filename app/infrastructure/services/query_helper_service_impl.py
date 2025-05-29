@@ -3,6 +3,7 @@ from math import ceil
 from typing import Any, List, Optional, Tuple
 
 from dateutil.parser import isoparse  # robust ISO 8601 parser
+
 from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 

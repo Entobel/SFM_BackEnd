@@ -1,8 +1,10 @@
 import psycopg2
-from domain.entities.department_entity import DepartmentEntity
-from domain.interfaces.repositories.department_repository import IDepartmentRepository
-from domain.interfaces.services.query_helper_service import IQueryHelperService
 from psycopg2.extras import RealDictCursor
+
+from domain.entities.department_entity import DepartmentEntity
+from domain.interfaces.repositories.department_repository import \
+    IDepartmentRepository
+from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class DepartmentRepository(IDepartmentRepository):

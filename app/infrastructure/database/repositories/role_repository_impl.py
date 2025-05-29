@@ -1,8 +1,9 @@
 import psycopg2
+from psycopg2.extras import RealDictCursor
+
 from domain.entities.role_entity import RoleEntity
 from domain.interfaces.repositories.role_repository import IRoleRepository
 from domain.interfaces.services.query_helper_service import IQueryHelperService
-from psycopg2.extras import RealDictCursor
 
 
 class RoleRepository(IRoleRepository):

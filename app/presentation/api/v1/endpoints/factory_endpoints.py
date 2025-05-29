@@ -1,18 +1,14 @@
+from fastapi import APIRouter, Depends
+
 from application.schemas.factory_dto import FactoryDTO
 from domain.entities.factory_entity import FactoryEntity
-from fastapi import APIRouter, Depends
 from presentation.api.v1.dependencies.factory_dependencies import (
-    CreateFactoryUseCaseDep,
-    ListFactoryUseCaseDep,
-    UpdateFactoryUseCaseDep,
-    UpdateStatusFactoryUseCaseDep,
-)
+    CreateFactoryUseCaseDep, ListFactoryUseCaseDep, UpdateFactoryUseCaseDep,
+    UpdateStatusFactoryUseCaseDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.factory_dto import (
-    CreateFactoryDTO,
-    UpdateFactoryDTO,
-    UpdateStatusFactoryDTO,
-)
+from presentation.schemas.factory_dto import (CreateFactoryDTO,
+                                              UpdateFactoryDTO,
+                                              UpdateStatusFactoryDTO)
 from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
 from presentation.schemas.response import Response
 

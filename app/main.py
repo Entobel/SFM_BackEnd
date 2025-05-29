@@ -1,12 +1,13 @@
 import logging
 
+from fastapi import FastAPI, status
+from fastapi.encoders import jsonable_encoder
+from starlette.middleware.cors import CORSMiddleware
+
 from core.config import config
 from core.database import db
 from core.error import setup_error_handlers
-from fastapi import FastAPI, status
-from fastapi.encoders import jsonable_encoder
 from presentation.api.v1.routes import routers as v1_routers
-from starlette.middleware.cors import CORSMiddleware
 
 # Configure logging
 logger = logging.getLogger("uvicorn")

@@ -1,12 +1,10 @@
-from application.interfaces.use_cases.production_object.create_production_object_uc import (
-    ICreateProductionObjectUC,
-)
+from application.interfaces.use_cases.production_object.create_production_object_uc import \
+    ICreateProductionObjectUC
 from application.schemas.production_object_dto import ProductionObjectDTO
 from core.exception import BadRequestError
 from domain.entities.production_object_entity import ProductionObjectEntity
-from domain.interfaces.repositories.production_object_repository import (
-    IProductionObjectRepository,
-)
+from domain.interfaces.repositories.production_object_repository import \
+    IProductionObjectRepository
 
 
 class CreateProductionObjectUC(ICreateProductionObjectUC):

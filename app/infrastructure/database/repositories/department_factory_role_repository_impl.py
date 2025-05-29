@@ -1,10 +1,11 @@
 import psycopg2
-from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
-from domain.interfaces.repositories.deparment_factory_role_repository import (
-    IDepartmentFactoryRoleRepository,
-)
-from domain.interfaces.services.query_helper_service import IQueryHelperService
 from psycopg2.extras import RealDictCursor
+
+from domain.entities.department_factory_role_entity import \
+    DepartmentFactoryRoleEntity
+from domain.interfaces.repositories.deparment_factory_role_repository import \
+    IDepartmentFactoryRoleRepository
+from domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
