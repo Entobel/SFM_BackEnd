@@ -13,6 +13,7 @@ class IListUserUC(ABC):
         department_id: int,
         factory_id: int,
         role_id: int,
+        is_active: bool,
     ) -> dict[
         "total":int,
         "page":int,
