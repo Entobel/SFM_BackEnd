@@ -1,7 +1,7 @@
+from application.dto.department_factory_role_dto import \
+    DepartmentFactoryRoleDTO
 from application.interfaces.use_cases.department.update_status_department_factory_role_uc import \
     IUpdateStatusDepartmentFactoryRoleUC
-from application.schemas.department_factory_role_dto import \
-    DepartmentFactoryRoleDTO
 from core.exception import BadRequestError, NotFoundError
 from domain.interfaces.repositories.deparment_factory_role_repository import \
     IDepartmentFactoryRoleRepository
