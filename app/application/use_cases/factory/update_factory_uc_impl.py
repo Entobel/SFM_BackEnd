@@ -1,6 +1,6 @@
+from application.dto.factory_dto import FactoryDTO
 from application.interfaces.use_cases.factory.update_factory_uc import \
     IUpdateFactoryUC
-from application.schemas.factory_dto import FactoryDTO
 from core.exception import BadRequestError
 from domain.entities.factory_entity import FactoryEntity
 from domain.interfaces.repositories.factory_repository import \
