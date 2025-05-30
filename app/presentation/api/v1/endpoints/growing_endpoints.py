@@ -1,18 +1,16 @@
 from fastapi import APIRouter, Depends
 
-from presentation.schemas.growing_schema import CreateGrowingSchema
-from application.schemas.growing_dto import GrowingDTO
-from application.schemas.diet_dto import DietDTO
-from application.schemas.produciton_type_dto import ProductionTypeDTO
-from application.schemas.production_object_dto import ProductionObjectDTO
-from application.schemas.shift_dto import ShiftDTO
-from application.schemas.user_dto import UserDTO
+from application.dto.diet_dto import DietDTO
+from application.dto.growing_dto import GrowingDTO
+from application.dto.produciton_type_dto import ProductionTypeDTO
+from application.dto.production_object_dto import ProductionObjectDTO
+from application.dto.shift_dto import ShiftDTO
+from application.dto.user_dto import UserDTO
 from presentation.api.v1.dependencies.growing_dependencies import (
-    CreateGrowingUCDep,
-    ListGrowingUCDep,
-)
+    CreateGrowingUCDep, ListGrowingUCDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from presentation.schemas.growing_schema import CreateGrowingSchema
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/growings", tags=["Growing"])
