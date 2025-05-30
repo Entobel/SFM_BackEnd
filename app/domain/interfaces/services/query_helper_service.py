@@ -16,6 +16,9 @@ class IQueryHelperService(ABC):
         pass
 
     @abstractmethod
+    def add_search(self, cols: List[str], query: str) -> None: ...
+
+    @abstractmethod
     def paginate(self, page: int, page_size: int) -> Tuple[str, List[Any]]:
         pass
 
