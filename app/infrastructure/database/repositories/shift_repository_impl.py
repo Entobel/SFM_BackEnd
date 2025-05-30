@@ -13,21 +13,25 @@ class ShiftRepository(IShiftRepository):
         self.conn = conn
         self.query_helper = query_helper
 
-    def get_shift_by_id(self, id: int) -> ShiftEntity:
+    def get_shift_by_id(self, shift_entity: ShiftEntity) -> ShiftEntity | None:
         query = """
             SELECT id as s_id, name as s_name, description as s_description, is_active as s_is_active FROM shift WHERE id = %s
         """
-        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(query, (id,))
-            return ShiftEntity.from_row(cur.fetchone())
 
-    def get_shift_by_name(self, name: str) -> ShiftEntity:
+        shift_id = shift_entity.id
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (shift_id,))
+            row = cur.fetchone()
+        return ShiftEntity.from_row(row) if row else None
+
+    def get_shift_by_name(self, shift_entity: ShiftEntity) -> ShiftEntity | None:
 
         query = """
             SELECT id as s_id, name as s_name, description as s_description, is_active as s_is_active FROM shift WHERE name = %s
         """
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(query, (name,))
+            cur.execute(query, (shift_entity.name,))
             row = cur.fetchone()
 
         return ShiftEntity.from_row(row) if row else None
