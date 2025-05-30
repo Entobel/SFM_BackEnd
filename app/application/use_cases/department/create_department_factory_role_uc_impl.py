@@ -1,7 +1,7 @@
+from application.dto.department_factory_role_dto import \
+    DepartmentFactoryRoleDTO
 from application.interfaces.use_cases.department.create_department_factory_role_uc import \
     ICreateDepartmentFactoryRoleUC
-from application.schemas.department_factory_role_dto import \
-    DepartmentFactoryRoleDTO
 from core.exception import BadRequestError, NotFoundError
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
 from domain.entities.department_factory_role_entity import \
