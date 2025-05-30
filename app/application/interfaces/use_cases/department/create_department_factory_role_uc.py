@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.schemas.department_factory_role_dto import \
+from application.dto.department_factory_role_dto import \
     DepartmentFactoryRoleDTO
 from domain.entities.department_factory_role_entity import \
     DepartmentFactoryRoleEntity
