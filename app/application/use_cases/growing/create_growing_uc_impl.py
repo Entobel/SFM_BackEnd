@@ -1,4 +1,5 @@
-from application.interfaces.use_cases.growing.create_growing_uc import ICreateGrowingUC
+from application.interfaces.use_cases.growing.create_growing_uc import \
+    ICreateGrowingUC
 from core.exception import BadRequestError
 from domain.entities.diet_entity import DietEntity
 from domain.entities.growing_entity import GrowingEntity
@@ -6,7 +7,8 @@ from domain.entities.production_object_entity import ProductionObjectEntity
 from domain.entities.production_type_entity import ProductionTypeEntity
 from domain.entities.shift_entity import ShiftEntity
 from domain.entities.user_entity import UserEntity
-from domain.interfaces.repositories.growing_repository import IGrowingRepository
+from domain.interfaces.repositories.growing_repository import \
+    IGrowingRepository
 from presentation.schemas.growing_schema import CreateGrowingSchema
 
 
