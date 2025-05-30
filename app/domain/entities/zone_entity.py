@@ -1,22 +1,17 @@
 from dataclasses import dataclass
 from typing import Optional
 
-# create table zone (
-#     id serial not null,
-#     zone_number int not null,
-#     is_active bool default true,
-#     created_at timestamptz default now(),
-#     updated_at timestamptz default now(),
-
-#     constraint pk_zone_id primary key (id)
-# )
+from application.dto.zone_dto import ZoneDTO
 
 
 @dataclass
 class ZoneEntity:
-    id: Optional[int]
-    zone_number: Optional[int]
-    is_active: Optional[bool]
+    id: Optional[int] = None
+    zone_number: Optional[int] = None
+    is_active: Optional[bool] = None
+
+    def update_zone(self, new_zone_number: int):
+        self.zone_number = new_zone_number
 
     def change_status(self, new_status: bool):
         self.is_active = new_status
@@ -24,7 +19,7 @@ class ZoneEntity:
     @classmethod
     def from_row(cls, row: dict) -> "ZoneEntity":
         return cls(
-            id=row["z_id"],
-            zone_number=row["z_zone_number"],
-            is_active=row["z_is_active"],
+            id=row["id"],
+            zone_number=row["zone_number"],
+            is_active=row["is_active"],
         )
