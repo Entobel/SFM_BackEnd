@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.schemas.role_dto import RoleDTO
+from application.dto.role_dto import RoleDTO
 
 
 class IUpdateRoleUC(ABC):
