@@ -2,22 +2,21 @@ import re
 from typing import List, Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import (BaseModel, ConfigDict, Field, field_validator,
-                      model_validator)
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from application.schemas.department_dto import DepartmentDTO
 from application.schemas.factory_dto import FactoryDTO
 from application.schemas.role_dto import RoleDTO
 
 
-class UserLoginResponseDTO(BaseModel):
+class UserLoginResponseSchema(BaseModel):
     id: int
     user_name: str
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserListDTO(BaseModel):
+class UserListSchema(BaseModel):
     id: int
     email: Optional[str] = None
     phone: Optional[str] = None
@@ -31,8 +30,8 @@ class UserListDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserListResponseDTO(BaseModel):
-    items: List[UserListDTO]
+class UserListResponseSchema(BaseModel):
+    items: List[UserListSchema]
     total: int
     page: int
     page_size: int
@@ -41,7 +40,7 @@ class UserListResponseDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ChangePasswordInputDTO(BaseModel):
+class ChangePasswordInputSchema(BaseModel):
     old_password: str = Field(...)
     new_password: str = Field(...)
 
@@ -61,7 +60,7 @@ class ChangePasswordInputDTO(BaseModel):
         return v
 
 
-class UpdateStatusInputDTO(BaseModel):
+class UpdateStatusInputSchema(BaseModel):
     status: bool = Field(...)
 
     @field_validator("status")
@@ -72,7 +71,7 @@ class UpdateStatusInputDTO(BaseModel):
         return v
 
 
-class CreateUserInputDTO(BaseModel):
+class CreateUserInputSchema(BaseModel):
     email: Optional[str] = None
     phone: str
     first_name: str
@@ -167,7 +166,7 @@ class CreateUserInputDTO(BaseModel):
         return v
 
 
-class UpdateUserInputDTO(BaseModel):
+class UpdateUserInputSchema(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
     first_name: Optional[str] = None

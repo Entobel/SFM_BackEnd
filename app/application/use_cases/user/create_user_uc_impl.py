@@ -2,14 +2,13 @@ from application.interfaces.use_cases.user.create_user_uc import ICreateUserUC
 from core.exception import BadRequestError
 from domain.entities.department_entity import DepartmentEntity
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
-from domain.entities.department_factory_role_entity import \
-    DepartmentFactoryRoleEntity
+from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
 from domain.entities.factory_entity import FactoryEntity
 from domain.entities.role_entity import RoleEntity
 from domain.entities.user_entity import UserEntity
 from domain.interfaces.repositories.user_repository import IUserRepository
 from domain.interfaces.services.password_service import IPasswordService
-from presentation.schemas.user_dto import CreateUserInputDTO
+from presentation.schemas.user_schema import CreateUserInputSchema
 
 
 class CreateUserUC(ICreateUserUC):
@@ -19,7 +18,7 @@ class CreateUserUC(ICreateUserUC):
         self.user_repository = user_repository
         self.password_service = password_service
 
-    def execute(self, user_dto: CreateUserInputDTO) -> UserEntity:
+    def execute(self, user_dto: CreateUserInputSchema) -> UserEntity:
         is_exist_email_or_phone = self.user_repository.get_user_by_email_and_phone(
             email=user_dto.email, phone=user_dto.phone
         )

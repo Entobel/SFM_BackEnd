@@ -2,12 +2,19 @@ from fastapi import APIRouter, Depends
 
 from application.schemas.shift_dto import ShiftDTO
 from presentation.api.v1.dependencies.shift_dependencies import (
-    CreateShiftUCDep, ListShiftUCDep, UpdateShiftUCDep, UpdateStatusShiftUCDep)
+    CreateShiftUCDep,
+    ListShiftUCDep,
+    UpdateShiftUCDep,
+    UpdateStatusShiftUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
 from presentation.schemas.response import Response
-from presentation.schemas.shift_dto import (CreateShiftDTO, UpdateShiftDTO,
-                                            UpdateStatusShiftDTO)
+from presentation.schemas.shift_schema import (
+    CreateShiftSchema,
+    UpdateShiftSchema,
+    UpdateStatusShiftSchema,
+)
 
 router = APIRouter(prefix="/shifts", tags=["Shift"])
 
@@ -16,7 +23,7 @@ router = APIRouter(prefix="/shifts", tags=["Shift"])
 async def get_all_shifts(
     token: TokenVerifyDep,
     list_shift_uc: ListShiftUCDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
 
     result = list_shift_uc.execute(
@@ -37,7 +44,7 @@ async def get_all_shifts(
         )
         shifts.append(shift_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -55,7 +62,7 @@ async def get_all_shifts(
 def create_shift(
     token: TokenVerifyDep,
     use_case: CreateShiftUCDep,
-    body: CreateShiftDTO,
+    body: CreateShiftSchema,
 ):
     shift_dto = ShiftDTO(
         name=body.name,
@@ -75,7 +82,7 @@ def update_shift_status(
     token: TokenVerifyDep,
     use_case: UpdateStatusShiftUCDep,
     shift_id: int,
-    body: UpdateStatusShiftDTO,
+    body: UpdateStatusShiftSchema,
 ):
     shift_dto = ShiftDTO(
         id=shift_id,
@@ -95,7 +102,7 @@ def update_shift(
     token: TokenVerifyDep,
     use_case: UpdateShiftUCDep,
     shift_id: int,
-    body: UpdateShiftDTO,
+    body: UpdateShiftSchema,
 ):
     shift_dto = ShiftDTO(
         id=shift_id,

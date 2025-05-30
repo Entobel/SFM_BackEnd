@@ -7,7 +7,7 @@ from application.schemas.factory_dto import FactoryDTO
 from application.schemas.role_dto import RoleDTO
 
 
-class DepartmentFactoryRoleDTOResponse(BaseModel):
+class DepartmentFactoryRoleResponseSchema(BaseModel):
     id: int
     factory: FactoryDTO
     department: DepartmentDTO
@@ -15,7 +15,7 @@ class DepartmentFactoryRoleDTOResponse(BaseModel):
     is_active: bool
 
 
-class UpdateStatusDepartmentFactoryRoleDTO(BaseModel):
+class UpdateStatusDepartmentFactoryRoleSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")
@@ -39,7 +39,7 @@ class UpdateStatusDepartmentFactoryRoleDTO(BaseModel):
         return values
 
 
-class CreateDepartmentFactoryRoleDTO(BaseModel):
+class CreateDepartmentFactoryRoleSchema(BaseModel):
     department_factory_id: int
     role_id: int
 

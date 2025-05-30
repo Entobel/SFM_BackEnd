@@ -17,7 +17,7 @@ class DepartmentDTO:
 
 
 @dataclass(frozen=True)
-class CreateDepartmentDTO:
+class CreateDepartmentSchema:
     name: str
     abbr_name: str
     description: str

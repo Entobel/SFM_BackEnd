@@ -4,9 +4,9 @@ from presentation.api.v1.dependencies.auth_dependencies import (
     LoginOauth2Dep,
     LoginUseCaseDep,
 )
-from presentation.schemas.auth_dto import LoginInputDTO, LoginResponseDTO
+from presentation.schemas.auth_schema import LoginInputSchema, LoginResponseSchema
 from presentation.schemas.response import Response
-from presentation.schemas.user_dto import UserLoginResponseDTO
+from presentation.schemas.user_schema import UserLoginResponseSchema
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -20,7 +20,7 @@ async def login(
     form_data: LoginOauth2Dep,
     login_use_case: LoginUseCaseDep,
 ):
-    login_input_dto = LoginInputDTO(
+    login_input_dto = LoginInputSchema(
         username=form_data.username, password=form_data.password
     )
 
@@ -30,9 +30,9 @@ async def login(
 
     response = Response.success_response(
         code="ETB-dang_nhap_thanh_cong",
-        data=LoginResponseDTO(
+        data=LoginResponseSchema(
             token=result.token,
-            user=UserLoginResponseDTO(
+            user=UserLoginResponseSchema(
                 id=result.user.id, user_name=result.user.user_name
             ),
         ),

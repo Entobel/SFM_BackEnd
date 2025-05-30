@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 
@@ -10,6 +11,9 @@ class DepartmentEntity:
     description: Optional[str] = None
     parent_id: Optional[int] = None
     is_active: Optional[bool] = None
+
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def set_name(self, name: str):
         self.name = name

@@ -1,18 +1,42 @@
 from typing import Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
-class CreateProductionObjectDTO(BaseModel):
-    name: str
+class UpdateRoleSchema(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_not_empty(cls, values):
+        if not any(v is not None for v in values.values()):
+            raise ValueError("ETB-payload_trong")
+        return values
+
+    @field_validator("name")
+    def validate_name(cls, v):
+        if len(v) < 3:
+            raise ValueError("ETB-ten_vai_tro_khong_duoc_nho_hon_3_ky_tu")
+        return v
+
+    @field_validator("description")
+    def validate_description(cls, v):
+        if len(v) > 255:
+            raise ValueError("ETB-mo_ta_vai_tro_khong_duoc_nho_hon_255_ky_tu")
+        return v
+
+
+class CreateRoleSchema(BaseModel):
+    name: str = Field(...)
     description: Optional[str] = None
 
     @model_validator(mode="before")
     @classmethod
     def check_required_fields(cls, values: dict[str, any]):
         required_fields = {
-            "name": "ETB-thieu_truong_name",
+            "name": "ETB-ten_vai_tro_khong_duoc_bo_trong",
         }
 
         errors = []
@@ -25,20 +49,26 @@ class CreateProductionObjectDTO(BaseModel):
                         "type": "value_error.missing",
                     }
                 )
+
         if errors:
             raise RequestValidationError(errors)
 
         return values
 
     @field_validator("name")
-    @classmethod
-    def validate_name(cls, v: str):
-        if len(v) < 1:
-            raise ValueError("ETB-ten_di_phai_lon_hon_1_ky_tu")
+    def validate_name(cls, v):
+        if len(v) < 3:
+            raise ValueError("ETB-ten_vai_tro_khong_duoc_nho_hon_3_ky_tu")
+        return v
+
+    @field_validator("description")
+    def validate_description(cls, v):
+        if len(v) > 255:
+            raise ValueError("ETB-mo_ta_vai_tro_khong_duoc_nho_hon_255_ky_tu")
         return v
 
 
-class UpdateStatusProductionObjectDTO(BaseModel):
+class UpdateStatusRoleSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")
@@ -62,22 +92,3 @@ class UpdateStatusProductionObjectDTO(BaseModel):
             raise RequestValidationError(errors)
 
         return values
-
-
-class UpdateProductionObjectDTO(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-
-    @model_validator(mode="before")
-    @classmethod
-    def check_not_empty(cls, values):
-        if not any(v is not None for v in values.values()):
-            raise ValueError("ETB-payload_trong")
-        return values
-
-    @field_validator("name")
-    @classmethod
-    def validate_name(cls, v: str):
-        if len(v) < 1:
-            raise ValueError("ETB-ten_di_phai_lon_hon_1_ky_tu")
-        return v

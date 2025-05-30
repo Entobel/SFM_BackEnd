@@ -1,30 +1,21 @@
 from typing import Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
-class FactoryDTO(BaseModel):
-    id: int
-    name: str
-    abbr_name: str
+class CreateDepartmentSchema(BaseModel):
+    name: str = Field(...)
+    abbr_name: str = Field(...)
     description: Optional[str] = None
-    location: Optional[str] = None
-
-
-class CreateFactoryDTO(BaseModel):
-    name: str
-    abbr_name: str
-    description: Optional[str] = None
-    location: Optional[str] = None
+    parent_id: Optional[int] = None
 
     @model_validator(mode="before")
     @classmethod
     def check_required_fields(cls, values: dict[str, any]):
         required_fields = {
-            "name": "ETB-thieu_truong_name",
-            "abbr_name": "ETB-thieu_truong_abbr_name",
-            "location": "ETB-thieu_truong_location",
+            "name": "ETB-ten_phong_ban_khong_duoc_bo_trong",
+            "abbr_name": "ETB-ten_ngan_phong_ban_khong_duoc_bo_trong",
         }
 
         errors = []
@@ -43,39 +34,35 @@ class CreateFactoryDTO(BaseModel):
         return values
 
     @field_validator("name")
-    @classmethod
     def validate_name(cls, v: str):
-        if len(v) < 3:
-            raise ValueError("ETB-ten_nha_may_phai_lon_hon_3_ky_tu")
+        if len(v) < 2:
+            raise ValueError("ETB_it_3_ky_tu")
         return v
 
     @field_validator("abbr_name")
-    @classmethod
     def validate_abbr_name(cls, v: str):
-        if len(v) < 3:
-            raise ValueError("ETB-ten_nha_may_phai_lon_hon_3_ky_tu")
+        if len(v) < 2:
+            raise ValueError("ETB_it_3_ky_tu")
         return v
 
     @field_validator("description")
-    @classmethod
     def validate_description(cls, v: str):
-        if len(v) < 3:
-            raise ValueError("ETB-mo_ta_nha_may_phai_lon_hon_3_ky_tu")
+        if len(v) < 2:
+            raise ValueError("ETB_it_3_ky_tu")
         return v
 
-    @field_validator("location")
-    @classmethod
-    def validate_location(cls, v: str):
-        if len(v) < 3:
-            raise ValueError("ETB-vi_tri_nha_may_phai_lon_hon_3_ky_tu")
+    @field_validator("parent_id")
+    def validate_parent_id(cls, v: int):
+        if v < 0:
+            raise ValueError("ETB-parent_id_khong_hop_le")
         return v
 
 
-class UpdateFactoryDTO(BaseModel):
+class UpdateDepartmentSchema(BaseModel):
     name: Optional[str] = None
     abbr_name: Optional[str] = None
     description: Optional[str] = None
-    location: Optional[str] = None
+    parent_id: Optional[int] = None
 
     @model_validator(mode="before")
     @classmethod
@@ -85,35 +72,31 @@ class UpdateFactoryDTO(BaseModel):
         return values
 
     @field_validator("name")
-    @classmethod
     def validate_name(cls, v: str):
-        if len(v) < 3:
-            raise ValueError("ETB-ten_nha_may_phai_lon_hon_3_ky_tu")
+        if len(v) < 2:
+            raise ValueError("ETB_it_3_ky_tu")
         return v
 
     @field_validator("abbr_name")
-    @classmethod
     def validate_abbr_name(cls, v: str):
-        if len(v) < 3:
-            raise ValueError("ETB-ten_nha_may_phai_lon_hon_3_ky_tu")
+        if len(v) < 2:
+            raise ValueError("ETB_it_3_ky_tu")
         return v
 
     @field_validator("description")
-    @classmethod
     def validate_description(cls, v: str):
-        if len(v) < 3:
-            raise ValueError("ETB-mo_ta_nha_may_phai_lon_hon_3_ky_tu")
+        if len(v) < 2:
+            raise ValueError("ETB_it_3_ky_tu")
         return v
 
-    @field_validator("location")
-    @classmethod
-    def validate_location(cls, v: str):
-        if len(v) < 3:
-            raise ValueError("ETB-vi_tri_nha_may_phai_lon_hon_3_ky_tu")
+    @field_validator("parent_id")
+    def validate_parent_id(cls, v: int):
+        if v < 0:
+            raise ValueError("ETB_parent_id_khong_hop_le")
         return v
 
 
-class UpdateStatusFactoryDTO(BaseModel):
+class UpdateStatusDepartmentSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")

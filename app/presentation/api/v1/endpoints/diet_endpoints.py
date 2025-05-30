@@ -2,11 +2,18 @@ from fastapi import APIRouter, Depends
 
 from application.schemas.diet_dto import DietDTO
 from presentation.api.v1.dependencies.diet_dependencies import (
-    CreateDietUCDep, ListDietUCDep, UpdateDietStatusUCDep, UpdateDietUCDep)
+    CreateDietUCDep,
+    ListDietUCDep,
+    UpdateDietStatusUCDep,
+    UpdateDietUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.diet_dto import (CreateDietDTO, UpdateDietDTO,
-                                           UpdateStatusDietDTO)
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.diet_schema import (
+    CreateDietSchema,
+    UpdateDietSchema,
+    UpdateStatusDietSchema,
+)
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/diets", tags=["Diet"])
@@ -17,7 +24,7 @@ router = APIRouter(prefix="/diets", tags=["Diet"])
 async def list_diets(
     token: TokenVerifyDep,
     use_case: ListDietUCDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -38,7 +45,7 @@ async def list_diets(
 
         diets.append(diet_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -56,7 +63,7 @@ async def list_diets(
 async def create_diet(
     token: TokenVerifyDep,
     use_case: CreateDietUCDep,
-    create_diet_dto: CreateDietDTO,
+    create_diet_dto: CreateDietSchema,
 ):
     diet_dto = DietDTO(
         name=create_diet_dto.name,
@@ -75,7 +82,7 @@ async def create_diet(
 async def update_diet_status(
     token: TokenVerifyDep,
     diet_id: int,
-    body: UpdateStatusDietDTO,
+    body: UpdateStatusDietSchema,
     use_case: UpdateDietStatusUCDep,
 ):
     diet_dto = DietDTO(
@@ -93,7 +100,7 @@ async def update_diet_status(
 async def update_diet(
     token: TokenVerifyDep,
     diet_id: int,
-    body: UpdateDietDTO,
+    body: UpdateDietSchema,
     use_case: UpdateDietUCDep,
 ):
     diet_dto = DietDTO(

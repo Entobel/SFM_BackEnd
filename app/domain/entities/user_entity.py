@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
@@ -17,10 +18,10 @@ class UserEntity:
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     password: Optional[str] = None
-
     department_factory_role: Optional[DepartmentFactoryRoleEntity] = None
-
     is_active: Optional[bool] = True
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     @property
     def user_name(self) -> str:
@@ -91,4 +92,6 @@ class UserEntity:
                     is_active=row["r_is_active"],
                 ),
             ),
+            created_at=row["created_at"],
+            updated_at=row["updated_at"],
         )

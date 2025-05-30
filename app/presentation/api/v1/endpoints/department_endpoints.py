@@ -2,26 +2,37 @@ from fastapi import APIRouter, Depends
 
 from application.schemas.department_dto import DepartmentDTO
 from application.schemas.department_factory_dto import DepartmentFactoryDTO
-from application.schemas.department_factory_role_dto import \
-    DepartmentFactoryRoleDTO
+from application.schemas.department_factory_role_dto import DepartmentFactoryRoleDTO
 from application.schemas.factory_dto import FactoryDTO
 from application.schemas.role_dto import RoleDTO
 from presentation.api.v1.dependencies.department_dependencies import (
-    CreateDepartmentFactoryRoleUseCaseDep, CreateDepartmentFactoryUseCaseDep,
-    CreateDepartmentUseCaseDep, ListDepartmentFactoryRoleUseCaseDep,
-    ListDepartmentFactoryUseCaseDep, ListDepartmentUseCaseDep,
-    UpdateDepartmentUseCaseDep, UpdateStatusDepartmentFactoryRoleUseCaseDep,
-    UpdateStatusDepartmentFactoryUseCaseDep, UpdateStatusDepartmentUseCaseDep)
+    CreateDepartmentFactoryRoleUseCaseDep,
+    CreateDepartmentFactoryUseCaseDep,
+    CreateDepartmentUseCaseDep,
+    ListDepartmentFactoryRoleUseCaseDep,
+    ListDepartmentFactoryUseCaseDep,
+    ListDepartmentUseCaseDep,
+    UpdateDepartmentUseCaseDep,
+    UpdateStatusDepartmentFactoryRoleUseCaseDep,
+    UpdateStatusDepartmentFactoryUseCaseDep,
+    UpdateStatusDepartmentUseCaseDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.department_dto import (CreateDepartmentDTO,
-                                                 UpdateDepartmentDTO,
-                                                 UpdateStatusDepartmentDTO)
-from presentation.schemas.department_factory_dto import (
-    CreateDepartmentFactoryDTO, UpdateStatusDepartmentFactoryDTO)
-from presentation.schemas.department_factory_role_dto import (
-    CreateDepartmentFactoryRoleDTO, DepartmentFactoryRoleDTOResponse,
-    UpdateStatusDepartmentFactoryRoleDTO)
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.department_schema import (
+    CreateDepartmentSchema,
+    UpdateDepartmentSchema,
+    UpdateStatusDepartmentSchema,
+)
+from presentation.schemas.department_factory_schema import (
+    CreateDepartmentFactorySchema,
+    UpdateStatusDepartmentFactorySchema,
+)
+from presentation.schemas.department_factory_role_schema import (
+    CreateDepartmentFactoryRoleSchema,
+    DepartmentFactoryRoleResponseSchema,
+    UpdateStatusDepartmentFactoryRoleSchema,
+)
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/departments", tags=["Department"])
@@ -31,7 +42,7 @@ router = APIRouter(prefix="/departments", tags=["Department"])
 async def get_all_department(
     token: TokenVerifyDep,
     use_case: ListDepartmentUseCaseDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -53,7 +64,7 @@ async def get_all_department(
         )
         departments.append(department_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -69,7 +80,7 @@ async def get_all_department(
 @router.post("/")
 async def create_department(
     token: TokenVerifyDep,
-    body: CreateDepartmentDTO,
+    body: CreateDepartmentSchema,
     use_case: CreateDepartmentUseCaseDep,
 ):
 
@@ -91,7 +102,7 @@ async def create_department(
 async def update_department(
     token: TokenVerifyDep,
     department_id: int,
-    body: UpdateDepartmentDTO,
+    body: UpdateDepartmentSchema,
     use_case: UpdateDepartmentUseCaseDep,
 ):
     department = DepartmentDTO(
@@ -113,7 +124,7 @@ async def update_department(
 async def update_status_department(
     token: TokenVerifyDep,
     department_id: int,
-    body: UpdateStatusDepartmentDTO,
+    body: UpdateStatusDepartmentSchema,
     use_case: UpdateStatusDepartmentUseCaseDep,
 ):
     use_case.execute(department_id, body.is_active)
@@ -127,7 +138,7 @@ async def update_status_department(
 async def get_department_factory(
     token: TokenVerifyDep,
     use_case: ListDepartmentFactoryUseCaseDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -163,7 +174,7 @@ async def get_department_factory(
         )
         department_factories.append(department_factory_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -181,7 +192,7 @@ async def get_department_factory(
 async def get_department_factory_role(
     token: TokenVerifyDep,
     use_case: ListDepartmentFactoryRoleUseCaseDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -195,7 +206,7 @@ async def get_department_factory_role(
     department_factory_roles = []
 
     for department_factory_role in result["items"]:
-        department_factory_role_dto = DepartmentFactoryRoleDTOResponse(
+        department_factory_role_dto = DepartmentFactoryRoleResponseSchema(
             id=department_factory_role.id,
             department=DepartmentDTO(
                 id=department_factory_role.department_factory.department.id,
@@ -217,7 +228,7 @@ async def get_department_factory_role(
         )
         department_factory_roles.append(department_factory_role_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -234,7 +245,7 @@ async def get_department_factory_role(
 @router.post("/department-factory", response_model_exclude_none=True)
 async def create_department_factory(
     token: TokenVerifyDep,
-    body: CreateDepartmentFactoryDTO,
+    body: CreateDepartmentFactorySchema,
     use_case: CreateDepartmentFactoryUseCaseDep,
 ):
     factory_dto = FactoryDTO(
@@ -259,7 +270,7 @@ async def create_department_factory(
 async def update_status_department_factory(
     token: TokenVerifyDep,
     department_factory_id: int,
-    body: UpdateStatusDepartmentFactoryDTO,
+    body: UpdateStatusDepartmentFactorySchema,
     use_case: UpdateStatusDepartmentFactoryUseCaseDep,
 ):
     department_factory_dto = DepartmentFactoryDTO(
@@ -277,7 +288,7 @@ async def update_status_department_factory(
 @router.post("/department-factory-role", response_model_exclude_none=True)
 async def create_department_factory_role(
     token: TokenVerifyDep,
-    body: CreateDepartmentFactoryRoleDTO,
+    body: CreateDepartmentFactoryRoleSchema,
     use_case: CreateDepartmentFactoryRoleUseCaseDep,
 ):
     department_factory_role_dto = DepartmentFactoryRoleDTO(
@@ -303,7 +314,7 @@ async def create_department_factory_role(
 async def update_status_department_factory_role(
     token: TokenVerifyDep,
     department_factory_role_id: int,
-    body: UpdateStatusDepartmentFactoryRoleDTO,
+    body: UpdateStatusDepartmentFactoryRoleSchema,
     use_case: UpdateStatusDepartmentFactoryRoleUseCaseDep,
 ):
     department_factory_role_dto = DepartmentFactoryRoleDTO(

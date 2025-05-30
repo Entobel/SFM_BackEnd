@@ -32,7 +32,15 @@ class RoleRepository(IRoleRepository):
             total = cur.fetchone()[0]
 
         limit_sql, limit_params = qb.paginate(page, page_size)
-        data_sql = f"""SELECT r.id as r_id, r.name as r_name, r.description as r_description, r.is_active as r_is_active FROM role r {qb.where_sql()} ORDER BY r.id DESC {limit_sql}"""
+        data_sql = f"""SELECT 
+            r.id as id, 
+            r.name as name, 
+            r.description as description, 
+            r.is_active as is_active,
+            r.created_at as created_at,
+            r.updated_at as updated_at
+            FROM role r {qb.where_sql()}
+            ORDER BY r.id DESC {limit_sql}"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(data_sql, qb.all_params(limit_params))
@@ -49,7 +57,15 @@ class RoleRepository(IRoleRepository):
         }
 
     def get_role_by_name(self, name: str) -> RoleEntity | None:
-        query = """SELECT r.id as r_id, r.name as r_name, r.description as r_description, r.is_active as r_is_active FROM role r WHERE r.name = %s"""
+        query = """SELECT
+                r.id as id,
+                r.name as name,
+                r.description as description,
+                r.is_active as is_active,
+                r.created_at as created_at,
+                r.updated_at as updated_at
+                FROM role r
+                WHERE r.name = % s"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (name,))
@@ -58,7 +74,14 @@ class RoleRepository(IRoleRepository):
         return RoleEntity.from_row(row) if row else None
 
     def get_role_by_id(self, id: int) -> RoleEntity:
-        query = """SELECT r.id as r_id, r.name as r_name, r.description as r_description, r.is_active as r_is_active FROM role r WHERE r.id = %s"""
+        query = """SELECT 
+                r.id as id, 
+                r.name as name, 
+                r.description as description, 
+                r.is_active as is_active,
+                r.created_at as created_at,
+                r.updated_at as updated_at
+                FROM role r WHERE r.id = %s"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (id,))

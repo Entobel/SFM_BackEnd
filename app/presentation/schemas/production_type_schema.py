@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, field_validator, model_validator
 
 
-class CreateProductionTypeDTO(BaseModel):
+class CreateProductionTypeSchema(BaseModel):
     name: str
     abbr_name: str
     description: Optional[str] = None
@@ -40,7 +40,7 @@ class CreateProductionTypeDTO(BaseModel):
         return v
 
 
-class UpdateStatusProductionTypeDTO(BaseModel):
+class UpdateStatusProductionTypeSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")
@@ -66,7 +66,7 @@ class UpdateStatusProductionTypeDTO(BaseModel):
         return values
 
 
-class UpdateProductionTypeDTO(BaseModel):
+class UpdateProductionTypeSchema(BaseModel):
     name: Optional[str] = None
     abbr_name: Optional[str] = None
     description: Optional[str] = None

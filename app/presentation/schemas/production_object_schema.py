@@ -1,10 +1,10 @@
 from typing import Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 
-class CreateDietDTO(BaseModel):
+class CreateProductionObjectSchema(BaseModel):
     name: str
     description: Optional[str] = None
 
@@ -38,7 +38,7 @@ class CreateDietDTO(BaseModel):
         return v
 
 
-class UpdateStatusDietDTO(BaseModel):
+class UpdateStatusProductionObjectSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")
@@ -64,7 +64,7 @@ class UpdateStatusDietDTO(BaseModel):
         return values
 
 
-class UpdateDietDTO(BaseModel):
+class UpdateProductionObjectDTO(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
 
@@ -74,3 +74,10 @@ class UpdateDietDTO(BaseModel):
         if not any(v is not None for v in values.values()):
             raise ValueError("ETB-payload_trong")
         return values
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str):
+        if len(v) < 1:
+            raise ValueError("ETB-ten_di_phai_lon_hon_1_ky_tu")
+        return v

@@ -2,12 +2,19 @@ from fastapi import APIRouter, Depends, Path
 
 from application.schemas.role_dto import RoleDTO
 from presentation.api.v1.dependencies.role_dependencies import (
-    CreateRoleUCDep, ListRoleUCDep, UpdateRoleUCDep, UpdateStatusRoleUCDep)
+    CreateRoleUCDep,
+    ListRoleUCDep,
+    UpdateRoleUCDep,
+    UpdateStatusRoleUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
 from presentation.schemas.response import Response
-from presentation.schemas.role_dto import (CreateRoleDTO, UpdateRoleDTO,
-                                           UpdateStatusRoleDTO)
+from presentation.schemas.role_schema import (
+    CreateRoleSchema,
+    UpdateRoleSchema,
+    UpdateStatusRoleSchema,
+)
 
 router = APIRouter(prefix="/roles", tags=["Role"])
 
@@ -16,7 +23,7 @@ router = APIRouter(prefix="/roles", tags=["Role"])
 async def get_all_roles(
     token: TokenVerifyDep,
     use_case: ListRoleUCDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -36,7 +43,7 @@ async def get_all_roles(
         )
         roles.append(role_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -52,7 +59,7 @@ async def get_all_roles(
 @router.post("/", response_model_exclude_none=True)
 async def create_role(
     token: TokenVerifyDep,
-    body: CreateRoleDTO,
+    body: CreateRoleSchema,
     use_case: CreateRoleUCDep,
 ):
     use_case.execute(role=body)
@@ -66,7 +73,7 @@ async def create_role(
 async def update_role(
     token: TokenVerifyDep,
     use_case: UpdateRoleUCDep,
-    body: UpdateRoleDTO,
+    body: UpdateRoleSchema,
     role_id: int = Path(...),
 ):
     role = RoleDTO(
@@ -86,7 +93,7 @@ async def update_role(
 async def update_role_status(
     token: TokenVerifyDep,
     use_case: UpdateStatusRoleUCDep,
-    body: UpdateStatusRoleDTO,
+    body: UpdateStatusRoleSchema,
     role_id: int = Path(...),
 ):
     use_case.execute(role_id=role_id, is_active=body.is_active)

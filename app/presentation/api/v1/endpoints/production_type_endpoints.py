@@ -2,13 +2,18 @@ from fastapi import APIRouter, Depends
 
 from application.schemas.produciton_type_dto import ProductionTypeDTO
 from presentation.api.v1.dependencies.production_type_denpendencies import (
-    CreateProductionTypeUCDep, ListProductionTypeUCDep,
-    UpdateProductionTypeUCDep, UpdateStatusProductionTypeUCDep)
+    CreateProductionTypeUCDep,
+    ListProductionTypeUCDep,
+    UpdateProductionTypeUCDep,
+    UpdateStatusProductionTypeUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
-from presentation.schemas.production_type_dto import (
-    CreateProductionTypeDTO, UpdateProductionTypeDTO,
-    UpdateStatusProductionTypeDTO)
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from presentation.schemas.production_type_schema import (
+    CreateProductionTypeSchema,
+    UpdateProductionTypeSchema,
+    UpdateStatusProductionTypeSchema,
+)
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/production-types", tags=["Production Type"])
@@ -19,7 +24,7 @@ router = APIRouter(prefix="/production-types", tags=["Production Type"])
 async def get_production_types(
     token: TokenVerifyDep,
     use_case: ListProductionTypeUCDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -41,7 +46,7 @@ async def get_production_types(
             )
         )
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -60,7 +65,7 @@ async def get_production_types(
 async def create_production_type(
     token: TokenVerifyDep,
     use_case: CreateProductionTypeUCDep,
-    body: CreateProductionTypeDTO,
+    body: CreateProductionTypeSchema,
 ):
 
     production_type_dto = ProductionTypeDTO(
@@ -83,7 +88,7 @@ async def update_production_type(
     token: TokenVerifyDep,
     use_case: UpdateProductionTypeUCDep,
     production_type_id: int,
-    body: UpdateProductionTypeDTO,
+    body: UpdateProductionTypeSchema,
 ):
     production_type_dto = ProductionTypeDTO(
         id=production_type_id,
@@ -106,7 +111,7 @@ async def update_status_production_type(
     token: TokenVerifyDep,
     use_case: UpdateStatusProductionTypeUCDep,
     production_type_id: int,
-    body: UpdateStatusProductionTypeDTO,
+    body: UpdateStatusProductionTypeSchema,
 ):
     production_type_dto = ProductionTypeDTO(
         id=production_type_id,

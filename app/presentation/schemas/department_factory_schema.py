@@ -5,7 +5,7 @@ from application.schemas.department_dto import DepartmentDTO
 from application.schemas.factory_dto import FactoryDTO
 
 
-class CreateDepartmentFactoryDTO(BaseModel):
+class CreateDepartmentFactorySchema(BaseModel):
     factory_id: int
     department_id: int
 
@@ -33,7 +33,7 @@ class CreateDepartmentFactoryDTO(BaseModel):
         return values
 
 
-class UpdateStatusDepartmentFactoryDTO(BaseModel):
+class UpdateStatusDepartmentFactorySchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")

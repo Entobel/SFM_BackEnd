@@ -1,15 +1,18 @@
 from fastapi import APIRouter, Depends
 
+from presentation.schemas.growing_schema import CreateGrowingSchema
+from application.schemas.growing_dto import GrowingDTO
 from application.schemas.diet_dto import DietDTO
 from application.schemas.produciton_type_dto import ProductionTypeDTO
 from application.schemas.production_object_dto import ProductionObjectDTO
 from application.schemas.shift_dto import ShiftDTO
 from application.schemas.user_dto import UserDTO
 from presentation.api.v1.dependencies.growing_dependencies import (
-    CreateGrowingUCDep, ListGrowingUCDep)
+    CreateGrowingUCDep,
+    ListGrowingUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
-from presentation.schemas.growing_dto import CreateGrowingDTO, GrowingDTO
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/growings", tags=["Growing"])
@@ -19,7 +22,7 @@ router = APIRouter(prefix="/growings", tags=["Growing"])
 def list_growings(
     token: TokenVerifyDep,
     use_case: ListGrowingUCDep,
-    filter: FilterDTO = Depends(),
+    filter: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter.page,
@@ -77,7 +80,7 @@ def list_growings(
         )
         growings.append(growing_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -93,7 +96,7 @@ def list_growings(
 @router.post("/", response_model_exclude_none=True)
 def create_growing(
     token: TokenVerifyDep,
-    body: CreateGrowingDTO,
+    body: CreateGrowingSchema,
     use_case: CreateGrowingUCDep,
 ):
     use_case.execute(body)

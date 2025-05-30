@@ -5,16 +5,24 @@ from application.schemas.factory_dto import FactoryDTO
 from application.schemas.role_dto import RoleDTO
 from application.schemas.user_dto import UserDTO
 from presentation.api.v1.dependencies.user_dependencies import (
-    ChangePasswordUCDep, ChangeStatusUseCaseDep, CreateUserUseCaseDep,
-    GetCurrentUserDep, GetListUserUseCaseDep, GetMeUseCaseDep, TokenVerifyDep,
-    UpdateUserUseCaseDep)
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+    ChangePasswordUCDep,
+    ChangeStatusUseCaseDep,
+    CreateUserUseCaseDep,
+    GetCurrentUserDep,
+    GetListUserUseCaseDep,
+    GetMeUseCaseDep,
+    TokenVerifyDep,
+    UpdateUserUseCaseDep,
+)
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
 from presentation.schemas.response import Response
-from presentation.schemas.token_dto import TokenPayloadInputDTO
-from presentation.schemas.user_dto import (ChangePasswordInputDTO,
-                                           CreateUserInputDTO,
-                                           UpdateStatusInputDTO,
-                                           UpdateUserInputDTO)
+from presentation.schemas.token_schema import TokenPayloadInputDTO
+from presentation.schemas.user_schema import (
+    ChangePasswordInputSchema,
+    CreateUserInputSchema,
+    UpdateStatusInputSchema,
+    UpdateUserInputSchema,
+)
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -23,7 +31,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 async def get_list_users(
     token: TokenVerifyDep,
     use_case: GetListUserUseCaseDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -69,7 +77,7 @@ async def get_list_users(
         )
         users.append(user_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -107,7 +115,7 @@ async def get_me(token: TokenVerifyDep, get_me_use_case: GetMeUseCaseDep):
 )
 async def create_user(
     token: TokenVerifyDep,
-    body: CreateUserInputDTO,
+    body: CreateUserInputSchema,
     create_user_use_case: CreateUserUseCaseDep,
 ):
 
@@ -126,7 +134,7 @@ async def create_user(
 )
 async def update_user(
     token: TokenVerifyDep,
-    body: UpdateUserInputDTO,
+    body: UpdateUserInputSchema,
     update_user_use_case: UpdateUserUseCaseDep,
     target_user: GetCurrentUserDep,
 ):
@@ -144,7 +152,7 @@ async def update_user(
 )
 async def change_password(
     token: TokenVerifyDep,
-    body: ChangePasswordInputDTO,
+    body: ChangePasswordInputSchema,
     change_password_use_case: ChangePasswordUCDep,
     target_user: GetCurrentUserDep,
 ):
@@ -167,7 +175,7 @@ async def change_password(
 )
 async def change_status_user(
     token: TokenVerifyDep,
-    body: UpdateStatusInputDTO,
+    body: UpdateStatusInputSchema,
     change_status_use_case: ChangeStatusUseCaseDep,
     target_user: GetCurrentUserDep,
 ):

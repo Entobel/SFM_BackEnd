@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, model_validator
 
 
-class CreateShiftDTO(BaseModel):
+class CreateShiftSchema(BaseModel):
     name: str
     description: Optional[str] = None
 
@@ -31,7 +31,7 @@ class CreateShiftDTO(BaseModel):
         return values
 
 
-class UpdateStatusShiftDTO(BaseModel):
+class UpdateStatusShiftSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")
@@ -57,7 +57,7 @@ class UpdateStatusShiftDTO(BaseModel):
         return values
 
 
-class UpdateShiftDTO(BaseModel):
+class UpdateShiftSchema(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
 

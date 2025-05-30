@@ -3,13 +3,18 @@ from fastapi import APIRouter, Depends
 from application.schemas.factory_dto import FactoryDTO
 from domain.entities.factory_entity import FactoryEntity
 from presentation.api.v1.dependencies.factory_dependencies import (
-    CreateFactoryUseCaseDep, ListFactoryUseCaseDep, UpdateFactoryUseCaseDep,
-    UpdateStatusFactoryUseCaseDep)
+    CreateFactoryUseCaseDep,
+    ListFactoryUseCaseDep,
+    UpdateFactoryUseCaseDep,
+    UpdateStatusFactoryUseCaseDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.factory_dto import (CreateFactoryDTO,
-                                              UpdateFactoryDTO,
-                                              UpdateStatusFactoryDTO)
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
+from presentation.schemas.factory_schema import (
+    CreateFactorySchema,
+    UpdateFactorySchema,
+    UpdateStatusFactorySchema,
+)
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/factories", tags=["Factory"])
@@ -19,7 +24,7 @@ router = APIRouter(prefix="/factories", tags=["Factory"])
 async def get_list_factory(
     token: TokenVerifyDep,
     use_case: ListFactoryUseCaseDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -41,7 +46,7 @@ async def get_list_factory(
         )
         factories.append(factory_dto)
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -57,7 +62,7 @@ async def get_list_factory(
 @router.post("/", response_model_exclude_none=True)
 async def create_factory(
     token: TokenVerifyDep,
-    factory_dto: CreateFactoryDTO,
+    factory_dto: CreateFactorySchema,
     use_case: CreateFactoryUseCaseDep,
 ):
     factory = FactoryEntity(
@@ -78,7 +83,7 @@ async def create_factory(
 async def update_factory(
     token: TokenVerifyDep,
     factory_id: int,
-    body: UpdateFactoryDTO,
+    body: UpdateFactorySchema,
     use_case: UpdateFactoryUseCaseDep,
 ):
 
@@ -101,7 +106,7 @@ async def update_factory(
 async def update_factory_status(
     token: TokenVerifyDep,
     factory_id: int,
-    body: UpdateStatusFactoryDTO,
+    body: UpdateStatusFactorySchema,
     use_case: UpdateStatusFactoryUseCaseDep,
 ):
     use_case.execute(

@@ -2,13 +2,18 @@ from fastapi import APIRouter, Depends
 
 from application.schemas.production_object_dto import ProductionObjectDTO
 from presentation.api.v1.dependencies.production_object_dependencies import (
-    CreateProductionObjectUCDep, ListProductionObjectUCDep,
-    UpdateProductionObjectUCDep, UpdateStatusProductionObjectUCDep)
+    CreateProductionObjectUCDep,
+    ListProductionObjectUCDep,
+    UpdateProductionObjectUCDep,
+    UpdateStatusProductionObjectUCDep,
+)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.filter_dto import FilterDTO, PaginateDTO
-from presentation.schemas.production_object_dto import (
-    CreateProductionObjectDTO, UpdateProductionObjectDTO,
-    UpdateStatusProductionObjectDTO)
+from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from presentation.schemas.production_object_schema import (
+    CreateProductionObjectSchema,
+    UpdateProductionObjectDTO,
+    UpdateStatusProductionObjectSchema,
+)
 from presentation.schemas.response import Response
 
 router = APIRouter(prefix="/production-objects", tags=["Production Object"])
@@ -19,7 +24,7 @@ router = APIRouter(prefix="/production-objects", tags=["Production Object"])
 async def get_production_objects(
     token: TokenVerifyDep,
     use_case: ListProductionObjectUCDep,
-    filter_params: FilterDTO = Depends(),
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -40,7 +45,7 @@ async def get_production_objects(
             )
         )
 
-    paginate_data = PaginateDTO(
+    paginate_data = PaginateSchema(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -58,7 +63,7 @@ async def get_production_objects(
 async def create_production_object(
     token: TokenVerifyDep,
     use_case: CreateProductionObjectUCDep,
-    body: CreateProductionObjectDTO,
+    body: CreateProductionObjectSchema,
 ):
     production_object_dto = ProductionObjectDTO(
         name=body.name,
@@ -99,7 +104,7 @@ async def update_status_production_object(
     token: TokenVerifyDep,
     use_case: UpdateStatusProductionObjectUCDep,
     production_object_id: int,
-    body: UpdateStatusProductionObjectDTO,
+    body: UpdateStatusProductionObjectSchema,
 ):
     production_object_dto = ProductionObjectDTO(
         id=production_object_id,

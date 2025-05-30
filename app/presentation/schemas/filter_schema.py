@@ -3,7 +3,7 @@ from typing import Generic, Optional, TypeVar
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class FilterDTO(BaseModel):
+class FilterSchema(BaseModel):
     """
     Reusable filter DTO for pagination and common filters.
     This can be used in multiple endpoints that require similar filtering parameters.
@@ -34,7 +34,7 @@ class FilterDTO(BaseModel):
 T = TypeVar("T")
 
 
-class PaginateDTO(BaseModel, Generic[T]):
+class PaginateSchema(BaseModel, Generic[T]):
     total: int
     page: int
     page_size: int

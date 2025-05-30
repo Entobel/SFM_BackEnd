@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 
@@ -8,6 +9,9 @@ class RoleEntity:
     name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
+
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def set_name(self, name: str):
         self.name = name
@@ -21,8 +25,10 @@ class RoleEntity:
     @classmethod
     def from_row(cls, row: dict) -> "RoleEntity":
         return cls(
-            id=row["r_id"],
-            name=row["r_name"],
-            description=row["r_description"],
-            is_active=row["r_is_active"],
+            id=row["id"],
+            name=row["name"],
+            description=row["description"],
+            is_active=row["is_active"],
+            created_at=row["created_at"],
+            updated_at=row["updated_at"],
         )
