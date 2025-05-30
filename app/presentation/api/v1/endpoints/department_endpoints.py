@@ -1,37 +1,26 @@
 from fastapi import APIRouter, Depends
 
-from application.schemas.department_dto import DepartmentDTO
-from application.schemas.department_factory_dto import DepartmentFactoryDTO
-from application.schemas.department_factory_role_dto import DepartmentFactoryRoleDTO
-from application.schemas.factory_dto import FactoryDTO
-from application.schemas.role_dto import RoleDTO
+from application.dto.department_dto import DepartmentDTO
+from application.dto.department_factory_dto import DepartmentFactoryDTO
+from application.dto.department_factory_role_dto import \
+    DepartmentFactoryRoleDTO
+from application.dto.factory_dto import FactoryDTO
+from application.dto.role_dto import RoleDTO
 from presentation.api.v1.dependencies.department_dependencies import (
-    CreateDepartmentFactoryRoleUseCaseDep,
-    CreateDepartmentFactoryUseCaseDep,
-    CreateDepartmentUseCaseDep,
-    ListDepartmentFactoryRoleUseCaseDep,
-    ListDepartmentFactoryUseCaseDep,
-    ListDepartmentUseCaseDep,
-    UpdateDepartmentUseCaseDep,
-    UpdateStatusDepartmentFactoryRoleUseCaseDep,
-    UpdateStatusDepartmentFactoryUseCaseDep,
-    UpdateStatusDepartmentUseCaseDep,
-)
+    CreateDepartmentFactoryRoleUseCaseDep, CreateDepartmentFactoryUseCaseDep,
+    CreateDepartmentUseCaseDep, ListDepartmentFactoryRoleUseCaseDep,
+    ListDepartmentFactoryUseCaseDep, ListDepartmentUseCaseDep,
+    UpdateDepartmentUseCaseDep, UpdateStatusDepartmentFactoryRoleUseCaseDep,
+    UpdateStatusDepartmentFactoryUseCaseDep, UpdateStatusDepartmentUseCaseDep)
 from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.department_schema import (
-    CreateDepartmentSchema,
-    UpdateDepartmentSchema,
-    UpdateStatusDepartmentSchema,
-)
-from presentation.schemas.department_factory_schema import (
-    CreateDepartmentFactorySchema,
-    UpdateStatusDepartmentFactorySchema,
-)
 from presentation.schemas.department_factory_role_schema import (
-    CreateDepartmentFactoryRoleSchema,
-    DepartmentFactoryRoleResponseSchema,
-    UpdateStatusDepartmentFactoryRoleSchema,
-)
+    CreateDepartmentFactoryRoleSchema, DepartmentFactoryRoleResponseSchema,
+    UpdateStatusDepartmentFactoryRoleSchema)
+from presentation.schemas.department_factory_schema import (
+    CreateDepartmentFactorySchema, UpdateStatusDepartmentFactorySchema)
+from presentation.schemas.department_schema import (
+    CreateDepartmentSchema, UpdateDepartmentSchema,
+    UpdateStatusDepartmentSchema)
 from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
 from presentation.schemas.response import Response
 
