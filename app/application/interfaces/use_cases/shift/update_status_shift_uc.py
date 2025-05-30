@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.schemas.shift_dto import ShiftDTO
+from application.dto.shift_dto import ShiftDTO
 
 
 class IUpdateStatusShiftUC(ABC):
