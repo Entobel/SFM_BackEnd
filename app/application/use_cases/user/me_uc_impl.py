@@ -1,5 +1,5 @@
+from application.dto.user_dto import UserDTO
 from application.interfaces.use_cases.user.me_uc import IMeUC
-from application.schemas.user_dto import UserDTO
 from core.exception import NotFoundError
 from domain.interfaces.repositories.user_repository import IUserRepository
 
