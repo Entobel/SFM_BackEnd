@@ -1,4 +1,5 @@
 import psycopg2
+from psycopg2.extras import RealDictCursor
 
 from domain.entities.zone_entity import ZoneEntity
 from domain.interfaces.repositories.zone_repository import IZoneRepository
@@ -32,15 +33,89 @@ class ZoneRepository(IZoneRepository):
                 return False
 
     def update_status_zone(self, zone_entity: ZoneEntity) -> bool:
-        return super().update_status_zone(zone_entity)
+        query = """
+        UPDATE zone SET is_active = %s WHERE id = %s
+        """
+        with self.conn.cursor() as cur:
+            cur.execute(query, (zone_entity.is_active, zone_entity.id))
 
-    def get_list_zone(
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False
+
+    def get_list_zones(
         self, page: int, page_size: int, search: str, is_active: bool
     ) -> dict:
-        return super().get_list_zone(page, page_size, search, is_active)
+        qb = self.query_helper
+
+        if search:
+            qb.add_search(cols=["z.zone_number"], query=search)
+
+        if is_active is not None:
+            qb.add_bool("z.is_active", is_active)
+
+        # Count
+        count_sql = f"""SELECT COUNT(*) FROM zone {qb.where_sql()}"""
+
+        with self.conn.cursor() as cur:
+            cur.execute(count_sql, qb.all_params())
+            total = cur.fetchone()[0]
+
+        # Fetch
+        limit_sql, limit_params = qb.paginate(page, page_size)
+        data_sql = f"""
+        SELECT z.id as id, z.zone_number as zone_number, z.is_active as is_active, z.created_at as created_at, z.updated_at as updated_at FROM zone z {qb.where_sql()} ORDER BY z.zone_number DESC {limit_sql}
+        """
+
+        params = qb.all_params(limit_params)
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(data_sql, params)
+            rows = cur.fetchall()
+
+        zones = [ZoneEntity.from_row(row) for row in rows]
+
+        return {
+            "items": zones,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": qb.total_pages(total=total, page_size=page_size),
+        }
 
     def get_zone_by_zone_number(self, zone_entity: ZoneEntity) -> ZoneEntity | None:
-        return super().get_zone_by_zone_number(zone_entity)
+        data_sql = """
+        SELECT z.id as id, z.zone_number as zone_number, z.is_active as is_active, z.created_at as created_at, z.updated_at as updated_at FROM zone z WHERE z.zone_number = %s
+        """
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(data_sql, (zone_entity.zone_number,))
+            row = cur.fetchone()
+        return ZoneEntity.from_row(row) if row else None
 
-    def get_zone_by_id(self, zone_id: int) -> ZoneEntity | None:
-        return super().get_zone_by_id(zone_id)
+    def get_zone_by_id(self, zone_entity: ZoneEntity) -> ZoneEntity | None:
+        data_sql = """
+        SELECT z.id as id, z.zone_number as zone_number, z.is_active as is_active, z.created_at as created_at, z.updated_at as updated_at FROM zone z WHERE z.id = %s
+        """
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(data_sql, (zone_entity.id,))
+            row = cur.fetchone()
+        return ZoneEntity.from_row(row) if row else None
+
+    def update_zone(self, zone_entity: ZoneEntity) -> bool:
+        query = """
+        UPDATE zone SET zone_number = %s, is_active = %s WHERE id = %s
+        """
+        with self.conn.cursor() as cur:
+            cur.execute(
+                query, (zone_entity.zone_number, zone_entity.is_active, zone_entity.id)
+            )
+
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False
