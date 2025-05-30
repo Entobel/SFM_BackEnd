@@ -1,6 +1,6 @@
+from application.dto.diet_dto import DietDTO
 from application.interfaces.use_cases.diet.update_status_diet_uc import \
     IUpdateStatusDietUC
-from application.schemas.diet_dto import DietDTO
 from core.exception import BadRequestError
 from domain.entities.diet_entity import DietEntity
 from domain.interfaces.repositories.diet_repository import IDietRepository
