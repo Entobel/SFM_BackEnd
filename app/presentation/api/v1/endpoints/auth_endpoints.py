@@ -1,10 +1,9 @@
 from fastapi import APIRouter, status
 
 from presentation.api.v1.dependencies.auth_dependencies import (
-    LoginOauth2Dep,
-    LoginUseCaseDep,
-)
-from presentation.schemas.auth_schema import LoginInputSchema, LoginResponseSchema
+    LoginOauth2Dep, LoginUseCaseDep)
+from presentation.schemas.auth_schema import (LoginInputSchema,
+                                              LoginResponseSchema)
 from presentation.schemas.response import Response
 from presentation.schemas.user_schema import UserLoginResponseSchema
 
