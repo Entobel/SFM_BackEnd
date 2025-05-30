@@ -1,7 +1,8 @@
+from application.dto.shift_dto import ShiftDTO
 from application.interfaces.use_cases.shift.update_status_shift_uc import \
     IUpdateStatusShiftUC
-from application.schemas.shift_dto import ShiftDTO
 from core.exception import BadRequestError
+from domain.entities.shift_entity import ShiftEntity
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 
 
@@ -10,7 +11,10 @@ class UpdateStatusShiftUC(IUpdateStatusShiftUC):
         self.shift_repository = shift_repository
 
     def execute(self, shift_dto: ShiftDTO) -> bool:
-        shift_entity = self.shift_repository.get_shift_by_id(shift_dto.id)
+        _shift_entity = ShiftEntity(id=shift_dto.id)
+
+        shift_entity = self.shift_repository.get_shift_by_id(shift_entity=_shift_entity)
+
         if not shift_entity:
             raise BadRequestError("ETB-shift_khong_ton_tai")
 
