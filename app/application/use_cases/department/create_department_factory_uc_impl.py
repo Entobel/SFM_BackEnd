@@ -1,7 +1,7 @@
+from application.dto.department_dto import DepartmentDTO
+from application.dto.factory_dto import FactoryDTO
 from application.interfaces.use_cases.department.create_department_factory_uc import \
     ICreateDepartmentFactoryUC
-from application.schemas.department_dto import DepartmentDTO
-from application.schemas.factory_dto import FactoryDTO
 from core.exception import BadRequestError, NotFoundError
 from domain.entities.department_entity import DepartmentEntity
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
