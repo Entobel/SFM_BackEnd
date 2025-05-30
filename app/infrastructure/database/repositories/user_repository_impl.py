@@ -7,7 +7,8 @@ from psycopg2.extras import RealDictCursor
 
 from domain.entities.department_entity import DepartmentEntity
 from domain.entities.department_factory_entity import DepartmentFactoryEntity
-from domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from domain.entities.department_factory_role_entity import \
+    DepartmentFactoryRoleEntity
 from domain.entities.factory_entity import FactoryEntity
 from domain.entities.role_entity import RoleEntity
 from domain.entities.user_entity import UserEntity
@@ -62,7 +63,7 @@ class UserRepository(IUserRepository):
         )
 
     def get_profile_by_id(self, id: int) -> Optional[UserEntity]:
-        query = """SELECT u.id AS user_id, u.email, u.phone, u.first_name, u.last_name, u.is_active, u.created_at AS created_at, u.updated_at AS updated_at, dpfr.id AS dept_fry_role_id, dp.id AS department_id, dp.name AS department_name, dp.description AS department_description, dp.abbr_name AS department_abbr_name, dp.is_active AS department_active, f.id AS factory_id, f.name AS factory_name, f.abbr_name AS factory_abbr, f.description AS factory_description, f.location AS factory_location, f.is_active as factory_active, r.id AS r_id, r.name AS r_name, r.description AS r_description, r.is_active AS r_is_active, dpf.id AS department_factory_id, FROM "user" u JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id JOIN factory f ON f.id = dpf.factory_id JOIN role r ON dpfr.role_id = r.id JOIN department dp ON dp.id = dpf.department_id WHERE u.id = %s """
+        query = """SELECT u.id AS user_id, u.email, u.phone, u.first_name, u.last_name, u.is_active, u.created_at AS created_at, u.updated_at AS updated_at, dpfr.id AS dept_fry_role_id, dp.id AS department_id, dp.name AS department_name, dp.description AS department_description, dp.abbr_name AS department_abbr_name, dp.is_active AS department_active, f.id AS factory_id, f.name AS factory_name, f.abbr_name AS factory_abbr, f.description AS factory_description, f.location AS factory_location, f.is_active as factory_active, r.id AS r_id, r.name AS r_name, r.description AS r_description, r.is_active AS r_is_active, dpf.id AS department_factory_id FROM "user" u JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id JOIN factory f ON f.id = dpf.factory_id JOIN role r ON dpfr.role_id = r.id JOIN department dp ON dp.id = dpf.department_id WHERE u.id = %s """
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (id,))
@@ -151,7 +152,7 @@ class UserRepository(IUserRepository):
         with self.conn.cursor() as cur:
             cur.execute(count_sql, qb.all_params())
             total = cur.fetchone()[0]
-
+        # arzopa
         # 2) FETCH page
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
