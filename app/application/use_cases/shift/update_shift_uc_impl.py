@@ -1,7 +1,8 @@
+from application.dto.shift_dto import ShiftDTO
 from application.interfaces.use_cases.shift.update_shift_uc import \
     IUpdateShiftUC
-from application.schemas.shift_dto import ShiftDTO
 from core.exception import BadRequestError
+from domain.entities.shift_entity import ShiftEntity
 from domain.interfaces.repositories.shift_repository import IShiftRepository
 
 
@@ -10,13 +11,19 @@ class UpdateShiftUC(IUpdateShiftUC):
         self.shift_repository = shift_repository
 
     def execute(self, shift_dto: ShiftDTO) -> bool:
-        shift_entity = self.shift_repository.get_shift_by_id(shift_dto.id)
+        query_entity = ShiftEntity(
+            id=shift_dto.id,
+            name=shift_dto.name,
+            description=shift_dto.description,
+        )
+
+        shift_entity = self.shift_repository.get_shift_by_id(shift_entity=query_entity)
+
         if not shift_entity:
             raise BadRequestError("ETB-shift_khong_ton_tai")
 
         if shift_dto.name is not None and shift_dto.name != shift_entity.name:
-
-            if self.shift_repository.get_shift_by_name(shift_dto.name):
+            if self.shift_repository.get_shift_by_name(query_entity):
                 raise BadRequestError("ETB-ten_ca_lam_da_ton_tai")
 
             shift_entity.change_name(shift_dto.name)
