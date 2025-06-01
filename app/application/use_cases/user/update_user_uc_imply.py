@@ -1,7 +1,7 @@
-from application.dto.user_dto import UserDTO
-from application.interfaces.use_cases.user.update_user_uc import IUpdateUserUC
-from core.exception import NotFoundError
-from domain.interfaces.repositories.user_repository import IUserRepository
+from app.application.dto.user_dto import UserDTO
+from app.application.interfaces.use_cases.user.update_user_uc import IUpdateUserUC
+from app.core.exception import NotFoundError
+from app.domain.interfaces.repositories.user_repository import IUserRepository
 
 
 class UpdateUserUC(IUpdateUserUC):

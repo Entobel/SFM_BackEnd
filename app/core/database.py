@@ -5,7 +5,7 @@ from typing import Generator
 import psycopg2
 from psycopg2 import OperationalError, pool
 
-from .config import config
+from app.core.config import config
 
 # Configure logging
 logger = logging.getLogger("uvicorn")

@@ -1,13 +1,11 @@
 import logging
-
 from fastapi import FastAPI, status
-from fastapi.encoders import jsonable_encoder
 from starlette.middleware.cors import CORSMiddleware
 
-from core.config import config
-from core.database import db
-from core.error import setup_error_handlers
-from presentation.api.v1.routes import routers as v1_routers
+from app.core.config import config
+from app.core.database import db
+from app.core.error import setup_error_handlers
+from app.presentation.api.v1.routes import routers as v1_routers
 
 # Configure logging
 logger = logging.getLogger("uvicorn")
@@ -65,12 +63,13 @@ class AppCreator:
         # Configure CORS middleware if applicable
         if config.BACKEND_CORS_ORIGINS:
             self.app.add_middleware(
-                CORSMiddleware,
+                type[CORSMiddleware],
                 allow_origins=[str(origin) for origin in config.BACKEND_CORS_ORIGINS],
                 allow_credentials=True,
                 allow_methods=["*"],
                 allow_headers=["*"],
             )
+
             logger.info(
                 f"[APP]:: CORS configured with origins: {config.BACKEND_CORS_ORIGINS}"
             )
@@ -87,7 +86,6 @@ class AppCreator:
         # Setup centralized error handling
         setup_error_handlers(self.app)
         logger.info("[APP]:: Centralized error handlers configured")
-
 
 app_creator = AppCreator()
 app = app_creator.app

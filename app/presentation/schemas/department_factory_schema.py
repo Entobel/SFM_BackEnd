@@ -1,10 +1,6 @@
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, model_validator
 
-from application.dto.department_dto import DepartmentDTO
-from application.dto.factory_dto import FactoryDTO
-
-
 class CreateDepartmentFactorySchema(BaseModel):
     factory_id: int
     department_id: int

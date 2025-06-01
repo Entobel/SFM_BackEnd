@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.dto.user_dto import UserDTO
+from app.application.dto.user_dto import UserDTO
 
 
 class IUpdateUserUC(ABC):

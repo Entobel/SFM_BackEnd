@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.role_entity import RoleEntity
+from app.domain.entities.role_entity import RoleEntity
 
 
 class IListRoleUC(ABC):

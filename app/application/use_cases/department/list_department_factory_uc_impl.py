@@ -1,6 +1,6 @@
-from application.interfaces.use_cases.department.list_department_factory_uc import \
+from app.application.interfaces.use_cases.department.list_department_factory_uc import \
     IListDepartmentFactoryUC
-from domain.interfaces.repositories.department_factory_repository import \
+from app.domain.interfaces.repositories.department_factory_repository import \
     IDepartmentFactoryRepository
 
 

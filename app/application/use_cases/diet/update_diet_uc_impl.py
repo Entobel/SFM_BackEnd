@@ -1,7 +1,7 @@
-from application.dto.diet_dto import DietDTO
-from application.interfaces.use_cases.diet.update_diet_uc import IUpdateDietUC
-from core.exception import BadRequestError
-from domain.interfaces.repositories.diet_repository import IDietRepository
+from app.application.dto.diet_dto import DietDTO
+from app.application.interfaces.use_cases.diet.update_diet_uc import IUpdateDietUC
+from app.core.exception import BadRequestError
+from app.domain.interfaces.repositories.diet_repository import IDietRepository
 
 
 class UpdateDietUC(IUpdateDietUC):

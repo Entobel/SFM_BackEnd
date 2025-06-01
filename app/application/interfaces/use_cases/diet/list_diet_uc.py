@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.diet_entity import DietEntity
+from app.domain.entities.diet_entity import DietEntity
 
 
 class IListDietUC(ABC):

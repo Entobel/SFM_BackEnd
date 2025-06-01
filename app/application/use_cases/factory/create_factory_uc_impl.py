@@ -1,8 +1,8 @@
-from application.interfaces.use_cases.factory.create_factory_uc import \
+from app.application.interfaces.use_cases.factory.create_factory_uc import \
     ICreateFactoryUC
-from core.exception import BadRequestError
-from domain.entities.factory_entity import FactoryEntity
-from domain.interfaces.repositories.factory_repository import \
+from app.core.exception import BadRequestError
+from app.domain.entities.factory_entity import FactoryEntity
+from app.domain.interfaces.repositories.factory_repository import \
     IFactoryRepository
 
 

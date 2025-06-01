@@ -1,9 +1,9 @@
-from application.dto.production_object_dto import ProductionObjectDTO
-from application.interfaces.use_cases.production_object.create_production_object_uc import \
+from app.application.dto.production_object_dto import ProductionObjectDTO
+from app.application.interfaces.use_cases.production_object.create_production_object_uc import \
     ICreateProductionObjectUC
-from core.exception import BadRequestError
-from domain.entities.production_object_entity import ProductionObjectEntity
-from domain.interfaces.repositories.production_object_repository import \
+from app.core.exception import BadRequestError
+from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.interfaces.repositories.production_object_repository import \
     IProductionObjectRepository
 
 

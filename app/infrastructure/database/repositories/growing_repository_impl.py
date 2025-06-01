@@ -3,10 +3,10 @@ from typing import Any, Dict
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from domain.entities.growing_entity import GrowingEntity
-from domain.interfaces.repositories.growing_repository import \
+from app.domain.entities.growing_entity import GrowingEntity
+from app.domain.interfaces.repositories.growing_repository import \
     IGrowingRepository
-from domain.interfaces.services.query_helper_service import IQueryHelperService
+from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class GrowingRepository(IGrowingRepository):

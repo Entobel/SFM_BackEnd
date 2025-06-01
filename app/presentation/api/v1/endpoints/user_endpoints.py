@@ -1,20 +1,28 @@
 from fastapi import APIRouter, Depends, status
 
-from application.dto.department_dto import DepartmentDTO
-from application.dto.factory_dto import FactoryDTO
-from application.dto.role_dto import RoleDTO
-from application.dto.user_dto import UserDTO
-from presentation.api.v1.dependencies.user_dependencies import (
-    ChangePasswordUCDep, ChangeStatusUseCaseDep, CreateUserUseCaseDep,
-    GetCurrentUserDep, GetListUserUseCaseDep, GetMeUseCaseDep, TokenVerifyDep,
-    UpdateUserUseCaseDep)
-from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
-from presentation.schemas.response import Response
-from presentation.schemas.token_schema import TokenPayloadInputDTO
-from presentation.schemas.user_schema import (ChangePasswordInputSchema,
-                                              CreateUserInputSchema,
-                                              UpdateStatusInputSchema,
-                                              UpdateUserInputSchema)
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.dto.factory_dto import FactoryDTO
+from app.application.dto.role_dto import RoleDTO
+from app.presentation.api.v1.dependencies.user_dependencies import (
+    ChangePasswordUCDep,
+    ChangeStatusUseCaseDep,
+    CreateUserUseCaseDep,
+    GetCurrentUserDep,
+    GetListUserUseCaseDep,
+    GetMeUseCaseDep,
+    TokenVerifyDep,
+    UpdateUserUseCaseDep,
+)
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.response import Response
+from app.presentation.schemas.token_schema import TokenPayloadInputDTO
+from app.presentation.schemas.user_schema import (
+    ChangePasswordInputSchema,
+    CreateUserInputSchema,
+    UpdateStatusInputSchema,
+    UpdateUserInputSchema,
+    UserResponseSchema,
+)
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -38,7 +46,7 @@ async def get_list_users(
     users = []
 
     for user in result["items"]:
-        user_dto = UserDTO(
+        user_dto = UserResponseSchema(
             id=user.id,
             email=user.email,
             phone=user.phone,
@@ -66,6 +74,8 @@ async def get_list_users(
                 description=user.department_factory_role.role.description,
                 is_active=user.department_factory_role.role.is_active,
             ),
+            created_at=user.created_at,
+            updated_at=user.updated_at,
         )
         users.append(user_dto)
 
@@ -91,10 +101,10 @@ async def get_list_users(
 async def get_me(token: TokenVerifyDep, get_me_use_case: GetMeUseCaseDep):
     token_input_dto = TokenPayloadInputDTO(**token)
 
-    user_dto = get_me_use_case.execute(user_id=token_input_dto.sub)
+    user = get_me_use_case.execute(user_id=token_input_dto.sub)
 
     return Response.success_response(
-        code="ETB-lay_thong_tin_thanh_cong", data=user_dto
+        code="ETB-lay_thong_tin_thanh_cong", data=user
     ).get_dict()
 
 

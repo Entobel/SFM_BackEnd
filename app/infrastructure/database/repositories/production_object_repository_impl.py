@@ -1,10 +1,10 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from domain.entities.production_object_entity import ProductionObjectEntity
-from domain.interfaces.repositories.production_object_repository import \
+from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.interfaces.repositories.production_object_repository import \
     IProductionObjectRepository
-from domain.interfaces.services.query_helper_service import IQueryHelperService
+from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class ProductionObjectRepository(IProductionObjectRepository):

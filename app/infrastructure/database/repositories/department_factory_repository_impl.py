@@ -3,12 +3,12 @@ from typing import Optional
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from domain.entities.department_entity import DepartmentEntity
-from domain.entities.department_factory_entity import DepartmentFactoryEntity
-from domain.entities.factory_entity import FactoryEntity
-from domain.interfaces.repositories.department_factory_repository import \
+from app.domain.entities.department_entity import DepartmentEntity
+from app.domain.entities.department_factory_entity import DepartmentFactoryEntity
+from app.domain.entities.factory_entity import FactoryEntity
+from app.domain.interfaces.repositories.department_factory_repository import \
     IDepartmentFactoryRepository
-from domain.interfaces.services.query_helper_service import IQueryHelperService
+from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class DepartmentFactoryRepository(IDepartmentFactoryRepository):

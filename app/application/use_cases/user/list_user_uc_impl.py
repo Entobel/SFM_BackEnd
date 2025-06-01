@@ -1,6 +1,6 @@
-from application.interfaces.use_cases.user.list_user_uc import IListUserUC
-from domain.entities.user_entity import UserEntity
-from domain.interfaces.repositories.user_repository import IUserRepository
+from app.application.interfaces.use_cases.user.list_user_uc import IListUserUC
+from app.domain.entities.user_entity import UserEntity
+from app.domain.interfaces.repositories.user_repository import IUserRepository
 
 
 class ListUserUC(IListUserUC):

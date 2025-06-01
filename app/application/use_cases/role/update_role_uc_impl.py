@@ -1,8 +1,8 @@
-from application.dto.role_dto import RoleDTO
-from application.interfaces.use_cases.role.update_role_uc import IUpdateRoleUC
-from core.exception import BadRequestError
-from domain.entities.role_entity import RoleEntity
-from domain.interfaces.repositories.role_repository import IRoleRepository
+from app.application.dto.role_dto import RoleDTO
+from app.application.interfaces.use_cases.role.update_role_uc import IUpdateRoleUC
+from app.core.exception import BadRequestError
+from app.domain.entities.role_entity import RoleEntity
+from app.domain.interfaces.repositories.role_repository import IRoleRepository
 
 
 class UpdateRoleUC(IUpdateRoleUC):

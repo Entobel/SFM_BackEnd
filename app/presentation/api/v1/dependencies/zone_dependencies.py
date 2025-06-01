@@ -2,20 +2,20 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from application.interfaces.use_cases.zone.create_zone_uc import ICreateZoneUC
-from application.interfaces.use_cases.zone.list_zone_uc import IListZoneUC
-from application.interfaces.use_cases.zone.update_status_zone_uc import \
+from app.application.interfaces.use_cases.zone.create_zone_uc import ICreateZoneUC
+from app.application.interfaces.use_cases.zone.list_zone_uc import IListZoneUC
+from app.application.interfaces.use_cases.zone.update_status_zone_uc import \
     IUpdateStatusZoneUC
-from application.interfaces.use_cases.zone.update_zone_uc import IUpdateZoneUC
-from application.use_cases.zone.create_zone_uc_impl import CreateZoneUC
-from application.use_cases.zone.list_zone_uc_impl import ListZoneUC
-from application.use_cases.zone.update_status_zone_uc_impl import \
+from app.application.interfaces.use_cases.zone.update_zone_uc import IUpdateZoneUC
+from app.application.use_cases.zone.create_zone_uc_impl import CreateZoneUC
+from app.application.use_cases.zone.list_zone_uc_impl import ListZoneUC
+from app.application.use_cases.zone.update_status_zone_uc_impl import \
     UpdateStatusZoneUC
-from application.use_cases.zone.update_zone_uc_impl import UpdateZoneUC
-from domain.interfaces.repositories.zone_repository import IZoneRepository
-from infrastructure.database.repositories.zone_repository_impl import \
+from app.application.use_cases.zone.update_zone_uc_impl import UpdateZoneUC
+from app.domain.interfaces.repositories.zone_repository import IZoneRepository
+from app.infrastructure.database.repositories.zone_repository_impl import \
     ZoneRepository
-from presentation.api.v1.dependencies.common_dependencies import (
+from app.presentation.api.v1.dependencies.common_dependencies import (
     DatabaseDep, QueryHelperDep)
 
 

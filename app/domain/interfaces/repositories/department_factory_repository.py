@@ -2,10 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Optional
-
-from domain.entities.department_entity import DepartmentEntity
-from domain.entities.department_factory_entity import DepartmentFactoryEntity
-from domain.entities.factory_entity import FactoryEntity
+from app.domain.entities.department_factory_entity import DepartmentFactoryEntity
 
 
 class IDepartmentFactoryRepository(ABC):

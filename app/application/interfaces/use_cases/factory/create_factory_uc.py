@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.factory_entity import FactoryEntity
+from app.domain.entities.factory_entity import FactoryEntity
 
 
 class ICreateFactoryUC(ABC):

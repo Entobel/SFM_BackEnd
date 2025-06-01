@@ -3,10 +3,10 @@ from datetime import datetime, timezone
 from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 
-from core.config import config
-from domain.value_objects.token_payload import TokenPayload
+from app.core.config import config
+from app.domain.value_objects.token_payload import TokenPayload
 
-from .exception import AuthenticationError
+from app.core.exception import AuthenticationError
 
 
 def create_access_token(token_request: TokenPayload) -> str:

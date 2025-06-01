@@ -1,9 +1,9 @@
-from application.dto.produciton_type_dto import ProductionTypeDTO
-from application.interfaces.use_cases.production_type.create_production_type_uc import \
+from app.application.dto.produciton_type_dto import ProductionTypeDTO
+from app.application.interfaces.use_cases.production_type.create_production_type_uc import \
     ICreateProductionTypeUC
-from core.exception import BadRequestError
-from domain.entities.production_type_entity import ProductionTypeEntity
-from domain.interfaces.repositories.production_type_repository import \
+from app.core.exception import BadRequestError
+from app.domain.entities.production_type_entity import ProductionTypeEntity
+from app.domain.interfaces.repositories.production_type_repository import \
     IProductionTypeRepository
 
 

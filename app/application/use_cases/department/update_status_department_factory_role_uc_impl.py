@@ -1,9 +1,9 @@
-from application.dto.department_factory_role_dto import \
+from app.application.dto.department_factory_role_dto import \
     DepartmentFactoryRoleDTO
-from application.interfaces.use_cases.department.update_status_department_factory_role_uc import \
+from app.application.interfaces.use_cases.department.update_status_department_factory_role_uc import \
     IUpdateStatusDepartmentFactoryRoleUC
-from core.exception import BadRequestError, NotFoundError
-from domain.interfaces.repositories.deparment_factory_role_repository import \
+from app.core.exception import BadRequestError, NotFoundError
+from app.domain.interfaces.repositories.deparment_factory_role_repository import \
     IDepartmentFactoryRoleRepository
 
 

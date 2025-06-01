@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from application.dto.diet_dto import DietDTO
-from application.dto.produciton_type_dto import ProductionTypeDTO
-from application.dto.production_object_dto import ProductionObjectDTO
-from application.dto.shift_dto import ShiftDTO
-from application.dto.user_dto import UserDTO
+from app.application.dto.diet_dto import DietDTO
+from app.application.dto.produciton_type_dto import ProductionTypeDTO
+from app.application.dto.production_object_dto import ProductionObjectDTO
+from app.application.dto.shift_dto import ShiftDTO
+from app.application.dto.user_dto import UserDTO
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.department_entity import DepartmentEntity
-from domain.entities.factory_entity import FactoryEntity
+from app.domain.entities.department_entity import DepartmentEntity
 
 
 class IListFactoryUC(ABC):

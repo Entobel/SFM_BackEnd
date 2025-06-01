@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from domain.entities.user_entity import UserEntity
+from app.domain.entities.user_entity import UserEntity
 
 
 class IUserRepository(ABC):

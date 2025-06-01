@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from domain.entities.department_factory_entity import DepartmentFactoryEntity
+from app.domain.entities.department_factory_entity import DepartmentFactoryEntity
 
-from .department_entity import DepartmentEntity
-from .department_factory_role_entity import DepartmentFactoryRoleEntity
-from .factory_entity import FactoryEntity
-from .role_entity import RoleEntity
+from app.domain.entities.department_entity import DepartmentEntity
+from app.domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from app.domain.entities.factory_entity import FactoryEntity
+from app.domain.entities.role_entity import RoleEntity
 
 
 @dataclass
@@ -54,6 +54,8 @@ class UserEntity:
             f"first_name='{self.first_name}', last_name='{self.last_name}', "
             f"is_active={'Active' if self.is_active else 'Inactive'})>"
             f"department_factory_role='{self.department_factory_role}'"
+            f"created_at='{self.created_at}'"
+            f"updated_at='{self.updated_at}'"
         )
 
     @classmethod

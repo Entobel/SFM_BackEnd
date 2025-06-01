@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from typing import Optional
-
-from application.dto.zone_dto import ZoneDTO
+from app.domain.entities.factory_entity import FactoryEntity
 
 
 @dataclass
 class ZoneEntity:
     id: Optional[int] = None
     zone_number: Optional[int] = None
+    factory: Optional[FactoryEntity] = None
     is_active: Optional[bool] = None
 
     def update_zone(self, new_zone_number: int):

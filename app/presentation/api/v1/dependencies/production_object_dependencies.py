@@ -2,27 +2,27 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from application.interfaces.use_cases.production_object.create_production_object_uc import \
+from app.application.interfaces.use_cases.production_object.create_production_object_uc import \
     ICreateProductionObjectUC
-from application.interfaces.use_cases.production_object.list_production_object_uc import \
+from app.application.interfaces.use_cases.production_object.list_production_object_uc import \
     IListProductionObjectUC
-from application.interfaces.use_cases.production_object.update_production_object_uc import \
+from app.application.interfaces.use_cases.production_object.update_production_object_uc import \
     IUpdateProductionObjectUC
-from application.interfaces.use_cases.production_object.update_status_production_object_uc import \
+from app.application.interfaces.use_cases.production_object.update_status_production_object_uc import \
     IUpdateStatusProductionObjectUC
-from application.use_cases.production_object.create_production_object_uc_impl import \
+from app.application.use_cases.production_object.create_production_object_uc_impl import \
     CreateProductionObjectUC
-from application.use_cases.production_object.list_production_object_uc_impl import \
+from app.application.use_cases.production_object.list_production_object_uc_impl import \
     ListProductionObjectUC
-from application.use_cases.production_object.update_production_object_uc_impl import \
+from app.application.use_cases.production_object.update_production_object_uc_impl import \
     UpdateProductionObjectUC
-from application.use_cases.production_object.update_status_production_object_uc_impl import \
+from app.application.use_cases.production_object.update_status_production_object_uc_impl import \
     UpdateStatusProductionObjectUC
-from domain.interfaces.repositories.production_object_repository import \
+from app.domain.interfaces.repositories.production_object_repository import \
     IProductionObjectRepository
-from infrastructure.database.repositories.production_object_repository_impl import \
+from app.infrastructure.database.repositories.production_object_repository_impl import \
     ProductionObjectRepository
-from presentation.api.v1.dependencies.common_dependencies import (
+from app.presentation.api.v1.dependencies.common_dependencies import (
     DatabaseDep, QueryHelperDep)
 
 

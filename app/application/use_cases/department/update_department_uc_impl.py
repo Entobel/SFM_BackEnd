@@ -1,8 +1,8 @@
-from application.dto.department_dto import DepartmentDTO
-from application.interfaces.use_cases.department.update_department_uc import \
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.interfaces.use_cases.department.update_department_uc import \
     IUpdateDepartmentUC
-from core.exception import BadRequestError
-from domain.interfaces.repositories.department_repository import \
+from app.core.exception import BadRequestError
+from app.domain.interfaces.repositories.department_repository import \
     IDepartmentRepository
 
 

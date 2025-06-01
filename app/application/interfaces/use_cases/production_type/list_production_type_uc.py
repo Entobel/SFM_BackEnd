@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.production_type_entity import ProductionTypeEntity
+from app.domain.entities.production_type_entity import ProductionTypeEntity
 
 
 class IListProductionTypeUC(ABC):
     @abstractmethod
-    def execute(self) -> list[ProductionTypeEntity]: ...
+    def execute(self, page: int,
+        page_size: int,
+        search: str,
+        is_active: bool,) -> list[ProductionTypeEntity]: ...

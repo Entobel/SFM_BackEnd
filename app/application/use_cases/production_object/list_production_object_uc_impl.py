@@ -1,7 +1,7 @@
-from application.interfaces.use_cases.production_object.list_production_object_uc import \
+from app.application.interfaces.use_cases.production_object.list_production_object_uc import \
     IListProductionObjectUC
-from domain.entities.production_object_entity import ProductionObjectEntity
-from domain.interfaces.repositories.production_object_repository import \
+from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.interfaces.repositories.production_object_repository import \
     IProductionObjectRepository
 
 

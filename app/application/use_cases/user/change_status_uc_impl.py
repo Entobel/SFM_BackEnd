@@ -1,7 +1,7 @@
-from application.interfaces.use_cases.user.change_status_uc import \
+from app.application.interfaces.use_cases.user.change_status_uc import \
     IChangeStatusUC
-from domain.entities.user_entity import UserEntity
-from domain.interfaces.repositories.user_repository import IUserRepository
+from app.domain.entities.user_entity import UserEntity
+from app.domain.interfaces.repositories.user_repository import IUserRepository
 
 
 class ChangeStatusUC(IChangeStatusUC):

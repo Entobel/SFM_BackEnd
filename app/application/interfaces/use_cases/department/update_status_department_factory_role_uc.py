@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.dto.department_factory_role_dto import \
+from app.application.dto.department_factory_role_dto import \
     DepartmentFactoryRoleDTO
 
 

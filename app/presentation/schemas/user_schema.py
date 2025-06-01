@@ -1,13 +1,13 @@
+from datetime import datetime
 import re
 from typing import List, Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import (BaseModel, ConfigDict, Field, field_validator,
-                      model_validator)
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from application.dto.department_dto import DepartmentDTO
-from application.dto.factory_dto import FactoryDTO
-from application.dto.role_dto import RoleDTO
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.dto.factory_dto import FactoryDTO
+from app.application.dto.role_dto import RoleDTO
 
 
 class UserLoginResponseSchema(BaseModel):
@@ -17,22 +17,24 @@ class UserLoginResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserListSchema(BaseModel):
+class UserResponseSchema(BaseModel):
     id: int
     email: Optional[str] = None
     phone: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    is_active: bool = True
+    is_active: Optional[bool] = None
     department: Optional[DepartmentDTO] = None
     factory: Optional[FactoryDTO] = None
     role: Optional[RoleDTO] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class UserListResponseSchema(BaseModel):
-    items: List[UserListSchema]
+    items: List[UserResponseSchema]
     total: int
     page: int
     page_size: int

@@ -4,20 +4,20 @@ import psycopg2.extensions
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from core.database import db
-from domain.interfaces.repositories.user_repository import IUserRepository
-from domain.interfaces.services.access_policy_service import \
+from app.core.database import db
+from app.domain.interfaces.repositories.user_repository import IUserRepository
+from app.domain.interfaces.services.access_policy_service import \
     IAccessPolicyService
-from domain.interfaces.services.password_service import IPasswordService
-from domain.interfaces.services.query_helper_service import IQueryHelperService
-from domain.interfaces.services.token_service import ITokenService
-from infrastructure.database.repositories.user_repository_impl import \
+from app.domain.interfaces.services.password_service import IPasswordService
+from app.domain.interfaces.services.query_helper_service import IQueryHelperService
+from app.domain.interfaces.services.token_service import ITokenService
+from app.infrastructure.database.repositories.user_repository_impl import \
     UserRepository
-from infrastructure.services.access_policy_service_impl import \
+from app.infrastructure.services.access_policy_service_impl import \
     AccessPolicyService
-from infrastructure.services.password_service_imply import PasswordService
-from infrastructure.services.query_helper_service_impl import QueryHelper
-from infrastructure.services.token_service_imply import TokenService
+from app.infrastructure.services.password_service_imply import PasswordService
+from app.infrastructure.services.query_helper_service_impl import QueryHelper
+from app.infrastructure.services.token_service_imply import TokenService
 
 DatabaseDep = Annotated[psycopg2.extensions.connection, Depends(db.get_db)]
 

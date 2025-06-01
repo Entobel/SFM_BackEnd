@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from application.dto.department_dto import DepartmentDTO
-from application.dto.factory_dto import FactoryDTO
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.dto.factory_dto import FactoryDTO
 
 
 @dataclass(frozen=True)

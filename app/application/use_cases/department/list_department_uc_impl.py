@@ -1,7 +1,7 @@
-from application.interfaces.use_cases.department.list_department_uc import \
+from app.application.interfaces.use_cases.department.list_department_uc import \
     IListDepartmentUC
-from domain.entities.department_entity import DepartmentEntity
-from domain.interfaces.repositories.department_repository import \
+from app.domain.entities.department_entity import DepartmentEntity
+from app.domain.interfaces.repositories.department_repository import \
     IDepartmentRepository
 
 

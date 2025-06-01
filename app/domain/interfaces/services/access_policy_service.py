@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from domain.value_objects.access_policy import AccessPolicyContext
+from app.domain.value_objects.access_policy import AccessPolicyContext
 
 
 class IAccessPolicyService(ABC):

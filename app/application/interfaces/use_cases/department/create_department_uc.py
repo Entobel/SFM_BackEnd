@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.dto.department_dto import DepartmentDTO
+from app.application.dto.department_dto import DepartmentDTO
 
 
 class ICreateDepartmentUC(ABC):

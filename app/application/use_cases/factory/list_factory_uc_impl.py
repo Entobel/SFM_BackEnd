@@ -1,7 +1,7 @@
-from application.interfaces.use_cases.factory.list_factory_uc import \
+from app.application.interfaces.use_cases.factory.list_factory_uc import \
     IListFactoryUC
-from domain.entities.department_entity import DepartmentEntity
-from domain.interfaces.repositories.factory_repository import \
+from app.domain.entities.department_entity import DepartmentEntity
+from app.domain.interfaces.repositories.factory_repository import \
     IFactoryRepository
 
 

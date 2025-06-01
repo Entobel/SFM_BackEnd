@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.shift_entity import ShiftEntity
-from domain.interfaces.repositories.shift_repository import IShiftRepository
+from app.domain.entities.shift_entity import ShiftEntity
 
 
 class IListShiftUC(ABC):

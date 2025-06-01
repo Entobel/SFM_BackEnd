@@ -1,16 +1,21 @@
 from fastapi import APIRouter, Depends
 
-from application.dto.zone_dto import ZoneDTO
-from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.api.v1.dependencies.zone_dependencies import (
-    CreateZoneUseCaseDep, GetListZoneUseCaseDep, UpdateStatusZoneUseCaseDep,
-    UpdateZoneUseCaseDep)
-from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
-from presentation.schemas.response import Response
-from presentation.schemas.zone_schema import (CreateZoneSchema,
-                                              UpdateStatusZoneSchema,
-                                              UpdateZoneSchema,
-                                              ZoneResponseSchema)
+from app.application.dto.zone_dto import ZoneDTO
+from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
+from app.presentation.api.v1.dependencies.zone_dependencies import (
+    CreateZoneUseCaseDep,
+    GetListZoneUseCaseDep,
+    UpdateStatusZoneUseCaseDep,
+    UpdateZoneUseCaseDep,
+)
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.response import Response
+from app.presentation.schemas.zone_schema import (
+    CreateZoneSchema,
+    UpdateStatusZoneSchema,
+    UpdateZoneSchema,
+    ZoneResponseSchema,
+)
 
 router = APIRouter(prefix="/zones", tags=["Zones"])
 
@@ -27,6 +32,7 @@ async def get_list_zones(
         page_size=filter_params.page_size,
         search=filter_params.search,
         is_active=filter_params.is_active,
+        factory_id=filter_params.factory_id,
     )
     zones = []
 

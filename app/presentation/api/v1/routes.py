@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from presentation.api.v1.endpoints import (auth_endpoints,
+from app.presentation.api.v1.endpoints import (auth_endpoints,
                                            department_endpoints,
                                            diet_endpoints, factory_endpoints,
                                            growing_endpoints,

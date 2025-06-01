@@ -1,6 +1,6 @@
-from application.interfaces.use_cases.diet.list_diet_uc import IListDietUC
-from domain.entities.diet_entity import DietEntity
-from domain.interfaces.repositories.diet_repository import IDietRepository
+from app.application.interfaces.use_cases.diet.list_diet_uc import IListDietUC
+from app.domain.entities.diet_entity import DietEntity
+from app.domain.interfaces.repositories.diet_repository import IDietRepository
 
 
 class ListDietUC(IListDietUC):

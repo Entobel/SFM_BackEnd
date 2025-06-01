@@ -1,10 +1,10 @@
 from datetime import timedelta
 
-from application.dto.auth_dto import LoginResponse
-from application.interfaces.use_cases.auth.login_uc import ILoginUC
-from domain.interfaces.services.token_service import ITokenService
-from domain.services.auth_service import AuthService
-from domain.value_objects.token_payload import TokenPayload
+from app.application.dto.auth_dto import LoginResponse
+from app.application.interfaces.use_cases.auth.login_uc import ILoginUC
+from app.domain.interfaces.services.token_service import ITokenService
+from app.domain.services.auth_service import AuthService
+from app.domain.value_objects.token_payload import TokenPayload
 
 
 class LoginUC(ILoginUC):

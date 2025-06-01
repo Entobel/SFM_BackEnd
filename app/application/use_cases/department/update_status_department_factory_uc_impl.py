@@ -1,8 +1,8 @@
-from application.dto.department_factory_dto import DepartmentFactoryDTO
-from application.interfaces.use_cases.department.update_status_department_factory_uc import \
+from app.application.dto.department_factory_dto import DepartmentFactoryDTO
+from app.application.interfaces.use_cases.department.update_status_department_factory_uc import \
     IUpdateStatusDepartmentFactoryUC
-from core.exception import BadRequestError, NotFoundError
-from domain.interfaces.repositories.department_factory_repository import \
+from app.core.exception import BadRequestError, NotFoundError
+from app.domain.interfaces.repositories.department_factory_repository import \
     IDepartmentFactoryRepository
 
 

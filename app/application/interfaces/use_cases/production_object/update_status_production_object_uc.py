@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.dto.production_object_dto import ProductionObjectDTO
+from app.application.dto.production_object_dto import ProductionObjectDTO
 
 
 class IUpdateStatusProductionObjectUC(ABC):

@@ -2,20 +2,20 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from application.interfaces.use_cases.diet.create_diet_uc import ICreateDietUC
-from application.interfaces.use_cases.diet.list_diet_uc import IListDietUC
-from application.interfaces.use_cases.diet.update_diet_uc import IUpdateDietUC
-from application.interfaces.use_cases.diet.update_status_diet_uc import \
+from app.application.interfaces.use_cases.diet.create_diet_uc import ICreateDietUC
+from app.application.interfaces.use_cases.diet.list_diet_uc import IListDietUC
+from app.application.interfaces.use_cases.diet.update_diet_uc import IUpdateDietUC
+from app.application.interfaces.use_cases.diet.update_status_diet_uc import \
     IUpdateStatusDietUC
-from application.use_cases.diet.create_diet_uc_impl import CreateDietUC
-from application.use_cases.diet.list_diet_uc_impl import ListDietUC
-from application.use_cases.diet.update_diet_uc_impl import UpdateDietUC
-from application.use_cases.diet.update_status_diet_uc_impl import \
+from app.application.use_cases.diet.create_diet_uc_impl import CreateDietUC
+from app.application.use_cases.diet.list_diet_uc_impl import ListDietUC
+from app.application.use_cases.diet.update_diet_uc_impl import UpdateDietUC
+from app.application.use_cases.diet.update_status_diet_uc_impl import \
     UpdateStatusDietUC
-from domain.interfaces.repositories.diet_repository import IDietRepository
-from infrastructure.database.repositories.diet_repository_impl import \
+from app.domain.interfaces.repositories.diet_repository import IDietRepository
+from app.infrastructure.database.repositories.diet_repository_impl import \
     DietRepository
-from presentation.api.v1.dependencies.common_dependencies import (
+from app.presentation.api.v1.dependencies.common_dependencies import (
     DatabaseDep, QueryHelperDep)
 
 

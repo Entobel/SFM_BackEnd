@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends
 
-from application.dto.shift_dto import ShiftDTO
-from presentation.api.v1.dependencies.shift_dependencies import (
+from app.application.dto.shift_dto import ShiftDTO
+from app.presentation.api.v1.dependencies.shift_dependencies import (
     CreateShiftUCDep, ListShiftUCDep, UpdateShiftUCDep, UpdateStatusShiftUCDep)
-from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
-from presentation.schemas.response import Response
-from presentation.schemas.shift_schema import (CreateShiftSchema,
+from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.response import Response
+from app.presentation.schemas.shift_schema import (CreateShiftSchema,
                                                UpdateShiftSchema,
                                                UpdateStatusShiftSchema)
 

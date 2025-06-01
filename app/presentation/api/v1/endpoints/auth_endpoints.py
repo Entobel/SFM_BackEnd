@@ -1,11 +1,11 @@
 from fastapi import APIRouter, status
 
-from presentation.api.v1.dependencies.auth_dependencies import (
+from app.presentation.api.v1.dependencies.auth_dependencies import (
     LoginOauth2Dep, LoginUseCaseDep)
-from presentation.schemas.auth_schema import (LoginInputSchema,
+from app.presentation.schemas.auth_schema import (LoginInputSchema,
                                               LoginResponseSchema)
-from presentation.schemas.response import Response
-from presentation.schemas.user_schema import UserLoginResponseSchema
+from app.presentation.schemas.response import Response
+from app.presentation.schemas.user_schema import UserLoginResponseSchema
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 

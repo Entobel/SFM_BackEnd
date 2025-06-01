@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from presentation.schemas.growing_schema import CreateGrowingSchema
+from app.presentation.schemas.growing_schema import CreateGrowingSchema
 
 
 class ICreateGrowingUC(ABC):

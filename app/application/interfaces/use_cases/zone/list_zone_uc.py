@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.zone_entity import ZoneEntity
+from app.domain.entities.zone_entity import ZoneEntity
 
 
 class IListZoneUC(ABC):
     @abstractmethod
     def execute(
-        self, page: int, page_size: int, search: str, is_active: str
+        self, page: int, page_size: int, search: str, factory_id: int, is_active: str
     ) -> dict[
         "total":int,
         "page":int,

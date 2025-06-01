@@ -1,9 +1,9 @@
-from application.dto.department_dto import DepartmentDTO
-from application.interfaces.use_cases.department.create_department_uc import \
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.interfaces.use_cases.department.create_department_uc import \
     ICreateDepartmentUC
-from core.exception import BadRequestError
-from domain.entities.department_entity import DepartmentEntity
-from domain.interfaces.repositories.department_repository import \
+from app.core.exception import BadRequestError
+from app.domain.entities.department_entity import DepartmentEntity
+from app.domain.interfaces.repositories.department_repository import \
     IDepartmentRepository
 
 

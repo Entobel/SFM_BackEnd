@@ -3,9 +3,9 @@ from textwrap import dedent
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from domain.entities.diet_entity import DietEntity
-from domain.interfaces.repositories.diet_repository import IDietRepository
-from domain.interfaces.services.query_helper_service import IQueryHelperService
+from app.domain.entities.diet_entity import DietEntity
+from app.domain.interfaces.repositories.diet_repository import IDietRepository
+from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class DietRepository(IDietRepository):

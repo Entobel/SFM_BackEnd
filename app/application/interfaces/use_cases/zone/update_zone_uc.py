@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.dto.zone_dto import ZoneDTO
+from app.application.dto.zone_dto import ZoneDTO
 
 
 class IUpdateZoneUC(ABC):

@@ -1,8 +1,8 @@
-from application.dto.produciton_type_dto import ProductionTypeDTO
-from application.interfaces.use_cases.production_type.update_status_production_type_uc import \
+from app.application.dto.produciton_type_dto import ProductionTypeDTO
+from app.application.interfaces.use_cases.production_type.update_status_production_type_uc import \
     IUpdateStatusProductionTypeUC
-from core.exception import BadRequestError
-from domain.interfaces.repositories.production_type_repository import \
+from app.core.exception import BadRequestError
+from app.domain.interfaces.repositories.production_type_repository import \
     IProductionTypeRepository
 
 

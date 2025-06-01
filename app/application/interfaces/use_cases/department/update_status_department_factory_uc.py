@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.dto.department_factory_dto import DepartmentFactoryDTO
+from app.application.dto.department_factory_dto import DepartmentFactoryDTO
 
 
 class IUpdateStatusDepartmentFactoryUC(ABC):

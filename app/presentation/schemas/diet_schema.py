@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 
 class CreateDietSchema(BaseModel):

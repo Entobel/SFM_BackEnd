@@ -1,7 +1,7 @@
-from application.dto.user_dto import UserDTO
-from application.interfaces.use_cases.user.me_uc import IMeUC
-from core.exception import NotFoundError
-from domain.interfaces.repositories.user_repository import IUserRepository
+from app.application.dto.user_dto import UserDTO
+from app.application.interfaces.use_cases.user.me_uc import IMeUC
+from app.core.exception import NotFoundError
+from app.domain.interfaces.repositories.user_repository import IUserRepository
 
 
 class GetMeUseCase(IMeUC):
@@ -26,4 +26,6 @@ class GetMeUseCase(IMeUC):
             department=user.department_factory_role.department_factory.department,
             role=user.department_factory_role.role,
             is_active=user.is_active,
+            created_at=user.created_at,
+            updated_at=user.updated_at,
         )

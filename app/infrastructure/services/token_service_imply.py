@@ -1,6 +1,6 @@
-from core.security import create_access_token, verify_token
-from domain.interfaces.services.token_service import ITokenService
-from domain.value_objects.token_payload import TokenPayload
+from app.core.security import create_access_token, verify_token
+from app.domain.interfaces.services.token_service import ITokenService
+from app.domain.value_objects.token_payload import TokenPayload
 
 
 class TokenService(ITokenService):

@@ -1,13 +1,10 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
-from pydantic import ConfigDict
-
-from application.dto.department_dto import DepartmentDTO
-
-from .factory_dto import FactoryDTO
-from .role_dto import RoleDTO
-
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.dto.factory_dto import FactoryDTO
+from app.application.dto.role_dto import RoleDTO
 
 @dataclass(frozen=True)
 class UserDTO:
@@ -22,4 +19,5 @@ class UserDTO:
     factory: Optional[FactoryDTO] = None
     role: Optional[RoleDTO] = None
 
-    model_config = ConfigDict(from_attributes=True)
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None

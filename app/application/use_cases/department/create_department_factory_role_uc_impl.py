@@ -1,15 +1,15 @@
-from application.dto.department_factory_role_dto import \
-    DepartmentFactoryRoleDTO
-from application.interfaces.use_cases.department.create_department_factory_role_uc import \
-    ICreateDepartmentFactoryRoleUC
-from core.exception import BadRequestError, NotFoundError
-from domain.entities.department_factory_entity import DepartmentFactoryEntity
-from domain.entities.department_factory_role_entity import \
-    DepartmentFactoryRoleEntity
-from domain.entities.role_entity import RoleEntity
-from domain.interfaces.repositories.deparment_factory_role_repository import \
-    IDepartmentFactoryRoleRepository
-from domain.interfaces.repositories.role_repository import IRoleRepository
+from app.application.dto.department_factory_role_dto import DepartmentFactoryRoleDTO
+from app.application.interfaces.use_cases.department.create_department_factory_role_uc import (
+    ICreateDepartmentFactoryRoleUC,
+)
+from app.core.exception import BadRequestError, NotFoundError
+from app.domain.entities.department_factory_entity import DepartmentFactoryEntity
+from app.domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from app.domain.entities.role_entity import RoleEntity
+from app.domain.interfaces.repositories.deparment_factory_role_repository import (
+    IDepartmentFactoryRoleRepository,
+)
+from app.domain.interfaces.repositories.role_repository import IRoleRepository
 
 
 class CreateDepartmentFactoryRoleUC(ICreateDepartmentFactoryRoleUC):
@@ -32,8 +32,6 @@ class CreateDepartmentFactoryRoleUC(ICreateDepartmentFactoryRoleUC):
 
         department_factory_id = department_factory_role_dto.department_factory.id
         role_id = department_factory_role_dto.role.id
-
-        print("Department factory id", department_factory_id, "Role", role_id)
 
         # Check if exist department factory
         is_exist = self.department_factory_role_repository.check_department_factory_role_exists(

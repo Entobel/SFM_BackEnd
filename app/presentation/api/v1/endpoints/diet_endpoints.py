@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends
 
-from application.dto.diet_dto import DietDTO
-from presentation.api.v1.dependencies.diet_dependencies import (
+from app.application.dto.diet_dto import DietDTO
+from app.presentation.api.v1.dependencies.diet_dependencies import (
     CreateDietUCDep, ListDietUCDep, UpdateDietStatusUCDep, UpdateDietUCDep)
-from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.diet_schema import (CreateDietSchema,
+from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
+from app.presentation.schemas.diet_schema import (CreateDietSchema,
                                               UpdateDietSchema,
                                               UpdateStatusDietSchema)
-from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
-from presentation.schemas.response import Response
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.response import Response
 
 router = APIRouter(prefix="/diets", tags=["Diet"])
 

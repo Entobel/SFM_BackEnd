@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from application.dto.auth_dto import LoginResponse
+from app.application.dto.auth_dto import LoginResponse
 
 
 class ILoginUC(ABC):

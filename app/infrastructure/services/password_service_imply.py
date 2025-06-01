@@ -1,5 +1,5 @@
-from core.security import hash_password, verify_password
-from domain.interfaces.services.password_service import IPasswordService
+from app.core.security import hash_password, verify_password
+from app.domain.interfaces.services.password_service import IPasswordService
 
 
 class PasswordService(IPasswordService):

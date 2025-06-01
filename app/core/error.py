@@ -1,17 +1,13 @@
 import logging
-from functools import wraps
 from typing import Any, Callable, Dict, List, Type
 
 import psycopg2
 from fastapi import FastAPI, Request, status
-from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from psycopg2 import errorcodes as pg_errorcodes
-
-from presentation.schemas.response import Response
-
-from .exception import DomainError
+from app.presentation.schemas.response import Response
+from app.core.exception import DomainError
 
 logger = logging.getLogger("app.error")
 

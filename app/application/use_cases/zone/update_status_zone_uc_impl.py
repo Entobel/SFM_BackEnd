@@ -1,9 +1,9 @@
-from application.dto.zone_dto import ZoneDTO
-from application.interfaces.use_cases.zone.update_status_zone_uc import \
+from app.application.dto.zone_dto import ZoneDTO
+from app.application.interfaces.use_cases.zone.update_status_zone_uc import \
     IUpdateStatusZoneUC
-from core.exception import BadRequestError
-from domain.entities.zone_entity import ZoneEntity
-from domain.interfaces.repositories.zone_repository import IZoneRepository
+from app.core.exception import BadRequestError
+from app.domain.entities.zone_entity import ZoneEntity
+from app.domain.interfaces.repositories.zone_repository import IZoneRepository
 
 
 class UpdateStatusZoneUC(IUpdateStatusZoneUC):

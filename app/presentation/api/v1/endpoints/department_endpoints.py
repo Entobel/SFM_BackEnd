@@ -1,28 +1,28 @@
 from fastapi import APIRouter, Depends
 
-from application.dto.department_dto import DepartmentDTO
-from application.dto.department_factory_dto import DepartmentFactoryDTO
-from application.dto.department_factory_role_dto import \
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.dto.department_factory_dto import DepartmentFactoryDTO
+from app.application.dto.department_factory_role_dto import \
     DepartmentFactoryRoleDTO
-from application.dto.factory_dto import FactoryDTO
-from application.dto.role_dto import RoleDTO
-from presentation.api.v1.dependencies.department_dependencies import (
+from app.application.dto.factory_dto import FactoryDTO
+from app.application.dto.role_dto import RoleDTO
+from app.presentation.api.v1.dependencies.department_dependencies import (
     CreateDepartmentFactoryRoleUseCaseDep, CreateDepartmentFactoryUseCaseDep,
     CreateDepartmentUseCaseDep, ListDepartmentFactoryRoleUseCaseDep,
     ListDepartmentFactoryUseCaseDep, ListDepartmentUseCaseDep,
     UpdateDepartmentUseCaseDep, UpdateStatusDepartmentFactoryRoleUseCaseDep,
     UpdateStatusDepartmentFactoryUseCaseDep, UpdateStatusDepartmentUseCaseDep)
-from presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from presentation.schemas.department_factory_role_schema import (
+from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
+from app.presentation.schemas.department_factory_role_schema import (
     CreateDepartmentFactoryRoleSchema, DepartmentFactoryRoleResponseSchema,
     UpdateStatusDepartmentFactoryRoleSchema)
-from presentation.schemas.department_factory_schema import (
+from app.presentation.schemas.department_factory_schema import (
     CreateDepartmentFactorySchema, UpdateStatusDepartmentFactorySchema)
-from presentation.schemas.department_schema import (
+from app.presentation.schemas.department_schema import (
     CreateDepartmentSchema, UpdateDepartmentSchema,
     UpdateStatusDepartmentSchema)
-from presentation.schemas.filter_schema import FilterSchema, PaginateSchema
-from presentation.schemas.response import Response
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.response import Response
 
 router = APIRouter(prefix="/departments", tags=["Department"])
 

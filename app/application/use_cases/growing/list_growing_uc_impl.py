@@ -1,7 +1,7 @@
-from application.interfaces.use_cases.growing.list_growing_uc import \
+from app.application.interfaces.use_cases.growing.list_growing_uc import \
     IListGrowingUC
-from domain.entities.growing_entity import GrowingEntity
-from domain.interfaces.repositories.growing_repository import \
+from app.domain.entities.growing_entity import GrowingEntity
+from app.domain.interfaces.repositories.growing_repository import \
     IGrowingRepository
 
 

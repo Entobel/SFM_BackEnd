@@ -1,7 +1,7 @@
 import logging
 
-from core.exception import AuthenticationError
-from domain.entities.user_entity import UserEntity
+from app.core.exception import AuthenticationError
+from app.domain.entities.user_entity import UserEntity
 
 from ..interfaces.repositories.user_repository import IUserRepository
 from ..interfaces.services.password_service import IPasswordService

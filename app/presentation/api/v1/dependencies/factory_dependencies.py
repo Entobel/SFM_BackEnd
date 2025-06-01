@@ -2,27 +2,27 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from application.interfaces.use_cases.factory.create_factory_uc import \
+from app.application.interfaces.use_cases.factory.create_factory_uc import \
     ICreateFactoryUC
-from application.interfaces.use_cases.factory.list_factory_uc import \
+from app.application.interfaces.use_cases.factory.list_factory_uc import \
     IListFactoryUC
-from application.interfaces.use_cases.factory.update_factory_uc import \
+from app.application.interfaces.use_cases.factory.update_factory_uc import \
     IUpdateFactoryUC
-from application.interfaces.use_cases.factory.update_status_factory_uc import \
+from app.application.interfaces.use_cases.factory.update_status_factory_uc import \
     IUpdateStatusFactoryUC
-from application.use_cases.factory.create_factory_uc_impl import \
+from app.application.use_cases.factory.create_factory_uc_impl import \
     CreateFactoryUC
-from application.use_cases.factory.list_factory_uc_impl import \
+from app.application.use_cases.factory.list_factory_uc_impl import \
     ListFactoryUCImpl
-from application.use_cases.factory.update_factory_uc_impl import \
+from app.application.use_cases.factory.update_factory_uc_impl import \
     UpdateFactoryUC
-from application.use_cases.factory.update_status_factory_uc_impl import \
+from app.application.use_cases.factory.update_status_factory_uc_impl import \
     UpdateStatusFactoryUC
-from domain.interfaces.repositories.factory_repository import \
+from app.domain.interfaces.repositories.factory_repository import \
     IFactoryRepository
-from infrastructure.database.repositories.factory_repository_impl import \
+from app.infrastructure.database.repositories.factory_repository_impl import \
     FactoryRepository
-from presentation.api.v1.dependencies.common_dependencies import (
+from app.presentation.api.v1.dependencies.common_dependencies import (
     DatabaseDep, QueryHelperDep)
 
 

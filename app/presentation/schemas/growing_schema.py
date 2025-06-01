@@ -2,15 +2,8 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import (BaseModel, ConfigDict, Field, field_validator,
+from pydantic import (BaseModel, Field, field_validator,
                       model_validator)
-
-from application.dto.diet_dto import DietDTO
-from application.dto.produciton_type_dto import ProductionTypeDTO
-from application.dto.production_object_dto import ProductionObjectDTO
-from application.dto.shift_dto import ShiftDTO
-from application.dto.user_dto import UserDTO
-
 
 class CreateGrowingSchema(BaseModel):
     date_produced: datetime = Field(...)

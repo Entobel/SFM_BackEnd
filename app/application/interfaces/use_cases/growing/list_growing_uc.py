@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from domain.entities.growing_entity import GrowingEntity
+from app.domain.entities.growing_entity import GrowingEntity
 
 
 class IListGrowingUC(ABC):

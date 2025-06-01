@@ -2,18 +2,18 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from application.interfaces.use_cases.growing.create_growing_uc import \
+from app.application.interfaces.use_cases.growing.create_growing_uc import \
     ICreateGrowingUC
-from application.interfaces.use_cases.growing.list_growing_uc import \
+from app.application.interfaces.use_cases.growing.list_growing_uc import \
     IListGrowingUC
-from application.use_cases.growing.create_growing_uc_impl import \
+from app.application.use_cases.growing.create_growing_uc_impl import \
     CreateGrowingUC
-from application.use_cases.growing.list_growing_uc_impl import ListGrowingUC
-from domain.interfaces.repositories.growing_repository import \
+from app.application.use_cases.growing.list_growing_uc_impl import ListGrowingUC
+from app.domain.interfaces.repositories.growing_repository import \
     IGrowingRepository
-from infrastructure.database.repositories.growing_repository_impl import \
+from app.infrastructure.database.repositories.growing_repository_impl import \
     GrowingRepository
-from presentation.api.v1.dependencies.common_dependencies import (
+from app.presentation.api.v1.dependencies.common_dependencies import (
     DatabaseDep, QueryHelperDep)
 
 

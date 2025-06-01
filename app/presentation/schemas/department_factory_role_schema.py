@@ -1,10 +1,9 @@
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, model_validator
 
-from application.dto.department_dto import DepartmentDTO
-from application.dto.department_factory_dto import DepartmentFactoryDTO
-from application.dto.factory_dto import FactoryDTO
-from application.dto.role_dto import RoleDTO
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.dto.factory_dto import FactoryDTO
+from app.application.dto.role_dto import RoleDTO
 
 
 class DepartmentFactoryRoleResponseSchema(BaseModel):

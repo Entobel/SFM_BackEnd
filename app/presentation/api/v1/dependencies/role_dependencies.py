@@ -2,20 +2,20 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from application.interfaces.use_cases.role.create_role_uc import ICreateRoleUC
-from application.interfaces.use_cases.role.list_role_uc import IListRoleUC
-from application.interfaces.use_cases.role.update_role_uc import IUpdateRoleUC
-from application.interfaces.use_cases.role.update_status_role_uc import \
+from app.application.interfaces.use_cases.role.create_role_uc import ICreateRoleUC
+from app.application.interfaces.use_cases.role.list_role_uc import IListRoleUC
+from app.application.interfaces.use_cases.role.update_role_uc import IUpdateRoleUC
+from app.application.interfaces.use_cases.role.update_status_role_uc import \
     IUpdateStatusRoleUC
-from application.use_cases.role.create_role_uc_impl import CreateRoleUC
-from application.use_cases.role.list_role_uc_impl import ListRoleUC
-from application.use_cases.role.update_role_status_uc_impl import \
+from app.application.use_cases.role.create_role_uc_impl import CreateRoleUC
+from app.application.use_cases.role.list_role_uc_impl import ListRoleUC
+from app.application.use_cases.role.update_role_status_uc_impl import \
     UpdateRoleStatusUc
-from application.use_cases.role.update_role_uc_impl import UpdateRoleUC
-from domain.interfaces.repositories.role_repository import IRoleRepository
-from infrastructure.database.repositories.role_repository_impl import \
+from app.application.use_cases.role.update_role_uc_impl import UpdateRoleUC
+from app.domain.interfaces.repositories.role_repository import IRoleRepository
+from app.infrastructure.database.repositories.role_repository_impl import \
     RoleRepository
-from presentation.api.v1.dependencies.common_dependencies import (
+from app.presentation.api.v1.dependencies.common_dependencies import (
     DatabaseDep, QueryHelperDep)
 
 

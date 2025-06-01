@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.zone_entity import ZoneEntity
+from app.domain.entities.zone_entity import ZoneEntity
 
 
 class IZoneRepository(ABC):
 
     @abstractmethod
     def get_list_zones(
-        self, page: int, page_size: int, search: str, is_active: bool
+        self, page: int, page_size: int, search: str, is_active: bool, factory_id: int
     ) -> dict[
         "items" : list[ZoneEntity],
         "total":int,

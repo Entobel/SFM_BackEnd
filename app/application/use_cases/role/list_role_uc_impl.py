@@ -1,6 +1,6 @@
-from application.interfaces.use_cases.role.list_role_uc import IListRoleUC
-from domain.entities.role_entity import RoleEntity
-from domain.interfaces.repositories.role_repository import IRoleRepository
+from app.application.interfaces.use_cases.role.list_role_uc import IListRoleUC
+from app.domain.entities.role_entity import RoleEntity
+from app.domain.interfaces.repositories.role_repository import IRoleRepository
 
 
 class ListRoleUC(IListRoleUC):

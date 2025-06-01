@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.dto.role_dto import RoleDTO
-from domain.entities.role_entity import RoleEntity
-
+from app.application.dto.role_dto import RoleDTO
 
 class ICreateRoleUC(ABC):
     @abstractmethod

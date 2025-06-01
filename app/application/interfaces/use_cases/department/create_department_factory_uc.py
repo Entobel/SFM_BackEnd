@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from application.dto.department_dto import DepartmentDTO
-from application.dto.factory_dto import FactoryDTO
+from app.application.dto.department_dto import DepartmentDTO
+from app.application.dto.factory_dto import FactoryDTO
 
 
 class ICreateDepartmentFactoryUC(ABC):

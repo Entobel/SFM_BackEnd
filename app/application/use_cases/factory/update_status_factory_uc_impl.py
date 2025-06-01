@@ -1,7 +1,7 @@
-from application.interfaces.use_cases.factory.update_status_factory_uc import \
+from app.application.interfaces.use_cases.factory.update_status_factory_uc import \
     IUpdateStatusFactoryUC
-from core.exception import BadRequestError
-from domain.interfaces.repositories.factory_repository import \
+from app.core.exception import BadRequestError
+from app.domain.interfaces.repositories.factory_repository import \
     IFactoryRepository
 
 

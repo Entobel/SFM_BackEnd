@@ -1,9 +1,9 @@
-from application.dto.shift_dto import ShiftDTO
-from application.interfaces.use_cases.shift.create_shift_uc import \
+from app.application.dto.shift_dto import ShiftDTO
+from app.application.interfaces.use_cases.shift.create_shift_uc import \
     ICreateShiftUC
-from core.exception import BadRequestError
-from domain.entities.shift_entity import ShiftEntity
-from domain.interfaces.repositories.shift_repository import IShiftRepository
+from app.core.exception import BadRequestError
+from app.domain.entities.shift_entity import ShiftEntity
+from app.domain.interfaces.repositories.shift_repository import IShiftRepository
 
 
 class CreateShiftUC(ICreateShiftUC):

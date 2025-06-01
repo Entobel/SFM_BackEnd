@@ -1,8 +1,8 @@
-from application.interfaces.use_cases.department.list_department_factory_role_uc import \
+from app.application.interfaces.use_cases.department.list_department_factory_role_uc import \
     IListDepartmentFactoryRoleUC
-from domain.entities.department_factory_role_entity import \
+from app.domain.entities.department_factory_role_entity import \
     DepartmentFactoryRoleEntity
-from domain.interfaces.repositories.deparment_factory_role_repository import \
+from app.domain.interfaces.repositories.deparment_factory_role_repository import \
     IDepartmentFactoryRoleRepository
 
 

@@ -1,7 +1,7 @@
-from application.interfaces.use_cases.role.update_status_role_uc import \
+from app.application.interfaces.use_cases.role.update_status_role_uc import \
     IUpdateStatusRoleUC
-from core.exception import BadRequestError, NotFoundError
-from domain.interfaces.repositories.role_repository import IRoleRepository
+from app.core.exception import BadRequestError, NotFoundError
+from app.domain.interfaces.repositories.role_repository import IRoleRepository
 
 
 class UpdateRoleStatusUc(IUpdateStatusRoleUC):

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.department_factory_role_entity import \
+from app.domain.entities.department_factory_role_entity import \
     DepartmentFactoryRoleEntity
 
 

@@ -1,9 +1,9 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from domain.entities.zone_entity import ZoneEntity
-from domain.interfaces.repositories.zone_repository import IZoneRepository
-from domain.interfaces.services.query_helper_service import IQueryHelperService
+from app.domain.entities.zone_entity import ZoneEntity
+from app.domain.interfaces.repositories.zone_repository import IZoneRepository
+from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
 class ZoneRepository(IZoneRepository):
@@ -67,7 +67,16 @@ class ZoneRepository(IZoneRepository):
         # Fetch
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT z.id as id, z.zone_number as zone_number, z.is_active as is_active, z.created_at as created_at, z.updated_at as updated_at FROM zone z {qb.where_sql()} ORDER BY z.zone_number DESC {limit_sql}
+        SELECT 
+        z.id as id, 
+        z.zone_number as zone_number, 
+        z.is_active as is_active, 
+        z.created_at as created_at, 
+        z.updated_at as updated_at 
+        FROM 
+        zone z {qb.where_sql()} 
+        ORDER BY 
+        z.zone_number DESC {limit_sql};
         """
 
         params = qb.all_params(limit_params)
