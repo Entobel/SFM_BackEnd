@@ -63,7 +63,7 @@ class AppCreator:
         # Configure CORS middleware if applicable
         if config.BACKEND_CORS_ORIGINS:
             self.app.add_middleware(
-                type[CORSMiddleware],
+                CORSMiddleware,
                 allow_origins=[str(origin) for origin in config.BACKEND_CORS_ORIGINS],
                 allow_credentials=True,
                 allow_methods=["*"],
@@ -86,6 +86,7 @@ class AppCreator:
         # Setup centralized error handling
         setup_error_handlers(self.app)
         logger.info("[APP]:: Centralized error handlers configured")
+
 
 app_creator = AppCreator()
 app = app_creator.app

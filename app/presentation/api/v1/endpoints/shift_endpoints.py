@@ -4,7 +4,7 @@ from app.application.dto.shift_dto import ShiftDTO
 from app.presentation.api.v1.dependencies.shift_dependencies import (
     CreateShiftUCDep, ListShiftUCDep, UpdateShiftUCDep, UpdateStatusShiftUCDep)
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.shift_schema import (CreateShiftSchema,
                                                UpdateShiftSchema,
@@ -38,7 +38,7 @@ async def get_all_shifts(
         )
         shifts.append(shift_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],

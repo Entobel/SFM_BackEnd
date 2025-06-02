@@ -9,7 +9,7 @@ from app.application.dto.user_dto import UserDTO
 from app.presentation.api.v1.dependencies.growing_dependencies import (
     CreateGrowingUCDep, ListGrowingUCDep)
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.growing_schema import CreateGrowingSchema
 from app.presentation.schemas.response import Response
 
@@ -78,7 +78,7 @@ def list_growings(
         )
         growings.append(growing_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],

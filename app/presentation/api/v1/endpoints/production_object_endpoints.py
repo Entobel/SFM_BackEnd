@@ -5,7 +5,7 @@ from app.presentation.api.v1.dependencies.production_object_dependencies import 
     CreateProductionObjectUCDep, ListProductionObjectUCDep,
     UpdateProductionObjectUCDep, UpdateStatusProductionObjectUCDep)
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.production_object_schema import (
     CreateProductionObjectSchema, UpdateProductionObjectDTO,
     UpdateStatusProductionObjectSchema)
@@ -40,7 +40,7 @@ async def get_production_objects(
             )
         )
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],

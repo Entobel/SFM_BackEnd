@@ -34,7 +34,7 @@ class FilterSchema(BaseModel):
 T = TypeVar("T")
 
 
-class PaginateSchema(BaseModel, Generic[T]):
+class PaginateDTO(BaseModel, Generic[T]):
     total: int
     page: int
     page_size: int

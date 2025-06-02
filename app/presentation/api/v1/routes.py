@@ -1,13 +1,13 @@
 from fastapi import APIRouter
 
 from app.presentation.api.v1.endpoints import (auth_endpoints,
-                                           department_endpoints,
-                                           diet_endpoints, factory_endpoints,
-                                           growing_endpoints,
-                                           production_object_endpoints,
-                                           production_type_endpoints,
-                                           role_endpoints, shift_endpoints,
-                                           user_endpoints, zone_endpoints)
+                                               department_endpoints,
+                                               diet_endpoints, factory_endpoints,
+                                               growing_endpoints,
+                                               production_object_endpoints,
+                                               production_type_endpoints,
+                                               role_endpoints, shift_endpoints,
+                                               user_endpoints, zone_endpoints, level_endpoints)
 
 routers = APIRouter()
 router_list = [
@@ -22,6 +22,7 @@ router_list = [
     production_type_endpoints.router,
     growing_endpoints.router,
     zone_endpoints.router,
+    level_endpoints.router,
 ]
 
 for router in router_list:

@@ -8,7 +8,7 @@ class ListZoneUC(IListZoneUC):
         self.zone_repo = zone_repo
 
     def execute(
-        self, page: int, page_size: int, search: str, is_active: str, factory_id: int
+        self, page: int, page_size: int, search: str, is_active: bool, factory_id: int
     ) -> dict[
         "total":int,
         "page":int,
@@ -21,5 +21,5 @@ class ListZoneUC(IListZoneUC):
             page_size=page_size,
             search=search,
             is_active=is_active,
-            factory_id=factory_id,
+            factory_id=factory_id
         )

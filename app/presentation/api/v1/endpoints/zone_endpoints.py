@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 
+from app.application.dto.factory_dto import FactoryDTO
 from app.application.dto.zone_dto import ZoneDTO
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from app.presentation.api.v1.dependencies.zone_dependencies import (
@@ -8,13 +9,12 @@ from app.presentation.api.v1.dependencies.zone_dependencies import (
     UpdateStatusZoneUseCaseDep,
     UpdateZoneUseCaseDep,
 )
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.zone_schema import (
     CreateZoneSchema,
     UpdateStatusZoneSchema,
     UpdateZoneSchema,
-    ZoneResponseSchema,
 )
 
 router = APIRouter(prefix="/zones", tags=["Zones"])
@@ -23,9 +23,9 @@ router = APIRouter(prefix="/zones", tags=["Zones"])
 # get list zone
 @router.get("/")
 async def get_list_zones(
-    token: TokenVerifyDep,
-    use_case: GetListZoneUseCaseDep,
-    filter_params: FilterSchema = Depends(),
+        token: TokenVerifyDep,
+        use_case: GetListZoneUseCaseDep,
+        filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -37,15 +37,21 @@ async def get_list_zones(
     zones = []
 
     for zone in result["items"]:
-        zone_dto = ZoneResponseSchema(
+        zone_dto = ZoneDTO(
             id=zone.id,
             zone_number=zone.zone_number,
             is_active=zone.is_active,
+            factory=FactoryDTO(
+                name=zone.factory.name,
+                abbr_name=zone.factory.abbr_name,
+            ),
+            created_at=zone.created_at,
+            updated_at=zone.updated_at
         )
 
         zones.append(zone_dto)
 
-    paginate_schema = PaginateSchema(
+    paginate_schema = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -61,11 +67,13 @@ async def get_list_zones(
 # create zone
 @router.post("/")
 async def create_zone(
-    token: TokenVerifyDep,
-    body: CreateZoneSchema,
-    use_case: CreateZoneUseCaseDep,
+        token: TokenVerifyDep,
+        body: CreateZoneSchema,
+        use_case: CreateZoneUseCaseDep,
 ):
-    zone_dto = ZoneDTO(zone_number=body.zone_number)
+    zone_dto = ZoneDTO(zone_number=body.zone_number, factory=FactoryDTO(
+        id=body.factory_id,
+    ))
 
     use_case.execute(zone_dto=zone_dto)
 
@@ -77,10 +85,10 @@ async def create_zone(
 # update zone
 @router.patch("/{zone_id}")
 async def update_zone(
-    token: TokenVerifyDep,
-    zone_id: int,
-    body: UpdateZoneSchema,
-    use_case: UpdateZoneUseCaseDep,
+        token: TokenVerifyDep,
+        zone_id: int,
+        body: UpdateZoneSchema,
+        use_case: UpdateZoneUseCaseDep,
 ):
     zone_dto = ZoneDTO(id=zone_id, zone_number=body.zone_number)
 
@@ -94,10 +102,10 @@ async def update_zone(
 # update status zone
 @router.patch("/{zone_id}/status")
 async def update_status_zone(
-    token: TokenVerifyDep,
-    zone_id: int,
-    body: UpdateStatusZoneSchema,
-    use_case: UpdateStatusZoneUseCaseDep,
+        token: TokenVerifyDep,
+        zone_id: int,
+        body: UpdateStatusZoneSchema,
+        use_case: UpdateStatusZoneUseCaseDep,
 ):
     zone_dto = ZoneDTO(id=zone_id, is_active=body.is_active)
 

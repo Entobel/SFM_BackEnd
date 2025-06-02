@@ -9,7 +9,7 @@ from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDe
 from app.presentation.schemas.factory_schema import (CreateFactorySchema,
                                                  UpdateFactorySchema,
                                                  UpdateStatusFactorySchema)
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
 
 router = APIRouter(prefix="/factories", tags=["Factory"])
@@ -41,7 +41,7 @@ async def get_list_factory(
         )
         factories.append(factory_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],

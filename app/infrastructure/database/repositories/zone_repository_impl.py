@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.zone_entity import ZoneEntity
 from app.domain.interfaces.repositories.zone_repository import IZoneRepository
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
@@ -17,8 +18,9 @@ class ZoneRepository(IZoneRepository):
 
     def create_zone(self, zone_entity: ZoneEntity) -> bool:
         query = """
-        INSERT INTO zone (zone_number) VALUES (%s)
-        """
+                INSERT INTO zone (zone_number)
+                VALUES (%s) \
+                """
 
         zone_number = zone_entity.zone_number
 
@@ -34,8 +36,10 @@ class ZoneRepository(IZoneRepository):
 
     def update_status_zone(self, zone_entity: ZoneEntity) -> bool:
         query = """
-        UPDATE zone SET is_active = %s WHERE id = %s
-        """
+                UPDATE zone
+                SET is_active = %s
+                WHERE id = %s \
+                """
         with self.conn.cursor() as cur:
             cur.execute(query, (zone_entity.is_active, zone_entity.id))
 
@@ -47,7 +51,7 @@ class ZoneRepository(IZoneRepository):
                 return False
 
     def get_list_zones(
-        self, page: int, page_size: int, search: str, is_active: bool
+        self, page: int, page_size: int, search: str, is_active: bool, factory_id: int
     ) -> dict:
         qb = self.query_helper
 
@@ -56,6 +60,9 @@ class ZoneRepository(IZoneRepository):
 
         if is_active is not None:
             qb.add_bool("z.is_active", is_active)
+
+        if factory_id is not None:
+            qb.add_eq("z.factory_id", factory_id)
 
         # Count
         count_sql = f"""SELECT COUNT(*) FROM zone {qb.where_sql()}"""
@@ -71,10 +78,12 @@ class ZoneRepository(IZoneRepository):
         z.id as id, 
         z.zone_number as zone_number, 
         z.is_active as is_active, 
+        f.abbr_name as f_abbr_name,
+        f."name" as f_name,
         z.created_at as created_at, 
         z.updated_at as updated_at 
         FROM 
-        zone z {qb.where_sql()} 
+        zone z JOIN factory f ON z.factory_id = f.id {qb.where_sql()} 
         ORDER BY 
         z.zone_number DESC {limit_sql};
         """
@@ -85,7 +94,20 @@ class ZoneRepository(IZoneRepository):
             cur.execute(data_sql, params)
             rows = cur.fetchall()
 
-        zones = [ZoneEntity.from_row(row) for row in rows]
+        zones = []
+        for row in rows:
+            zone = ZoneEntity(
+                id=row["id"],
+                zone_number=row["zone_number"],
+                is_active=row["is_active"],
+                factory=FactoryEntity(
+                    name=row["f_name"],
+                    abbr_name=row["f_abbr_name"],
+                ),
+                created_at=row["created_at"],
+                updated_at=row["updated_at"],
+            )
+            zones.append(zone)
 
         return {
             "items": zones,
@@ -95,19 +117,38 @@ class ZoneRepository(IZoneRepository):
             "total_pages": qb.total_pages(total=total, page_size=page_size),
         }
 
-    def get_zone_by_zone_number(self, zone_entity: ZoneEntity) -> ZoneEntity | None:
+    def check_zone_existed(self, zone_entity: ZoneEntity) -> ZoneEntity | None:
         data_sql = """
-        SELECT z.id as id, z.zone_number as zone_number, z.is_active as is_active, z.created_at as created_at, z.updated_at as updated_at FROM zone z WHERE z.zone_number = %s
-        """
+                   SELECT z.id          as id,
+                          z.zone_number as zone_number,
+                          z.is_active   as is_active,
+                          z.created_at  as created_at,
+                          z.updated_at  as updated_at
+                   FROM zone z
+                            JOIN factory f ON z.factory_id = f.id
+                   WHERE z.zone_number = %s
+                     AND f.id = %s \
+                   """
+
+        zone_number = zone_entity.zone_number
+        factory_id = zone_entity.factory.id
+
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(data_sql, (zone_entity.zone_number,))
+            cur.execute(data_sql, (zone_number, factory_id))
             row = cur.fetchone()
+
         return ZoneEntity.from_row(row) if row else None
 
     def get_zone_by_id(self, zone_entity: ZoneEntity) -> ZoneEntity | None:
         data_sql = """
-        SELECT z.id as id, z.zone_number as zone_number, z.is_active as is_active, z.created_at as created_at, z.updated_at as updated_at FROM zone z WHERE z.id = %s
-        """
+                   SELECT z.id          as id,
+                          z.zone_number as zone_number,
+                          z.is_active   as is_active,
+                          z.created_at  as created_at,
+                          z.updated_at  as updated_at
+                   FROM zone z
+                   WHERE z.id = %s \
+                   """
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(data_sql, (zone_entity.id,))
             row = cur.fetchone()
@@ -115,8 +156,11 @@ class ZoneRepository(IZoneRepository):
 
     def update_zone(self, zone_entity: ZoneEntity) -> bool:
         query = """
-        UPDATE zone SET zone_number = %s, is_active = %s WHERE id = %s
-        """
+                UPDATE zone
+                SET zone_number = %s,
+                    is_active   = %s
+                WHERE id = %s \
+                """
         with self.conn.cursor() as cur:
             cur.execute(
                 query, (zone_entity.zone_number, zone_entity.is_active, zone_entity.id)

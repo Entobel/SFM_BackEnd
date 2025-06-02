@@ -21,7 +21,7 @@ from app.presentation.schemas.department_factory_schema import (
 from app.presentation.schemas.department_schema import (
     CreateDepartmentSchema, UpdateDepartmentSchema,
     UpdateStatusDepartmentSchema)
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
 
 router = APIRouter(prefix="/departments", tags=["Department"])
@@ -53,7 +53,7 @@ async def get_all_department(
         )
         departments.append(department_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -163,7 +163,7 @@ async def get_department_factory(
         )
         department_factories.append(department_factory_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
@@ -217,7 +217,7 @@ async def get_department_factory_role(
         )
         department_factory_roles.append(department_factory_role_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],

@@ -13,7 +13,7 @@ from app.presentation.api.v1.dependencies.user_dependencies import (
     TokenVerifyDep,
     UpdateUserUseCaseDep,
 )
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.token_schema import TokenPayloadInputDTO
 from app.presentation.schemas.user_schema import (
@@ -79,7 +79,7 @@ async def get_list_users(
         )
         users.append(user_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],

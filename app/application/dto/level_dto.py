@@ -2,14 +2,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from app.application.dto.factory_dto import FactoryDTO
-
 
 @dataclass(frozen=True)
-class ZoneDTO:
+class LevelDTO:
     id: Optional[int] = None
-    zone_number: Optional[int] = None
-    factory: Optional[FactoryDTO] = None
+    name: Optional[str] = None
     is_active: Optional[bool] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

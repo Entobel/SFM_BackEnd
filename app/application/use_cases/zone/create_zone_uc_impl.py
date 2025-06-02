@@ -1,6 +1,7 @@
 from app.application.dto.zone_dto import ZoneDTO
 from app.application.interfaces.use_cases.zone.create_zone_uc import ICreateZoneUC
 from app.core.exception import BadRequestError
+from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.zone_entity import ZoneEntity
 from app.domain.interfaces.repositories.zone_repository import IZoneRepository
 
@@ -10,9 +11,9 @@ class CreateZoneUC(ICreateZoneUC):
         self.zone_repo = zone_repo
 
     def execute(self, zone_dto: ZoneDTO):
-        zone_entity = ZoneEntity(zone_number=zone_dto.zone_number)
+        zone_entity = ZoneEntity(zone_number=zone_dto.zone_number, factory=FactoryEntity(id=zone_dto.factory.id))
 
-        is_exist_zone = self.zone_repo.get_zone_by_zone_number(zone_entity=zone_entity)
+        is_exist_zone = self.zone_repo.check_zone_existed(zone_entity=zone_entity)
 
         # Check existed
         if is_exist_zone:
@@ -21,6 +22,6 @@ class CreateZoneUC(ICreateZoneUC):
         is_success = self.zone_repo.create_zone(zone_entity=zone_entity)
 
         if not is_success:
-            raise BadRequestError("ETB_tao_zon_khong_thanh_cong")
+            raise BadRequestError("ETB_tao_zone_khong_thanh_cong")
 
         return True

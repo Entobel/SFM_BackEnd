@@ -10,14 +10,17 @@ class ZoneResponseSchema(BaseModel):
     is_active: bool
 
 
+
 class CreateZoneSchema(BaseModel):
     zone_number: int
+    factory_id: int
 
     @model_validator(mode="before")
     @classmethod
     def check_required_fields(cls, values: dict[str, any]):
         required_fields = {
             "zone_number": "ETB-thieu_truong_zone_number",
+            "factory_id": "ETB-thieu_truong_factory_id",
         }
 
         errors = []
@@ -42,6 +45,12 @@ class CreateZoneSchema(BaseModel):
             raise ValueError("ETB-so_zone_khong_duoc_am")
         return v
 
+    @field_validator("factory_id")
+    @classmethod
+    def validate_zone_number(cls, v: int):
+        if v <= 0:
+            raise ValueError("ETB-factory_id_khong_hop_le")
+        return v
 
 class UpdateZoneSchema(BaseModel):
     zone_number: int

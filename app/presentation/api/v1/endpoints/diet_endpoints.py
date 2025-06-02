@@ -7,7 +7,7 @@ from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDe
 from app.presentation.schemas.diet_schema import (CreateDietSchema,
                                               UpdateDietSchema,
                                               UpdateStatusDietSchema)
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
 
 router = APIRouter(prefix="/diets", tags=["Diet"])
@@ -39,7 +39,7 @@ async def list_diets(
 
         diets.append(diet_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],

@@ -4,7 +4,7 @@ from app.application.dto.role_dto import RoleDTO
 from app.presentation.api.v1.dependencies.role_dependencies import (
     CreateRoleUCDep, ListRoleUCDep, UpdateRoleUCDep, UpdateStatusRoleUCDep)
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from app.presentation.schemas.filter_schema import FilterSchema, PaginateSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.role_schema import (CreateRoleSchema,
                                               UpdateRoleSchema,
@@ -37,7 +37,7 @@ async def get_all_roles(
         )
         roles.append(role_dto)
 
-    paginate_data = PaginateSchema(
+    paginate_data = PaginateDTO(
         total=result["total"],
         page=result["page"],
         page_size=result["page_size"],
