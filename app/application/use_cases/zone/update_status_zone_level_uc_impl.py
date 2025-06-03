@@ -24,7 +24,6 @@ class UpdateStatusZoneLevelUC(IUpdateStatusZoneLevelUC):
             raise BadRequestError("ETB-khong_tim_thay_zone_level")
 
         if zone_level_entity.is_active == query_entity.is_active:
-            print("Vaoda y")
             return True
 
         zone_level_entity.change_is_active(query_entity.is_active)

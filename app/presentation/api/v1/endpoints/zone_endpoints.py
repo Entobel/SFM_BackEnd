@@ -6,6 +6,7 @@ from app.application.dto.zone_level_dto import ZoneLevelDTO
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from app.presentation.api.v1.dependencies.zone_dependencies import (
     CreateZoneUseCaseDep,
+    GetListZoneLevelUseCaseDep,
     GetListZoneUseCaseDep,
     UpdateStatusZoneLevelUseCaseDep,
     UpdateStatusZoneUseCaseDep,
@@ -153,4 +154,32 @@ async def update_status_zone_level(
 
     return Response.success_response(
         code="ETB-cap_nhat_status_thanh_cong", data="Success"
+    ).get_dict()
+
+
+@router.get("/zone-levels")
+async def get_list_zone_levels(
+    token: TokenVerifyDep,
+    use_case: GetListZoneLevelUseCaseDep,
+    filter_params: FilterSchema = Depends(),
+):
+    result = use_case.execute(
+        page=filter_params.page,
+        page_size=filter_params.page_size,
+        search=filter_params.search,
+        zone_id=filter_params.zone_id,
+        is_active=filter_params.is_active,
+    )
+
+    paginate_schema = PaginateDTO(
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"],
+        total_pages=result["total_pages"],
+        items=result["items"],
+    )
+
+    return Response.success_response(
+        code="ETB-lay_danh_sach_thanh_cong",
+        data=paginate_schema,
     ).get_dict()

@@ -12,6 +12,7 @@ class FilterSchema(BaseModel):
     page: int = Field(default=1, description="Page number")
     page_size: int = Field(default=10, description="Number of items per page")
     search: str = Field(default="", description="Search query string")
+    zone_id: Optional[int] = Field(default=None, description="Filter by zone ID")
     department_id: Optional[int] = Field(
         default=None, description="Filter by department ID"
     )

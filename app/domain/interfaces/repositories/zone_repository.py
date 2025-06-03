@@ -23,6 +23,17 @@ class IZoneRepository(ABC):
     ]: ...
 
     @abstractmethod
+    def get_list_zone_levels(
+        self, page: int, page_size: int, search: str, zone_id: int, is_active: bool
+    ) -> dict[
+        "items" : list[ZoneLevelEntity],
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+    ]: ...
+
+    @abstractmethod
     def get_zone_by_id(self, zone_entity: ZoneEntity) -> ZoneEntity | None: ...
 
     @abstractmethod

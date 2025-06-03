@@ -82,6 +82,7 @@ class ZoneRepository(IZoneRepository):
             JOIN factory f ON z.factory_id = f.id
             {qb.where_sql()}
         """
+
         with self.conn.cursor() as cur:
             cur.execute(count_sql, qb.all_params())
             total = cur.fetchone()[0]
@@ -128,8 +129,9 @@ class ZoneRepository(IZoneRepository):
         ]
 
         # ZoneLevel query
-        zone_ids = [str(row["id"]) for row in rows]
-        zone_level_sql = f"""
+        zone_ids = [int(row["id"]) for row in rows]
+
+        zone_level_sql = """
             SELECT
                 zl.id             AS zone_level_id,
                 zl.zone_id        AS zone_id,
@@ -145,11 +147,12 @@ class ZoneRepository(IZoneRepository):
             JOIN level l ON zl.level_id = l.id
             JOIN zone z ON zl.zone_id = z.id
             JOIN factory f ON z.factory_id = f.id
-            WHERE z.id IN ({','.join(zone_ids)})
+            WHERE z.id = ANY(%s)
             ORDER BY z.zone_number DESC;
         """
+
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(zone_level_sql)
+            cur.execute(zone_level_sql, (zone_ids,))
             zone_level_rows = cur.fetchall()
 
         # ZoneLevel entities
@@ -283,3 +286,96 @@ class ZoneRepository(IZoneRepository):
             if row
             else None
         )
+
+    def get_list_zone_levels(
+        self, page: int, page_size: int, search: str, zone_id: int, is_active: bool
+    ) -> dict[
+        "items" : list[ZoneLevelEntity],
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+    ]:
+        qb = self.query_helper
+
+        if search:
+            qb.add_search(cols=["CAST(zl.zone_id AS TEXT)"], query=search)
+        if is_active is not None:
+            qb.add_bool("z.is_active", is_active)
+        if zone_id is not None:
+            qb.add_eq("zl.zone_id", zone_id)
+
+        # Count query
+        count_sql = f"""
+            SELECT COUNT(*)
+            FROM zone_level zl
+            JOIN zone z ON zl.zone_id = z.id
+            {qb.where_sql()}
+        """
+        with self.conn.cursor() as cur:
+            cur.execute(count_sql, qb.all_params())
+            total = cur.fetchone()[0]
+
+        limit_sql, limit_params = qb.paginate(page, page_size)
+
+        data_sql = f"""
+            SELECT
+                zl.id             AS zone_level_id,
+                zl.zone_id        AS zone_id,
+                zl.is_active      AS zone_level_active,
+                l.name            AS level_name,
+                l.id              AS level_id,
+                l.is_active       AS level_active,
+                l.created_at      AS level_created_at,
+                l.updated_at      AS level_updated_at,
+                z.id              AS zone_id,
+                z.zone_number     AS zone_number,
+                z.is_active       AS zone_active,
+                z.created_at      AS zone_created_at,
+                z.updated_at      AS zone_updated_at,
+                zl.created_at     AS created_at,
+                zl.updated_at     AS updated_at
+            FROM zone_level zl
+            JOIN zone z ON zl.zone_id = z.id
+            JOIN level l ON zl.level_id = l.id
+            {qb.where_sql()}
+            ORDER BY z.zone_number DESC
+            {limit_sql};
+        """
+        params = qb.all_params(limit_params)
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(data_sql, params)
+            rows = cur.fetchall()
+
+        zone_levels = [
+            ZoneLevelEntity(
+                id=row["zone_level_id"],
+                is_active=row["zone_level_active"],
+                zone=ZoneEntity(
+                    id=row["zone_id"],
+                    zone_number=row["zone_number"],
+                    is_active=row["zone_active"],
+                    created_at=row["zone_created_at"],
+                    updated_at=row["zone_updated_at"],
+                ),
+                level=LevelEntity(
+                    id=row["level_id"],
+                    name=row["level_name"],
+                    is_active=row["level_active"],
+                    created_at=row["level_created_at"],
+                    updated_at=row["level_updated_at"],
+                ),
+                created_at=row["created_at"],
+                updated_at=row["updated_at"],
+            )
+            for row in rows
+        ]
+
+        return {
+            "items": zone_levels,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": qb.total_pages(total=total, page_size=page_size),
+        }
