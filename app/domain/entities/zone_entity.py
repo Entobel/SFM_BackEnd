@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from app.domain.entities.factory_entity import FactoryEntity
 
 

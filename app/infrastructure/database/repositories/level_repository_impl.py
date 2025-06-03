@@ -8,20 +8,22 @@ from app.domain.interfaces.services.query_helper_service import IQueryHelperServ
 
 class LevelRepository(ILevelRepository):
     def __init__(
-            self,
-            conn: psycopg2.extensions.connection,
-            query_helper: IQueryHelperService,
+        self,
+        conn: psycopg2.extensions.connection,
+        query_helper: IQueryHelperService,
     ):
         self.conn = conn
         self.query_helper = query_helper
 
-    def get_list_levels(self, page: int, page_size: int, search: str, is_active: bool) -> dict[
-                                                                                          "items": list[LevelEntity],
-                                                                                          "total":int,
-                                                                                          "page":int,
-                                                                                          "page_size":int,
-                                                                                          "total_pages":int,
-                                                                                          ]:
+    def get_list_levels(
+        self, page: int, page_size: int, search: str, is_active: bool
+    ) -> dict[
+        "items" : list[LevelEntity],
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+    ]:
 
         qb = self.query_helper
 
@@ -32,7 +34,7 @@ class LevelRepository(ILevelRepository):
             qb.add_bool("l.is_active", is_active)
 
         # Count
-        count_sql = f"""SELECT COUNT(*) FROM level {qb.where_sql()}"""
+        count_sql = f"""SELECT COUNT(*) FROM level l {qb.where_sql()}"""
 
         with self.conn.cursor() as cursor:
             cursor.execute(count_sql, qb.all_params())

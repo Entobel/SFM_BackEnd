@@ -1,9 +1,15 @@
 from abc import ABC, abstractmethod
 
 from app.domain.entities.zone_entity import ZoneEntity
+from app.domain.entities.zone_level_entity import ZoneLevelEntity
 
 
 class IZoneRepository(ABC):
+
+    @abstractmethod
+    def get_zone_level_by_id(
+        self, zone_level_entity: ZoneLevelEntity
+    ) -> ZoneLevelEntity | None: ...
 
     @abstractmethod
     def get_list_zones(
@@ -30,3 +36,6 @@ class IZoneRepository(ABC):
 
     @abstractmethod
     def update_zone(self, zone_entity: ZoneEntity) -> bool: ...
+
+    @abstractmethod
+    def update_status_zone_level(self, zone_level_entity: ZoneLevelEntity) -> bool: ...

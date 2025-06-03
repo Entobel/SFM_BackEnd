@@ -10,7 +10,6 @@ class ZoneResponseSchema(BaseModel):
     is_active: bool
 
 
-
 class CreateZoneSchema(BaseModel):
     zone_number: int
     factory_id: int
@@ -52,6 +51,7 @@ class CreateZoneSchema(BaseModel):
             raise ValueError("ETB-factory_id_khong_hop_le")
         return v
 
+
 class UpdateZoneSchema(BaseModel):
     zone_number: int
 
@@ -86,6 +86,32 @@ class UpdateZoneSchema(BaseModel):
 
 
 class UpdateStatusZoneSchema(BaseModel):
+    is_active: bool
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_required_fields(cls, values: dict[str, any]):
+        required_fields = {
+            "is_active": "ETB-thieu_truong_is_active",
+        }
+
+        errors = []
+        for field, error_code in required_fields.items():
+            if field not in values or values[field] is None:
+                errors.append(
+                    {
+                        "loc": ("body", field),
+                        "msg": error_code,
+                        "type": "value_error.missing",
+                    }
+                )
+        if errors:
+            raise RequestValidationError(errors)
+
+        return values
+
+
+class UpdateStatusLevelZoneSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")
