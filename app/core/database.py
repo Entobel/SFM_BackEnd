@@ -65,15 +65,15 @@ class Database:
             logger.error("[DATABASE]:: Connection test failed", exc_info=True)
             return False
 
-    def get_db(self) -> Generator[psycopg2.extensions.connection, None, None]:
-        """
-        FastAPI-compatible dependency for database connection.
-        Use as: `conn = Depends(db.get_connection)`
-        """
+    def get_db(self):
         conn = self.connection_pool.getconn()
         try:
             self._set_timezone(conn)
             yield conn
+            conn.commit()  # Commit luôn sau mỗi request
+        except Exception:
+            conn.rollback()
+            raise
         finally:
             self.connection_pool.putconn(conn)
 
