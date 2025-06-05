@@ -23,7 +23,9 @@ class IProductionTypeRepository(ABC):
     def get_production_type_by_name(self, name: str) -> ProductionTypeEntity: ...
 
     @abstractmethod
-    def get_production_type_by_id(self, id: int) -> ProductionTypeEntity: ...
+    def get_production_type_by_id(
+        self, production_type_entity: ProductionTypeEntity
+    ) -> ProductionTypeEntity: ...
 
     @abstractmethod
     def create_production_type(
