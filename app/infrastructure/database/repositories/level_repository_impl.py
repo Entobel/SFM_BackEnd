@@ -34,7 +34,7 @@ class LevelRepository(ILevelRepository):
             qb.add_bool("l.is_active", is_active)
 
         # Count
-        count_sql = f"""SELECT COUNT(*) FROM level l {qb.where_sql()}"""
+        count_sql = f"""SELECT COUNT(*) FROM levels l {qb.where_sql()}"""
 
         with self.conn.cursor() as cursor:
             cursor.execute(count_sql, qb.all_params())
@@ -50,7 +50,7 @@ class LevelRepository(ILevelRepository):
         l.is_active as is_active,
         l.created_at as created_at,
         l.updated_at as updated_at
-        FROM level l {qb.where_sql()}
+        FROM levels l {qb.where_sql()}
         ORDER BY
         l.id DESC {limit_sql};
         """
@@ -89,23 +89,23 @@ class LevelRepository(ILevelRepository):
 
         level_id = level_entity.id
 
-        with self.conn.cursor(cursor_factory=RealDictCursor) as curr:
-            curr.execute(query=query, vars=(level_id,))
-            row = curr.fetchone()
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query=query, vars=(level_id,))
+            row = cur.fetchone()
             return LevelEntity.from_row(row) if row else None
 
     def get_level_by_name(self, level_entity: LevelEntity) -> LevelEntity | None:
         query = """
                 SELECT id, name, is_active, created_at, updated_at
-                FROM level
+                FROM levels
                 WHERE name = %s; \
                 """
 
         level_name = level_entity.name
 
-        with self.conn.cursor(cursor_factory=RealDictCursor) as curr:
-            curr.execute(query=query, vars=(level_name,))
-            row = curr.fetchone()
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query=query, vars=(level_name,))
+            row = cur.fetchone()
             return LevelEntity.from_row(row) if row else None
 
     def create_level(self, level_entity: LevelEntity) -> bool:
@@ -115,35 +115,25 @@ class LevelRepository(ILevelRepository):
                 """
         level_name = level_entity.name
 
-        with self.conn.cursor() as curr:
-            curr.execute(query=query, vars=(level_name,))
+        with self.conn.cursor() as cur:
+            cur.execute(query=query, vars=(level_name,))
 
-            if curr.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_level(self, level: LevelEntity) -> bool:
         query = """
-                UPDATE level
+                UPDATE levels
                 SET name = %s \
                 """
         level_name = level.name
-        with self.conn.cursor() as curr:
-            curr.execute(query=query, vars=(level_name,))
+        with self.conn.cursor() as cur:
+            cur.execute(query=query, vars=(level_name,))
 
-            if curr.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_status_level(self, level_entity: LevelEntity) -> bool:
         query = """
-                UPDATE level \
+                UPDATE levels \
                 SET is_active = %s \
                 WHERE id = %s
                 """
