@@ -8,7 +8,9 @@ class IProductionObjectRepository(ABC):
     def get_all_production_objects(self) -> list[ProductionObjectEntity]: ...
 
     @abstractmethod
-    def get_production_object_by_id(self, id: int) -> ProductionObjectEntity | None: ...
+    def get_production_object_by_id(
+        self, production_object_entity: ProductionObjectEntity
+    ) -> ProductionObjectEntity | None: ...
 
     @abstractmethod
     def get_production_object_by_name(
