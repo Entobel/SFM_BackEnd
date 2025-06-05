@@ -2,8 +2,9 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from app.domain.entities.production_object_entity import ProductionObjectEntity
-from app.domain.interfaces.repositories.production_object_repository import \
-    IProductionObjectRepository
+from app.domain.interfaces.repositories.production_object_repository import (
+    IProductionObjectRepository,
+)
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
@@ -33,7 +34,7 @@ class ProductionObjectRepository(IProductionObjectRepository):
 
         # 1) Count total items
         count_sql = f"""
-        SELECT COUNT(*) FROM production_object {qb.where_sql()}
+        SELECT COUNT(*) FROM production_objects {qb.where_sql()}
         """
 
         with self.conn.cursor() as cur:
@@ -43,7 +44,7 @@ class ProductionObjectRepository(IProductionObjectRepository):
         # 2) Get data
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_object {qb.where_sql()} ORDER BY po_id DESC {limit_sql}
+        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_objects {qb.where_sql()} ORDER BY po_id DESC {limit_sql}
         """
 
         params = qb.all_params(limit_params)
@@ -63,20 +64,23 @@ class ProductionObjectRepository(IProductionObjectRepository):
             "total_pages": qb.total_pages(total, page_size),
         }
 
-    def get_production_object_by_id(self, id: int) -> ProductionObjectEntity:
+    def get_production_object_by_id(
+        self, production_object_entity: ProductionObjectEntity
+    ) -> ProductionObjectEntity:
         query = """
-        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_object WHERE id = %s
+        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_objects WHERE id = %s
         """
+        production_object_id = production_object_entity.id
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(query, (id,))
+            cur.execute(query, (production_object_id,))
             row = cur.fetchone()
 
         return ProductionObjectEntity.from_row(row) if row else None
 
     def get_production_object_by_name(self, name: str) -> ProductionObjectEntity:
         query = """
-        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_object WHERE name = %s
+        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_objects WHERE name = %s
         """
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -89,7 +93,7 @@ class ProductionObjectRepository(IProductionObjectRepository):
         self, production_object_entity: ProductionObjectEntity
     ) -> bool:
         query = """
-        INSERT INTO production_object (name, description) VALUES (%s, %s)
+        INSERT INTO production_objects (name, description) VALUES (%s, %s)
         """
 
         name = production_object_entity.name
@@ -98,18 +102,13 @@ class ProductionObjectRepository(IProductionObjectRepository):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (name, description))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_production_object(
         self, production_object_entity: ProductionObjectEntity
     ) -> bool:
         query = """
-        UPDATE production_object SET name = %s, description = %s WHERE id = %s
+        UPDATE production_objects SET name = %s, description = %s WHERE id = %s
         """
 
         name = production_object_entity.name
@@ -119,18 +118,13 @@ class ProductionObjectRepository(IProductionObjectRepository):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (name, description, id))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_status_production_object(
         self, production_object_entity: ProductionObjectEntity
     ) -> bool:
         query = """
-        UPDATE production_object SET is_active = %s WHERE id = %s
+        UPDATE production_objects SET is_active = %s WHERE id = %s
         """
 
         is_active = production_object_entity.is_active
@@ -139,9 +133,4 @@ class ProductionObjectRepository(IProductionObjectRepository):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (is_active, id))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
