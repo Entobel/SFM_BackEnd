@@ -1,9 +1,12 @@
 from app.application.dto.production_object_dto import ProductionObjectDTO
-from app.application.interfaces.use_cases.production_object.update_production_object_uc import \
-    IUpdateProductionObjectUC
+from app.application.interfaces.use_cases.production_object.update_production_object_uc import (
+    IUpdateProductionObjectUC,
+)
 from app.core.exception import BadRequestError
-from app.domain.interfaces.repositories.production_object_repository import \
-    IProductionObjectRepository
+from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.interfaces.repositories.production_object_repository import (
+    IProductionObjectRepository,
+)
 
 
 class UpdateProductionObjectUC(IUpdateProductionObjectUC):
@@ -11,8 +14,10 @@ class UpdateProductionObjectUC(IUpdateProductionObjectUC):
         self.repo = repo
 
     def execute(self, production_object_dto: ProductionObjectDTO) -> bool:
+        query_entity = ProductionObjectEntity(id=production_object_dto.id)
+
         production_object_entity = self.repo.get_production_object_by_id(
-            id=production_object_dto.id
+            production_object_entity=query_entity
         )
 
         if production_object_entity is None:
