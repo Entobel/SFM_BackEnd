@@ -47,7 +47,9 @@ from app.application.use_cases.department.list_department_factory_role_uc_impl i
 from app.application.use_cases.department.list_department_factory_uc_impl import (
     ListDepartmentFactoryUC,
 )
-from app.application.use_cases.department.list_department_uc_impl import ListDepartmentUC
+from app.application.use_cases.department.list_department_uc_impl import (
+    ListDepartmentUC,
+)
 from app.application.use_cases.department.update_department_uc_impl import (
     UpdateDepartmentUC,
 )
@@ -66,7 +68,9 @@ from app.domain.interfaces.repositories.deparment_factory_role_repository import
 from app.domain.interfaces.repositories.department_factory_repository import (
     IDepartmentFactoryRepository,
 )
-from app.domain.interfaces.repositories.department_repository import IDepartmentRepository
+from app.domain.interfaces.repositories.department_repository import (
+    IDepartmentRepository,
+)
 from app.domain.interfaces.repositories.role_repository import IRoleRepository
 from app.infrastructure.database.repositories.department_factory_repository_impl import (
     DepartmentFactoryRepository,
@@ -81,7 +85,9 @@ from app.presentation.api.v1.dependencies.common_dependencies import (
     DatabaseDep,
     QueryHelperDep,
 )
-from app.presentation.api.v1.dependencies.factory_dependencies import FactoryRepositoryDep
+from app.presentation.api.v1.dependencies.factory_dependencies import (
+    FactoryRepositoryDep,
+)
 from app.presentation.api.v1.dependencies.role_dependencies import get_role_repository
 
 
