@@ -7,7 +7,9 @@ from psycopg2.extras import RealDictCursor
 
 from app.domain.entities.department_entity import DepartmentEntity
 from app.domain.entities.department_factory_entity import DepartmentFactoryEntity
-from app.domain.entities.department_factory_role_entity import DepartmentFactoryRoleEntity
+from app.domain.entities.department_factory_role_entity import (
+    DepartmentFactoryRoleEntity,
+)
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.role_entity import RoleEntity
 from app.domain.entities.user_entity import UserEntity
@@ -30,7 +32,7 @@ class UserRepository(IUserRepository):
             SELECT 
             1 
             FROM 
-            "user" 
+            users 
             WHERE 
             email = %s
         ) THEN 1 ELSE 0 END AS is_exist_email, 
@@ -38,7 +40,7 @@ class UserRepository(IUserRepository):
             SELECT 
             1 
             FROM 
-            "user" 
+            users 
             WHERE 
             phone = %s
         ) THEN 2 ELSE 0 END AS is_exist_phone;
@@ -67,13 +69,13 @@ class UserRepository(IUserRepository):
             dp.id AS dp_id,
             r.id AS r_id,
             f.id AS f_id,
-            dpfr.id AS dpfr_id
-        FROM "user" u
-        JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id
-        JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id
-        JOIN ROLE r ON r.id = dpfr.role_id
-        JOIN factory f ON f.id = dpf.factory_id
-        JOIN department dp ON dp.id = dpf.department_id
+            dfr.id AS dfr_id
+        FROM users u
+        JOIN department_factory_roles dfr ON u.department_factory_role_id = dfr.id
+        JOIN department_factories df ON df.id = dfr.department_factory_id
+        JOIN roles r ON r.id = dfr.role_id
+        JOIN factories f ON f.id = df.factory_id
+        JOIN departments dp ON dp.id = df.department_id
         WHERE u.id = %s;
         """
 
@@ -110,7 +112,7 @@ class UserRepository(IUserRepository):
         u.is_active, 
         u.created_at AS created_at, 
         u.updated_at AS updated_at, 
-        dpfr.id AS dept_fry_role_id, 
+        dfr.id AS dept_fry_role_id, 
         dp.id AS department_id, 
         dp.name AS department_name, 
         dp.description AS department_description, 
@@ -126,14 +128,14 @@ class UserRepository(IUserRepository):
         r.name AS r_name, 
         r.description AS r_description, 
         r.is_active AS r_is_active, 
-        dpf.id AS department_factory_id 
+        df.id AS department_factory_id 
         FROM 
-        "user" u 
-        JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id 
-        JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id 
-        JOIN factory f ON f.id = dpf.factory_id 
-        JOIN role r ON dpfr.role_id = r.id 
-        JOIN department dp ON dp.id = dpf.department_id 
+        users u 
+        JOIN department_factory_roles dfr ON u.department_factory_role_id = dfr.id 
+        JOIN department_factories df ON df.id = dfr.department_factory_id 
+        JOIN factories f ON f.id = df.factory_id 
+        JOIN roles r ON dfr.role_id = r.id 
+        JOIN departments dp ON dp.id = df.department_id 
         WHERE 
         u.id = %s;
         """
@@ -157,16 +159,16 @@ class UserRepository(IUserRepository):
         u.password AS password, 
         u.is_active AS is_active, 
         dp.id AS department_id, 
-        dpfr.id AS dept_fry_role_id, 
+        dfr.id AS dept_fry_role_id, 
         f.id AS factory_id, 
         r.id AS r_id 
         FROM 
-        "user" u 
-        JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id 
-        JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id 
-        JOIN factory f ON f.id = dpf.factory_id 
-        JOIN role r ON r.id = dpfr.role_id 
-        JOIN department dp ON dp.id = dpf.department_id 
+        users u 
+        JOIN department_factory_roles dfr ON u.department_factory_role_id = dfr.id 
+        JOIN department_factories df ON df.id = dfr.department_factory_id 
+        JOIN factories f ON f.id = df.factory_id 
+        JOIN roles r ON r.id = dfr.role_id 
+        JOIN departments dp ON dp.id = df.department_id 
         WHERE 
         u.is_active = true 
         AND (
@@ -202,7 +204,7 @@ class UserRepository(IUserRepository):
         query = """
         --sql
         UPDATE 
-        "user" 
+        users 
         SET 
         password = %s 
         WHERE 
@@ -218,8 +220,7 @@ class UserRepository(IUserRepository):
             cur.execute(query, (user.password, lookup, lookup))
             updated = cur.rowcount
 
-        self.conn.commit()
-        return updated > 0
+            return updated > 0
 
     def get_list_users(
         self,
@@ -251,12 +252,12 @@ class UserRepository(IUserRepository):
         # 1) COUNT(*)
         count_sql = f"""
         SELECT COUNT(*) 
-        FROM "user" u
-        JOIN department_factory_role dpfr ON u.department_factory_role_id = dpfr.id
-        JOIN department_factory dpf ON dpf.id = dpfr.department_factory_id
-        JOIN factory f ON f.id = dpf.factory_id
-        JOIN role r ON dpfr.role_id = r.id
-        JOIN department dp ON dp.id = dpf.department_id
+        FROM users u
+        JOIN department_factory_roles dfr ON u.department_factory_role_id = dfr.id
+        JOIN department_factories df ON df.id = dfr.department_factory_id
+        JOIN factories f ON f.id = df.factory_id
+        JOIN roles r ON dfr.role_id = r.id
+        JOIN departments dp ON dp.id = df.department_id
         {qb.where_sql()}
         """
         with self.conn.cursor() as cur:
@@ -277,7 +278,7 @@ class UserRepository(IUserRepository):
             u.is_active,
             u.created_at AS created_at,
             u.updated_at AS updated_at,
-            dpfr.id AS dept_fry_role_id,
+            dfr.id AS dept_fry_role_id,
             dp.id AS department_id,
             dp.name AS department_name,
             dp.description AS department_description,
@@ -293,19 +294,19 @@ class UserRepository(IUserRepository):
             r.name AS r_name,
             r.description AS r_description,
             r.is_active AS r_is_active,
-            dpf.id  AS department_factory_id
+            df.id  AS department_factory_id
             FROM
-                "user" u
-            JOIN department_factory_role dpfr ON
-                u.department_factory_role_id = dpfr.id
-            JOIN department_factory dpf ON
-                dpf.id = dpfr.department_factory_id
-            JOIN factory f ON
-                f.id = dpf.factory_id
-            JOIN role r ON
-                dpfr.role_id = r.id
-            JOIN department dp ON
-                dp.id = dpf.department_id
+                users u
+            JOIN department_factory_roles dfr ON
+                u.department_factory_role_id = dfr.id
+            JOIN department_factories df ON
+                df.id = dfr.department_factory_id
+            JOIN factories f ON
+                f.id = df.factory_id
+            JOIN roles r ON
+                dfr.role_id = r.id
+            JOIN departments dp ON
+                dp.id = df.department_id
             {qb.where_sql()}
             ORDER BY u.created_at DESC
             {limit_sql};
@@ -331,7 +332,7 @@ class UserRepository(IUserRepository):
         query = """        
         --sql
         UPDATE 
-        "user" 
+        users 
         SET 
         is_active = %s 
         WHERE 
@@ -342,12 +343,7 @@ class UserRepository(IUserRepository):
             cur.execute(query, (status, user.id))
             updated = cur.rowcount
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def create_user(self, user: UserEntity) -> bool:
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -359,7 +355,7 @@ class UserRepository(IUserRepository):
                 """
                 --sql
                 SELECT id
-                  FROM department_factory
+                  FROM department_factories
                  WHERE department_id = %s
                    AND factory_id    = %s;
                 """,
@@ -372,7 +368,7 @@ class UserRepository(IUserRepository):
                 cur.execute(
                     """
                     --sql
-                    INSERT INTO department_factory (department_id, factory_id)
+                    INSERT INTO department_factories (department_id, factory_id)
                     VALUES (%s, %s)
                     RETURNING id;
                     """,
@@ -384,7 +380,7 @@ class UserRepository(IUserRepository):
                 """
                 --sql
                 SELECT id
-                FROM department_factory_role
+                FROM department_factory_roles
                 WHERE department_factory_id = %s
                 AND role_id = %s;
                 """,
@@ -397,7 +393,7 @@ class UserRepository(IUserRepository):
                 cur.execute(
                     """
                     --sql
-                    INSERT INTO department_factory_role
+                    INSERT INTO department_factory_roles
                               (department_factory_id, role_id)
                     VALUES (%s, %s)
                     RETURNING id;
@@ -410,7 +406,7 @@ class UserRepository(IUserRepository):
             cur.execute(
                 """
                 --sql
-                INSERT INTO "user" (
+                INSERT INTO users (
                   email,
                   phone,
                   first_name,
@@ -442,18 +438,13 @@ class UserRepository(IUserRepository):
             )
             created = cur.fetchone()
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_user(self, user: UserEntity) -> bool:
         query = dedent(
             """
             --sql
-            UPDATE "user"
+            UPDATE users
             SET email = %s, phone = %s, first_name = %s, last_name = %s, department_factory_role_id = %s
             WHERE id = %s;
         """
@@ -473,9 +464,4 @@ class UserRepository(IUserRepository):
             )
             updated = cur.rowcount
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
