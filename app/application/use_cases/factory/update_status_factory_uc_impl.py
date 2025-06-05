@@ -1,8 +1,9 @@
-from app.application.interfaces.use_cases.factory.update_status_factory_uc import \
-    IUpdateStatusFactoryUC
+from app.application.interfaces.use_cases.factory.update_status_factory_uc import (
+    IUpdateStatusFactoryUC,
+)
 from app.core.exception import BadRequestError
-from app.domain.interfaces.repositories.factory_repository import \
-    IFactoryRepository
+from app.domain.entities.factory_entity import FactoryEntity
+from app.domain.interfaces.repositories.factory_repository import IFactoryRepository
 
 
 class UpdateStatusFactoryUC(IUpdateStatusFactoryUC):
@@ -10,8 +11,9 @@ class UpdateStatusFactoryUC(IUpdateStatusFactoryUC):
         self.factory_repository = factory_repository
 
     def execute(self, factory_id: int, is_active: bool) -> bool:
+        query_entity = FactoryEntity(id=factory_id)
 
-        factory = self.factory_repository.get_factory_by_id(id=factory_id)
+        factory = self.factory_repository.get_factory_by_id(factory=query_entity)
 
         if not factory:
             raise BadRequestError(
