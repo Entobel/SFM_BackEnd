@@ -1,10 +1,12 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from app.domain.entities.department_factory_role_entity import \
-    DepartmentFactoryRoleEntity
-from app.domain.interfaces.repositories.deparment_factory_role_repository import \
-    IDepartmentFactoryRoleRepository
+from app.domain.entities.department_factory_role_entity import (
+    DepartmentFactoryRoleEntity,
+)
+from app.domain.interfaces.repositories.deparment_factory_role_repository import (
+    IDepartmentFactoryRoleRepository,
+)
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
@@ -34,17 +36,17 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
                 r.id as role_id,
                 r."name" as role_name
             FROM
-                DEPARTMENT_FACTORY_ROLE DFR
-            JOIN DEPARTMENT_FACTORY DF ON
-                DFR.DEPARTMENT_FACTORY_ID = DF.ID
-            JOIN DEPARTMENT D ON
-                DF.DEPARTMENT_ID = D.ID
-            JOIN FACTORY F ON
-                DF.FACTORY_ID = F.ID
-            JOIN ROLE R ON
-                DFR.ROLE_ID = R.ID
+                department_factory_roles dfr
+            JOIN department_factories df ON
+                dfr.department_factory_id = df.id
+            JOIN departments d ON
+                df.department_id = d.id
+            JOIN factories f ON
+                df.factory_id = f.id
+            JOIN roles r ON
+                dfr.role_id = r.id
             WHERE
-                DFR.ID = %s
+                dfr.id = %s
         """
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (id,))
@@ -54,14 +56,14 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
     def check_department_factory_role_exists(
         self, department_factory_role_entity: DepartmentFactoryRoleEntity
     ) -> bool:
-        query = f"""
+        query = """
             SELECT
                 *
             FROM
-                DEPARTMENT_FACTORY_ROLE DFR
+                department_factory_roles dfr
             WHERE
-                DFR.DEPARTMENT_FACTORY_ID = %s
-                AND DFR.ROLE_ID = %s
+                dfr.department_factory_id = %s
+                AND dfr.role_id = %s
         """
         department_factory_id = department_factory_role_entity.department_factory.id
         role_id = department_factory_role_entity.role.id
@@ -77,7 +79,7 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
         self, department_factory_role_entity: DepartmentFactoryRoleEntity
     ) -> int:
         query = """
-            INSERT INTO department_factory_role (department_factory_id, role_id)
+            INSERT INTO department_factory_roles (department_factory_id, role_id)
             VALUES (%s, %s)
             RETURNING id
         """
@@ -87,12 +89,7 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
         with self.conn.cursor() as cur:
             cur.execute(query, (department_factory_id, role_id))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def get_list_department_factory_role(
         self,
@@ -125,11 +122,11 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
 
         # Count total item
         count_sql = f"""SELECT COUNT(*) 
-            FROM department_factory_role dfr 
-            JOIN department_factory df ON dfr.department_factory_id = df.id
-            JOIN department d ON df.department_id = d.id 
-            JOIN factory f ON df.factory_id = f.id 
-            JOIN role r ON dfr.role_id = r.id {qb.where_sql()}"""
+            FROM department_factory_roles dfr 
+            JOIN department_factories df ON dfr.department_factory_id = df.id
+            JOIN departments d ON df.department_id = d.id 
+            JOIN factories f ON df.factory_id = f.id 
+            JOIN roles r ON dfr.role_id = r.id {qb.where_sql()}"""
 
         with self.conn.cursor() as cur:
             cur.execute(count_sql, qb.all_params())
@@ -149,18 +146,18 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
             r."name" as role_name,
             dfr.is_active as is_active
         FROM
-            DEPARTMENT_FACTORY_ROLE DFR
-        JOIN ROLE R ON
-            DFR.ROLE_ID = R.ID
-        JOIN DEPARTMENT_FACTORY DF ON
-            DF.ID = DFR.DEPARTMENT_FACTORY_ID
-        JOIN DEPARTMENT D ON
-            D.ID = DF.DEPARTMENT_ID
-        JOIN FACTORY F ON
-            F.ID = DF.FACTORY_ID
+            department_factory_roles dfr
+        JOIN roles r ON
+            dfr.role_id = r.id
+        JOIN department_factories df ON
+            df.id = dfr.department_factory_id
+        JOIN departments D ON
+            d.id = df.department_id
+        JOIN factories F ON
+            f.id = df.factory_id
         {qb.where_sql()}
         ORDER BY
-            DFR.ID
+            dfr.id
         {limit_sql}"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -183,7 +180,7 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
         self, department_factory_role_entity: DepartmentFactoryRoleEntity
     ) -> bool:
         query = """
-            UPDATE department_factory_role SET is_active = %s WHERE id = %s
+            UPDATE department_factory_roles SET is_active = %s WHERE id = %s
         """
         department_factory_role_id = department_factory_role_entity.id
         is_active = department_factory_role_entity.is_active
@@ -191,12 +188,7 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
         with self.conn.cursor() as cur:
             cur.execute(query, (is_active, department_factory_role_id))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def is_department_factory_role_in_use(
         self, department_factory_role_entity: DepartmentFactoryRoleEntity
@@ -205,11 +197,11 @@ class DepartmentFactoryRoleRepository(IDepartmentFactoryRoleRepository):
         SELECT
         count(*) > 0 as is_in_use
         FROM
-        "user" U
-        JOIN DEPARTMENT_FACTORY_ROLE DFR ON
-        U.DEPARTMENT_FACTORY_ROLE_ID = DFR.ID
+        users u
+        JOIN department_factory_roles dfr ON
+        u.department_factory_role_id = dfr.id
         WHERE
-        DFR.ID = %s
+        dfr.id = %s
         """
 
         department_factory_role_id = department_factory_role_entity.id
