@@ -36,3 +36,9 @@ class IQueryHelperService(ABC):
         column: str,
         flag: Optional[bool],
     ): ...
+
+    @abstractmethod
+    def join_sql(self) -> str: ...
+
+    @abstractmethod
+    def add_table(self, table_name: str, _id: int): ...
