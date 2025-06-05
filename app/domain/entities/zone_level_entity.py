@@ -10,6 +10,7 @@ class ZoneLevelEntity:
     id: Optional[int] = None
     zone: Optional[ZoneEntity] = None
     level: Optional[LevelEntity] = None
+    is_used: Optional[bool] = None
     is_active: Optional[bool] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
