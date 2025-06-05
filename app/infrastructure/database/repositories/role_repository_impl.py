@@ -25,7 +25,7 @@ class RoleRepository(IRoleRepository):
             qb.add_bool(column="r.is_active", flag=is_active)
 
         # Count total item
-        count_sql = f"""SELECT COUNT(*) FROM role r {qb.where_sql()}"""
+        count_sql = f"""SELECT COUNT(*) FROM roles r {qb.where_sql()}"""
 
         with self.conn.cursor() as cur:
             cur.execute(count_sql, qb.all_params())
@@ -39,7 +39,7 @@ class RoleRepository(IRoleRepository):
             r.is_active as is_active,
             r.created_at as created_at,
             r.updated_at as updated_at
-            FROM role r {qb.where_sql()}
+            FROM roles r {qb.where_sql()}
             ORDER BY r.id DESC {limit_sql}"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -64,7 +64,7 @@ class RoleRepository(IRoleRepository):
                 r.is_active as is_active,
                 r.created_at as created_at,
                 r.updated_at as updated_at
-                FROM role r
+                FROM roles r
                 WHERE r.name = % s"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -81,7 +81,7 @@ class RoleRepository(IRoleRepository):
                 r.is_active as is_active,
                 r.created_at as created_at,
                 r.updated_at as updated_at
-                FROM role r WHERE r.id = %s"""
+                FROM roles r WHERE r.id = %s"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (id,))
@@ -90,20 +90,15 @@ class RoleRepository(IRoleRepository):
         return RoleEntity.from_row(row) if row else None
 
     def create_role(self, role: RoleEntity) -> bool:
-        query = """INSERT INTO role (name, description) VALUES (%s, %s)"""
+        query = """INSERT INTO roles (name, description) VALUES (%s, %s)"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (role.name, role.description))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-            return False
+            return cur.rowcount > 0
 
     def update_role(self, role: RoleEntity) -> bool:
-        query = """UPDATE role SET name = %s, description = %s WHERE id = %s"""
+        query = """UPDATE roles SET name = %s, description = %s WHERE id = %s"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (role.name, role.description, role.id))
@@ -133,11 +128,11 @@ class RoleRepository(IRoleRepository):
             SELECT
             COUNT(*) > 0 AS is_in_use
             FROM
-            DEPARTMENT_FACTORY_ROLE DFR
-            JOIN ROLE R ON
-            DFR.ROLE_ID = R.ID
+            department_factory_roles dfr
+            JOIN roles r ON
+            dfr.role_id = r.id
             WHERE
-            R.ID = %s
+            r.id = %s
             """
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
