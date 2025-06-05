@@ -50,3 +50,8 @@ class IZoneRepository(ABC):
 
     @abstractmethod
     def update_status_zone_level(self, zone_level_entity: ZoneLevelEntity) -> bool: ...
+
+    @abstractmethod
+    def get_list_zone_level_by_id(
+        self, zone_id: int, is_active: bool = True, is_used: bool = False
+    ) -> list[ZoneLevelEntity]: ...
