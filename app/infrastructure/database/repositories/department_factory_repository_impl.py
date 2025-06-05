@@ -6,8 +6,9 @@ from psycopg2.extras import RealDictCursor
 from app.domain.entities.department_entity import DepartmentEntity
 from app.domain.entities.department_factory_entity import DepartmentFactoryEntity
 from app.domain.entities.factory_entity import FactoryEntity
-from app.domain.interfaces.repositories.department_factory_repository import \
-    IDepartmentFactoryRepository
+from app.domain.interfaces.repositories.department_factory_repository import (
+    IDepartmentFactoryRepository,
+)
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
@@ -35,8 +36,8 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
             d.description as department_description,
             d.parent_id as department_parent_id,
             d.is_active as department_is_active
-        FROM department_factory df 
-        JOIN department d ON df.department_id = d.id 
+        FROM department_factories df 
+        JOIN departments d ON df.department_id = d.id 
         JOIN factory f ON df.factory_id = f.id 
         WHERE df.id = %s
         """
@@ -99,7 +100,7 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
 
         # Count total item
 
-        count_sql = f"""SELECT COUNT(*) FROM department d JOIN department_factory df ON d.id = df.department_id JOIN factory f ON df.factory_id = f.id {qb.where_sql()}"""
+        count_sql = f"""SELECT COUNT(*) FROM departments d JOIN department_factories df ON d.id = df.department_id JOIN factories f ON df.factory_id = f.id {qb.where_sql()}"""
 
         with self.conn.cursor() as cur:
             cur.execute(count_sql, qb.all_params())
@@ -122,9 +123,9 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
                 d.description as department_description,
                 d.parent_id as department_parent_id,
                 d.is_active as department_is_active
-            FROM department_factory df 
-            JOIN department d ON df.department_id = d.id 
-            JOIN factory f ON df.factory_id = f.id 
+            FROM department_factories df 
+            JOIN departments d ON df.department_id = d.id 
+            JOIN factories f ON df.factory_id = f.id 
             {qb.where_sql()} 
             ORDER BY df.id DESC {limit_sql}
         """
@@ -178,7 +179,7 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
         self, department_factory_entity: DepartmentFactoryEntity
     ) -> bool:
         query = """
-        INSERT INTO department_factory (department_id, factory_id) VALUES (%s, %s)
+        INSERT INTO department_factories (department_id, factory_id) VALUES (%s, %s)
         """
 
         department_id = department_factory_entity.department.id
@@ -193,12 +194,7 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
                 ),
             )
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def get_department_factory_by_department_id_and_factory_id(
         self, department_factory_entity: DepartmentFactoryEntity
@@ -206,7 +202,7 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
         query = """
         SELECT 
             *
-        FROM department_factory 
+        FROM department_factories 
         WHERE department_id = %s AND factory_id = %s
         """
 
@@ -238,12 +234,7 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
                 ),
             )
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def is_department_factory_in_use(
         self, department_factory_entity: DepartmentFactoryEntity
@@ -252,9 +243,9 @@ class DepartmentFactoryRepository(IDepartmentFactoryRepository):
         SELECT
         count(*) > 0 as is_in_use
         FROM
-        DEPARTMENT_FACTORY DF
-        JOIN DEPARTMENT_FACTORY_ROLE DFR ON
-        DF.ID = DFR.DEPARTMENT_FACTORY_ID
+        department_factories DF
+        JOIN department_factory_roles dfr ON
+        DF.ID = dfr.department_factory_id
         where df.id = %s
         """
         department_factory_id = department_factory_entity.id
