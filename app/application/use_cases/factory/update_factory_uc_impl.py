@@ -1,9 +1,10 @@
 from app.application.dto.factory_dto import FactoryDTO
-from app.application.interfaces.use_cases.factory.update_factory_uc import \
-    IUpdateFactoryUC
+from app.application.interfaces.use_cases.factory.update_factory_uc import (
+    IUpdateFactoryUC,
+)
 from app.core.exception import BadRequestError
-from app.domain.interfaces.repositories.factory_repository import \
-    IFactoryRepository
+from app.domain.entities.factory_entity import FactoryEntity
+from app.domain.interfaces.repositories.factory_repository import IFactoryRepository
 
 
 class UpdateFactoryUC(IUpdateFactoryUC):
@@ -11,26 +12,36 @@ class UpdateFactoryUC(IUpdateFactoryUC):
         self.factory_repository = factory_repository
 
     def execute(self, factory_id: int, factory_dto: FactoryDTO) -> bool:
-        factory = self.factory_repository.get_factory_by_id(id=factory_id)
+        query_entity = FactoryEntity(
+            id=factory_id,
+            abbr_name=factory_dto.abbr_name,
+            name=factory_dto.name,
+            description=factory_dto.description,
+            location=factory_dto.location,
+        )
 
-        if not factory:
+        factory_entity = self.factory_repository.get_factory_by_id(
+            factory_entity=query_entity
+        )
+
+        if not factory_entity:
             raise BadRequestError(
                 error_code="ETB-nha_may_khong_ton_tai",
             )
 
-        if factory_dto.name:
-            factory.set_name(factory_dto.name)
+        if query_entity.name:
+            factory_entity.set_name(query_entity.name)
 
-        if factory_dto.abbr_name:
-            factory.set_abbr_name(factory_dto.abbr_name)
+        if query_entity.abbr_name:
+            factory_entity.set_abbr_name(query_entity.abbr_name)
 
-        if factory_dto.description:
-            factory.set_description(factory_dto.description)
+        if query_entity.description:
+            factory_entity.set_description(query_entity.description)
 
-        if factory_dto.location:
-            factory.set_location(factory_dto.location)
+        if query_entity.location:
+            factory_entity.set_location(query_entity.location)
 
-        is_updated = self.factory_repository.update_factory(factory=factory)
+        is_updated = self.factory_repository.update_factory(factory=factory_entity)
 
         if not is_updated:
             raise BadRequestError(
