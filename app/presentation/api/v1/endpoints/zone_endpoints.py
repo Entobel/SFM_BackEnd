@@ -50,6 +50,7 @@ async def get_list_zones(
             is_active=zl.is_active,
             created_at=zl.created_at,
             updated_at=zl.updated_at,
+            is_used=zl.is_used,
         )
         zone_id = zl.zone.id
         zone_level_map.setdefault(zone_id, []).append(dto)
