@@ -2,8 +2,9 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from app.domain.entities.production_type_entity import ProductionTypeEntity
-from app.domain.interfaces.repositories.production_type_repository import \
-    IProductionTypeRepository
+from app.domain.interfaces.repositories.production_type_repository import (
+    IProductionTypeRepository,
+)
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
@@ -16,7 +17,7 @@ class ProductionTypeRepository(IProductionTypeRepository):
 
     def get_production_type_by_name(self, name: str) -> ProductionTypeEntity:
         query = """
-        SELECT id as pt_id, name as pt_name, abbr_name as pt_abbr_name, description as pt_description, is_active as pt_is_active FROM production_type WHERE name = %s
+        SELECT id as pt_id, name as pt_name, abbr_name as pt_abbr_name, description as pt_description, is_active as pt_is_active FROM production_types WHERE name = %s
         """
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (name,))
@@ -26,7 +27,7 @@ class ProductionTypeRepository(IProductionTypeRepository):
 
     def get_production_type_by_id(self, id: int) -> ProductionTypeEntity:
         query = """
-        SELECT id as pt_id, name as pt_name, abbr_name as pt_abbr_name, description as pt_description, is_active as pt_is_active FROM production_type WHERE id = %s
+        SELECT id as pt_id, name as pt_name, abbr_name as pt_abbr_name, description as pt_description, is_active as pt_is_active FROM production_types WHERE id = %s
         """
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (id,))
@@ -57,7 +58,7 @@ class ProductionTypeRepository(IProductionTypeRepository):
 
         # count
         count_sql = f"""
-        SELECT COUNT(*) FROM production_type {qb.where_sql()}
+        SELECT COUNT(*) FROM production_types {qb.where_sql()}
         """
 
         with self.conn.cursor() as cur:
@@ -67,7 +68,7 @@ class ProductionTypeRepository(IProductionTypeRepository):
         # fetch page
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT id as pt_id, name as pt_name, abbr_name as pt_abbr_name, description as pt_description, is_active as pt_is_active FROM production_type {qb.where_sql()} ORDER BY pt_id DESC {limit_sql}
+        SELECT id as pt_id, name as pt_name, abbr_name as pt_abbr_name, description as pt_description, is_active as pt_is_active FROM production_types {qb.where_sql()} ORDER BY pt_id DESC {limit_sql}
         """
 
         params = qb.all_params(limit_params)
@@ -91,7 +92,7 @@ class ProductionTypeRepository(IProductionTypeRepository):
         self, production_type_entity: ProductionTypeEntity
     ) -> bool:
         query = """
-        INSERT INTO production_type (name, abbr_name, description) VALUES (%s, %s, %s)
+        INSERT INTO production_types (name, abbr_name, description) VALUES (%s, %s, %s)
         """
 
         production_type_name = production_type_entity.name
@@ -107,18 +108,13 @@ class ProductionTypeRepository(IProductionTypeRepository):
                     production_type_description,
                 ),
             )
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_production_type(
         self, production_type_entity: ProductionTypeEntity
     ) -> bool:
         query = """
-        UPDATE production_type SET name = %s, abbr_name = %s, description = %s WHERE id = %s
+        UPDATE production_types SET name = %s, abbr_name = %s, description = %s WHERE id = %s
         """
         production_type_name = production_type_entity.name
         production_type_abbr_name = production_type_entity.abbr_name
@@ -135,27 +131,17 @@ class ProductionTypeRepository(IProductionTypeRepository):
                     production_type_id,
                 ),
             )
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_status_production_type(
         self, production_type_entity: ProductionTypeEntity
     ) -> bool:
         query = """
-        UPDATE production_type SET is_active = %s WHERE id = %s
+        UPDATE production_types SET is_active = %s WHERE id = %s
         """
         production_type_is_active = production_type_entity.is_active
         production_type_id = production_type_entity.id
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (production_type_is_active, production_type_id))
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
