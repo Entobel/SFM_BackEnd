@@ -18,7 +18,7 @@ class DietRepository(IDietRepository):
     def get_diet_by_id(self, id: int) -> DietEntity:
         query = dedent(
             """
-            SELECT d.id as d_id, d.name as d_name, d.description as d_description, d.is_active as d_is_active FROM diet d
+            SELECT d.id as d_id, d.name as d_name, d.description as d_description, d.is_active as d_is_active FROM diets d
             WHERE d.id = %s
             """
         )
@@ -32,7 +32,7 @@ class DietRepository(IDietRepository):
     def get_diet_by_name(self, name: str) -> bool:
         query = dedent(
             """
-            SELECT * FROM diet WHERE name = %s
+            SELECT * FROM diets WHERE name = %s
             """
         )
 
@@ -65,7 +65,7 @@ class DietRepository(IDietRepository):
 
         count_sql = f"""
         SELECT COUNT(*)
-        FROM diet
+        FROM diets
         {qb.where_sql()}
         """
 
@@ -75,7 +75,7 @@ class DietRepository(IDietRepository):
 
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT d.id as d_id, d.name as d_name, d.description as d_description, d.is_active as d_is_active FROM diet d
+        SELECT d.id as d_id, d.name as d_name, d.description as d_description, d.is_active as d_is_active FROM diets d
         {qb.where_sql()}
         ORDER BY d.id DESC
         {limit_sql}
@@ -97,7 +97,7 @@ class DietRepository(IDietRepository):
     def create_new_diet(self, diet_entity: DietEntity) -> bool:
         query = dedent(
             """
-            INSERT INTO diet (name, description)
+            INSERT INTO diets (name, description)
             VALUES (%s, %s)
             """
         )
@@ -108,17 +108,12 @@ class DietRepository(IDietRepository):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (diet_name, diet_description))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_diet_status(self, diet_entity: DietEntity) -> bool:
         query = dedent(
             """
-            UPDATE diet SET is_active = %s WHERE id = %s
+            UPDATE diets SET is_active = %s WHERE id = %s
             """
         )
 
@@ -128,17 +123,12 @@ class DietRepository(IDietRepository):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (diet_is_active, diet_id))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_diet(self, diet_entity: DietEntity) -> bool:
         query = dedent(
             """
-            UPDATE diet SET name = %s, description = %s WHERE id = %s
+            UPDATE diets SET name = %s, description = %s WHERE id = %s
             """
         )
 
@@ -149,9 +139,4 @@ class DietRepository(IDietRepository):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (diet_name, diet_description, diet_id))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
