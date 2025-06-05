@@ -1,17 +1,19 @@
 from app.application.dto.department_dto import DepartmentDTO
 from app.application.dto.factory_dto import FactoryDTO
-from app.application.interfaces.use_cases.department.create_department_factory_uc import \
-    ICreateDepartmentFactoryUC
+from app.application.interfaces.use_cases.department.create_department_factory_uc import (
+    ICreateDepartmentFactoryUC,
+)
 from app.core.exception import BadRequestError, NotFoundError
 from app.domain.entities.department_entity import DepartmentEntity
 from app.domain.entities.department_factory_entity import DepartmentFactoryEntity
 from app.domain.entities.factory_entity import FactoryEntity
-from app.domain.interfaces.repositories.department_factory_repository import \
-    IDepartmentFactoryRepository
-from app.domain.interfaces.repositories.department_repository import \
-    IDepartmentRepository
-from app.domain.interfaces.repositories.factory_repository import \
-    IFactoryRepository
+from app.domain.interfaces.repositories.department_factory_repository import (
+    IDepartmentFactoryRepository,
+)
+from app.domain.interfaces.repositories.department_repository import (
+    IDepartmentRepository,
+)
+from app.domain.interfaces.repositories.factory_repository import IFactoryRepository
 
 
 class CreateDepartmentFactoryUC(ICreateDepartmentFactoryUC):
@@ -26,11 +28,15 @@ class CreateDepartmentFactoryUC(ICreateDepartmentFactoryUC):
         self.department_factory_repo = department_factory_repo
 
     def execute(self, department_dto: DepartmentDTO, factory_dto: FactoryDTO) -> bool:
+        factory_query_entity = FactoryEntity(id=factory_dto.id)
+
         department_entity = self.department_repo.get_department_by_id(
             id=department_dto.id
         )
 
-        factory_entity = self.factory_repo.get_factory_by_id(id=factory_dto.id)
+        factory_entity = self.factory_repo.get_factory_by_id(
+            factory=factory_query_entity
+        )
 
         if not department_entity:
             raise NotFoundError("ETB-phong_ban_khong_ton_tai")
