@@ -11,5 +11,6 @@ class ZoneLevelDTO:
     id: Optional[int] = None
     level: Optional[LevelEntity] = None
     is_active: Optional[bool] = None
+    is_used: Optional[bool] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
