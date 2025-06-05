@@ -10,6 +10,7 @@ class QueryHelper(IQueryHelperService):
     def __init__(self):
         self.where_clauses: List[str] = []
         self.params: List[Any] = []
+        self.join_clauses: List[str] = []
 
     def add_eq(self, column: str, value: Any):
         """= filter"""
@@ -63,3 +64,23 @@ class QueryHelper(IQueryHelperService):
         if flag is not None:
             self.where_clauses.append(f"{column} = %s")
             self.params.append(flag)
+
+    def add_table(self, table_name: str, _id: int):
+        abbr = self._get_abbr_table(table_name)
+
+        join_fragment = (
+            f"SELECT '{table_name}' AS name, "
+            f"{abbr}.id AS found_id "
+            f"FROM {table_name} {abbr} "
+            f"WHERE {abbr}.id = %s"
+        )
+        self.join_clauses.append(join_fragment)
+        self.params.append(_id)
+
+    def join_sql(self) -> str:
+        if not self.join_clauses:
+            return ""
+        return " UNION ALL ".join(self.join_clauses)
+
+    def _get_abbr_table(self, name: str) -> str:
+        return "".join(word[0] for word in name.split("_"))
