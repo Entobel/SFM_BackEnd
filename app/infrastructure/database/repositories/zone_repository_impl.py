@@ -21,46 +21,36 @@ class ZoneRepository(IZoneRepository):
     def create_zone(self, zone_entity: ZoneEntity) -> bool:
         query = """
         WITH new_zone AS (
-        INSERT INTO "zone" (zone_number, factory_id) 
+        INSERT INTO zones (zone_number, factory_id) 
         VALUES 
             (%s, %s) RETURNING id AS zone_id
-        ) INSERT INTO zone_level (zone_id, level_id) 
+        ) INSERT INTO zone_levels (zone_id, level_id) 
         SELECT 
         new_zone.zone_id, 
         l.id 
         FROM 
         new_zone 
-        CROSS JOIN "level" AS l;
+        CROSS JOIN levels AS l;
         """
 
         zone_number = zone_entity.zone_number
         factory_id = zone_entity.factory.id
 
-        with self.conn.cursor() as curr:
-            curr.execute(query=query, vars=(zone_number, factory_id))
+        with self.conn.cursor() as cur:
+            cur.execute(query=query, vars=(zone_number, factory_id))
 
-            if curr.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_status_zone(self, zone_entity: ZoneEntity) -> bool:
         query = """
-                UPDATE zone
+                UPDATE zones
                 SET is_active = %s
                 WHERE id = %s \
                 """
         with self.conn.cursor() as cur:
             cur.execute(query, (zone_entity.is_active, zone_entity.id))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def get_list_zones(
         self, page: int, page_size: int, search: str, is_active: bool, factory_id: int
@@ -78,8 +68,8 @@ class ZoneRepository(IZoneRepository):
         # Count query
         count_sql = f"""
             SELECT COUNT(*)
-            FROM zone z
-            JOIN factory f ON z.factory_id = f.id
+            FROM zones z
+            JOIN factories f ON z.factory_id = f.id
             {qb.where_sql()}
         """
 
@@ -100,8 +90,8 @@ class ZoneRepository(IZoneRepository):
                 f.name            AS f_name,
                 z.created_at      AS z_created_at,
                 z.updated_at      AS z_updated_at
-            FROM zone z
-            JOIN factory f ON z.factory_id = f.id
+            FROM zones z
+            JOIN factories f ON z.factory_id = f.id
             {qb.where_sql()}
             ORDER BY z.zone_number DESC
             {limit_sql};
@@ -136,6 +126,7 @@ class ZoneRepository(IZoneRepository):
                 zl.id             AS zone_level_id,
                 zl.zone_id        AS zone_id,
                 zl.is_active      AS zone_level_active,
+                zl.is_used        AS zone_level_used,
                 l.name            AS level_name,
                 l.id              AS level_id,
                 l.is_active       AS level_active,
@@ -143,10 +134,10 @@ class ZoneRepository(IZoneRepository):
                 l.updated_at      AS level_updated_at,
                 zl.created_at     AS created_at,
                 zl.updated_at     AS updated_at
-            FROM zone_level zl
-            JOIN level l ON zl.level_id = l.id
-            JOIN zone z ON zl.zone_id = z.id
-            JOIN factory f ON z.factory_id = f.id
+            FROM zone_levels zl
+            JOIN levels l ON zl.level_id = l.id
+            JOIN zones z ON zl.zone_id = z.id
+            JOIN factories f ON z.factory_id = f.id
             WHERE z.id = ANY(%s)
             ORDER BY z.zone_number DESC;
         """
@@ -170,6 +161,7 @@ class ZoneRepository(IZoneRepository):
                     created_at=row["level_created_at"],
                     updated_at=row["level_updated_at"],
                 ),
+                is_used=row["zone_level_used"],
             )
             for row in zone_level_rows
         ]
@@ -189,8 +181,8 @@ class ZoneRepository(IZoneRepository):
                           z.is_active   as is_active,
                           z.created_at  as created_at,
                           z.updated_at  as updated_at
-                   FROM zone z
-                            JOIN factory f ON z.factory_id = f.id
+                   FROM zones z
+                            JOIN factories f ON z.factory_id = f.id
                    WHERE z.zone_number = %s
                      AND f.id = %s \
                    """
@@ -211,7 +203,7 @@ class ZoneRepository(IZoneRepository):
                           z.is_active   as is_active,
                           z.created_at  as created_at,
                           z.updated_at  as updated_at
-                   FROM zone z
+                   FROM zones z
                    WHERE z.id = %s \
                    """
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -221,7 +213,7 @@ class ZoneRepository(IZoneRepository):
 
     def update_zone(self, zone_entity: ZoneEntity) -> bool:
         query = """
-                UPDATE zone
+                UPDATE zones
                 SET zone_number = %s,
                     is_active   = %s
                 WHERE id = %s \
@@ -231,16 +223,11 @@ class ZoneRepository(IZoneRepository):
                 query, (zone_entity.zone_number, zone_entity.is_active, zone_entity.id)
             )
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def update_status_zone_level(self, zone_level_entity: ZoneLevelEntity) -> bool:
         query = """
-                UPDATE zone_level set is_active = %s WHERE id = %s
+                UPDATE zone_levels set is_active = %s WHERE id = %s
                 """
         is_active = zone_level_entity.is_active
         zone_level_id = zone_level_entity.id
@@ -248,12 +235,7 @@ class ZoneRepository(IZoneRepository):
         with self.conn.cursor() as cur:
             cur.execute(query, (is_active, zone_level_id))
 
-            if cur.rowcount > 0:
-                self.conn.commit()
-                return True
-            else:
-                self.conn.rollback()
-                return False
+            return cur.rowcount > 0
 
     def get_zone_level_by_id(
         self, zone_level_entity: ZoneLevelEntity
@@ -266,7 +248,7 @@ class ZoneRepository(IZoneRepository):
                 zl.zone_id AS zone_id,
                 zl.created_at AS created_at,
                 zl.updated_at AS updated_at
-                FROM zone_level zl WHERE id = %s
+                FROM zone_levels zl WHERE id = %s
                 """
 
         zone_level_id = zone_level_entity.id
@@ -308,8 +290,8 @@ class ZoneRepository(IZoneRepository):
         # Count query
         count_sql = f"""
             SELECT COUNT(*)
-            FROM zone_level zl
-            JOIN zone z ON zl.zone_id = z.id
+            FROM zone_levels zl
+            JOIN zones z ON zl.zone_id = z.id
             {qb.where_sql()}
         """
         with self.conn.cursor() as cur:
@@ -335,9 +317,9 @@ class ZoneRepository(IZoneRepository):
                 z.updated_at      AS zone_updated_at,
                 zl.created_at     AS created_at,
                 zl.updated_at     AS updated_at
-            FROM zone_level zl
-            JOIN zone z ON zl.zone_id = z.id
-            JOIN level l ON zl.level_id = l.id
+            FROM zone_levels zl
+            JOIN zones z ON zl.zone_id = z.id
+            JOIN levels l ON zl.level_id = l.id
             {qb.where_sql()}
             ORDER BY z.zone_number DESC
             {limit_sql};
@@ -379,3 +361,38 @@ class ZoneRepository(IZoneRepository):
             "page_size": page_size,
             "total_pages": qb.total_pages(total=total, page_size=page_size),
         }
+
+    def get_list_zone_level_by_id(
+        self, zone_id: int, is_active: bool = True, is_used: bool = False
+    ) -> list[ZoneLevelEntity]:
+        query = """
+        SELECT 
+        zl.id AS zone_level_id,
+        zl.is_active AS zone_level_is_active,
+        zl.is_used AS zone_level_is_used,
+        l.id as level_id,
+        l.name AS level_name,
+        z.id as zone_id,
+        z.zone_number AS zone_zone_number
+        FROM zone_levels zl JOIN levels l
+        ON zl.level_id = l.id JOIN zones z
+        ON zl.zone_id = z.id
+        WHERE zl.zone_id = %s AND (zl.is_active = %s AND zl.is_used = %s)
+        """
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query=query, vars=(zone_id, is_active, is_used))
+            rows = cur.fetchall()
+
+        zone_levels = [
+            ZoneLevelEntity(
+                id=row["zone_level_id"],
+                level=LevelEntity(id=row["level_id"], name=row["level_name"]),
+                zone=ZoneEntity(id=row["zone_id"], zone_number=row["zone_zone_number"]),
+                is_active=row["zone_level_is_active"],
+                is_used=row["zone_level_is_used"],
+            )
+            for row in rows
+        ]
+
+        return zone_levels
