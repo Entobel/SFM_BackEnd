@@ -12,6 +12,7 @@ from app.presentation.api.v1.endpoints import (
     user_endpoints,
     zone_endpoints,
     level_endpoints,
+    growing_endpoints,
 )
 
 routers = APIRouter()
@@ -27,6 +28,7 @@ router_list = [
     production_type_endpoints.router,
     zone_endpoints.router,
     level_endpoints.router,
+    growing_endpoints.router,
 ]
 
 for router in router_list:
