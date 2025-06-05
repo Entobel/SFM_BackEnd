@@ -4,10 +4,10 @@ import psycopg2
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from app.application.interfaces.use_cases.user.change_password_uc import \
-    IChangePasswordUC
-from app.application.interfaces.use_cases.user.change_status_uc import \
-    IChangeStatusUC
+from app.application.interfaces.use_cases.user.change_password_uc import (
+    IChangePasswordUC,
+)
+from app.application.interfaces.use_cases.user.change_status_uc import IChangeStatusUC
 from app.application.interfaces.use_cases.user.create_user_uc import ICreateUserUC
 from app.application.interfaces.use_cases.user.list_user_uc import IListUserUC
 from app.application.interfaces.use_cases.user.me_uc import IMeUC
@@ -25,7 +25,11 @@ from app.domain.interfaces.services.password_service import IPasswordService
 from app.domain.interfaces.services.token_service import ITokenService
 from app.domain.value_objects.token_payload import TokenPayload
 from app.presentation.api.v1.dependencies.common_dependencies import (
-     get_password_service, get_token_service, get_user_repository)
+    UserRepositoryDep,
+    get_password_service,
+    get_token_service,
+    get_user_repository,
+)
 
 get_oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
@@ -42,13 +46,13 @@ TokenVerifyDep = Annotated[TokenPayload, Depends(get_current_user)]
 
 
 def get_me_use_case(
-    user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+    user_repository: UserRepositoryDep,
 ) -> GetMeUseCase:
     return GetMeUseCase(user_repository=user_repository)
 
 
 def change_password_use_case(
-    user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+    user_repository: UserRepositoryDep,
     password_service: Annotated[IPasswordService, Depends(get_password_service)],
 ) -> IChangePasswordUC:
     return ChangePasswordUC(
@@ -57,19 +61,19 @@ def change_password_use_case(
 
 
 def get_list_user_use_case(
-    user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+    user_repository: UserRepositoryDep,
 ) -> IListUserUC:
     return ListUserUC(user_repository=user_repository)
 
 
 def change_status_use_case(
-    user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+    user_repository: UserRepositoryDep,
 ) -> IChangeStatusUC:
     return ChangeStatusUC(user_repository=user_repository)
 
 
 def get_create_user_uc(
-    user_repo: Annotated[IUserRepository, Depends(get_user_repository)],
+    user_repo: UserRepositoryDep,
     password_service: Annotated[IPasswordService, Depends(get_password_service)],
 ) -> ICreateUserUC:
     return CreateUserUC(
@@ -80,7 +84,7 @@ def get_create_user_uc(
 
 def get_current_user(
     target_user_id: int,
-    user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+    user_repository: UserRepositoryDep,
 ):
     # Just verify token and get target user without role checks
     target_user = user_repository.get_profile_by_id(id=target_user_id)
@@ -94,7 +98,7 @@ def get_current_user(
 def access_admin_role(
     token: TokenVerifyDep,
     target_user_id: int,
-    user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+    user_repository: UserRepositoryDep,
 ):
     # Just verify token and get target user without role checks
     target_user = user_repository.get_profile_by_id(id=target_user_id)
@@ -102,7 +106,7 @@ def access_admin_role(
 
 
 def get_update_user_uc(
-    user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
+    user_repository: UserRepositoryDep,
 ) -> IUpdateUserUC:
     return UpdateUserUC(user_repository=user_repository)
 
