@@ -8,7 +8,7 @@ from app.core.error import setup_error_handlers
 from app.presentation.api.v1.routes import routers as v1_routers
 
 # Configure logging
-logger = logging.getLogger("uvicorn")
+from loguru import logger
 
 
 class AppCreator:
@@ -70,7 +70,7 @@ class AppCreator:
                 allow_headers=["*"],
             )
 
-            logger.info(
+            logger.success(
                 f"[APP]:: CORS configured with origins: {config.BACKEND_CORS_ORIGINS}"
             )
 
@@ -81,11 +81,11 @@ class AppCreator:
 
         # Mount API v1 routes
         self.app.include_router(v1_routers, prefix=config.API_V1)
-        logger.info(f"[APP]:: API routes mounted at {config.API_V1}")
+        logger.success(f"[APP]:: API routes mounted at {config.API_V1}")
 
         # Setup centralized error handling
         setup_error_handlers(self.app)
-        logger.info("[APP]:: Centralized error handlers configured")
+        logger.success("[APP]:: Centralized error handlers configured")
 
 
 app_creator = AppCreator()
