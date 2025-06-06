@@ -44,7 +44,14 @@ class ProductionObjectRepository(IProductionObjectRepository):
         # 2) Get data
         limit_sql, limit_params = qb.paginate(page, page_size)
         data_sql = f"""
-        SELECT id as po_id, name as po_name, description as po_description, is_active as po_is_active FROM production_objects {qb.where_sql()} ORDER BY po_id DESC {limit_sql}
+        SELECT 
+        id as po_id, 
+        name as po_name, 
+        description as po_description, 
+        is_active as po_is_active, 
+        abbr_name as po_abbr_name 
+        FROM production_objects {qb.where_sql()} 
+        ORDER BY po_id DESC {limit_sql}
         """
 
         params = qb.all_params(limit_params)

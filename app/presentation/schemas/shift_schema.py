@@ -1,7 +1,19 @@
+from datetime import datetime
 from typing import Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, ConfigDict, model_validator
+
+
+class ShiftResponseSchema(BaseModel):
+    id: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    is_active: Optional[bool] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateShiftSchema(BaseModel):

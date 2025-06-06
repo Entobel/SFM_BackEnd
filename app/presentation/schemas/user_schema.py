@@ -13,12 +13,11 @@ from app.application.dto.role_dto import RoleDTO
 class UserLoginResponseSchema(BaseModel):
     id: int
     user_name: str
-
     model_config = ConfigDict(from_attributes=True)
 
 
 class UserResponseSchema(BaseModel):
-    id: int
+    id: Optional[int] = None
     email: Optional[str] = None
     phone: Optional[str] = None
     first_name: Optional[str] = None

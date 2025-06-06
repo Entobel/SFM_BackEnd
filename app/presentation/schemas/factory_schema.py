@@ -1,7 +1,21 @@
+from datetime import datetime
 from typing import Optional
 
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+
+
+class FactoryResponseSchema(BaseModel):
+    id: Optional[int] = None
+    name: Optional[str] = None
+    abbr_name: Optional[str] = None
+    description: Optional[str] = None
+    location: Optional[str] = None
+    is_active: Optional[bool] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateFactorySchema(BaseModel):

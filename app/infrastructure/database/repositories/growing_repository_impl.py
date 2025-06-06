@@ -1,9 +1,18 @@
 from psycopg2.extras import execute_values
 import psycopg2
+from psycopg2.extras import RealDictCursor
+
 from loguru import logger
 from app.core.exception import BadRequestError
+from app.domain.entities.diet_entity import DietEntity
+from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.growing_entity import GrowingEntity
 from app.domain.entities.growing_zone_level_entity import GrowingZoneLevelEntity
+from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.entities.production_type_entity import ProductionTypeEntity
+from app.domain.entities.shift_entity import ShiftEntity
+from app.domain.entities.user_entity import UserEntity
+from app.domain.entities.zone_level_entity import ZoneLevelEntity
 from app.domain.interfaces.repositories.growing_repository import IGrowingRepository
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
@@ -73,7 +82,9 @@ class GrowingRepository(IGrowingRepository):
 
             # Insert for growing_zone_level
             insert_growing_zone_level_query = """
-                INSERT INTO growing_zone_levels (growing_id, snapshot_level_name, snapshot_zone_number, zone_level_id)
+                INSERT INTO 
+                growing_zone_levels 
+                (growing_id, snapshot_level_name, snapshot_zone_number, zone_level_id, is_assigned)
                 VALUES %s
             """
 
@@ -83,6 +94,7 @@ class GrowingRepository(IGrowingRepository):
                     entity.snapshot_level_name,
                     entity.snapshot_zone_number,
                     entity.zone_level.id,
+                    entity.is_assigned,
                 )
                 for entity in list_growing_zone_level_entity
             ]
@@ -115,7 +127,13 @@ class GrowingRepository(IGrowingRepository):
         substrate_moisture_upper_bound: float | None,
         report_status: int | None,
         is_active: bool | None,
-    ):
+    ) -> dict[
+        "items" : list[list[GrowingEntity], list[GrowingZoneLevelEntity]],
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+    ]:
         sql_helper = self.query_helper
 
         if search:
@@ -190,7 +208,7 @@ class GrowingRepository(IGrowingRepository):
         # Query page
         limit_sql, limit_params = sql_helper.paginate(page=page, page_size=page_size)
 
-        data_sql = f"""
+        growing_data_sql = f"""
         SELECT g.id              AS g_id,
             g.date_produced      AS g_date_produced,
             g.number_crates      AS g_number_crates,
@@ -201,6 +219,8 @@ class GrowingRepository(IGrowingRepository):
             g.approved_at        AS g_approved_at,
             g.rejected_at        AS g_rejected_at,
             g.rejected_reason    AS g_rejected_reason,
+            s.id                 AS s_id,
+            s.name               AS s_name,
             po.id                AS po_id,
             po."name"            AS po_name,
             po.description       AS po_description,
@@ -208,6 +228,7 @@ class GrowingRepository(IGrowingRepository):
             pt."name"            AS pt_name,
             pt.abbr_name         AS pt_abbr_name,
             pt.description       AS pt_description,
+            d.id                 AS d_id,
             d."name"             AS d_name,
             d.description        AS d_description,
             f.id                 AS f_id,
@@ -252,10 +273,105 @@ class GrowingRepository(IGrowingRepository):
 
         list_param = sql_helper.all_params(limit_params)
 
-        with self.conn.cursor() as cur:
-            cur.execute(query=data_sql, vars=list_param)
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query=growing_data_sql, vars=list_param)
             rows = cur.fetchall()
 
-        logger.debug(f"{data_sql}")
+        growings = [
+            GrowingEntity(
+                id=row["g_id"],
+                date_produced=row["g_date_produced"],
+                number_crates=row["g_number_crates"],
+                substrate_moisture=row["g_substrate_moisture"],
+                status=row["g_status"],
+                notes=row["g_notes"],
+                is_active=row["g_is_active"],
+                approved_at=row["g_approved_at"],
+                shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
+                rejected_at=row["g_rejected_at"],
+                rejected_reason=row["g_rejected_reason"],
+                production_object=ProductionObjectEntity(
+                    id=row["po_id"],
+                    name=row["po_name"],
+                    description=row["po_description"],
+                ),
+                production_type=ProductionTypeEntity(
+                    id=row["pt_id"],
+                    name=row["pt_name"],
+                    abbr_name=row["pt_abbr_name"],
+                    description=row["pt_description"],
+                ),
+                diet=DietEntity(
+                    id=row["d_id"], name=row["d_name"], description=row["d_description"]
+                ),
+                factory=FactoryEntity(
+                    id=row["f_id"],
+                    abbr_name=row["f_abbr_name"],
+                    name=row["f_name"],
+                ),
+                created_by=UserEntity(
+                    id=row["created_by_id"],
+                    first_name=row["created_by_first_name"],
+                    last_name=row["created_by_last_name"],
+                    phone=row["created_by_phone"],
+                    email=row["created_by_email"],
+                ),
+                rejected_by=UserEntity(
+                    id=row["rejected_by_id"],
+                    first_name=row["rejected_by_first_name"],
+                    last_name=row["rejected_by_last_name"],
+                    phone=row["rejected_by_phone"],
+                    email=row["rejected_by_email"],
+                ),
+                approved_by=UserEntity(
+                    id=row["approved_by_id"],
+                    first_name=row["approved_by_first_name"],
+                    last_name=row["approved_by_last_name"],
+                    phone=row["approved_by_phone"],
+                    email=row["approved_by_email"],
+                ),
+            )
+            for row in rows
+        ]
 
-        return True
+        growing_ids = [int(row["g_id"]) for row in rows]
+
+        growing_zone_level_data_sql = """
+        SELECT 
+            gzl.id as gzl_id,
+            gzl.growing_id as growing_id,
+            gzl.zone_level_id as zone_level_id,
+            gzl.snapshot_level_name as gzl_snapshot_level_name,
+            gzl.snapshot_zone_number as gzl_snapshot_zone_number,
+            gzl.is_assigned as gzl_is_assigned,
+            gzl.created_at as gzl_created_at,
+            gzl.updated_at as gzl_updated_at
+        FROM growing_zone_levels gzl
+        WHERE gzl.growing_id = ANY(%s);         
+        """
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query=growing_zone_level_data_sql, vars=(growing_ids,))
+            growing_zone_level_rows = cur.fetchall()
+
+        growing_zone_levels = [
+            GrowingZoneLevelEntity(
+                id=row["gzl_id"],
+                growing=GrowingEntity(id=row["growing_id"]),
+                is_assigned=row["gzl_is_assigned"],
+                zone_level=ZoneLevelEntity(id=row["zone_level_id"]),
+                snapshot_level_name=row["gzl_snapshot_level_name"],
+                snapshot_zone_number=row["gzl_snapshot_zone_number"],
+                created_at=row["gzl_created_at"],
+                updated_at=row["gzl_updated_at"],
+            )
+            for row in growing_zone_level_rows
+        ]
+
+        return {
+            "items": (growings, growing_zone_levels),
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": sql_helper.total_pages(total=total, page_size=page_size),
+        }

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
-
-from pydantic import ConfigDict
 
 
 @dataclass(frozen=True)
@@ -12,5 +11,5 @@ class FactoryDTO:
     description: Optional[str] = None
     location: Optional[str] = None
     is_active: Optional[bool] = None
-
-    model_config = ConfigDict(from_attributes=True)
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None

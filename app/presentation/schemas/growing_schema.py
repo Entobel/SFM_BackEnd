@@ -1,6 +1,55 @@
+from datetime import datetime
 from typing import Optional
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, model_validator, ConfigDict
+
+from app.application.dto.diet_dto import DietDTO
+from app.application.dto.factory_dto import FactoryDTO
+from app.application.dto.growing_zone_level_dto import GrowingZoneLevelDTO
+from app.application.dto.produciton_type_dto import ProductionTypeDTO
+from app.application.dto.production_object_dto import ProductionObjectDTO
+from app.application.dto.shift_dto import ShiftDTO
+from app.application.dto.user_dto import UserDTO
+from app.domain.entities.shift_entity import ShiftEntity
+from app.presentation.schemas.diet_schema import DietResponseSchema
+from app.presentation.schemas.factory_schema import FactoryResponseSchema
+from app.presentation.schemas.growing_zone_level_schema import (
+    GrowingZoneLevelResponseSchema,
+)
+from app.presentation.schemas.production_object_schema import (
+    ProductionObjectResponseSchema,
+)
+from app.presentation.schemas.production_type_schema import ProductionTypeResponseSchema
+from app.presentation.schemas.shift_schema import ShiftResponseSchema
+from app.presentation.schemas.user_schema import UserResponseSchema
+
+
+class GrowingResponseSchema(BaseModel):
+    id: Optional[int] = None
+    date_produced: Optional[datetime] = None
+    shift: Optional[ShiftResponseSchema] = None
+    production_object: Optional[ProductionObjectResponseSchema] = None
+    production_type: Optional[ProductionTypeResponseSchema] = None
+    diet: Optional[DietResponseSchema] = None
+    factory: Optional[FactoryResponseSchema] = None
+    number_crates: Optional[int] = None
+    substrate_moisture: Optional[float] = None
+    notes: Optional[str] = None
+    status: Optional[int] = None
+
+    assigned_zone_levels: Optional[list[GrowingZoneLevelResponseSchema]] = None
+
+    created_by: Optional[UserResponseSchema] = None
+    created_at: Optional[datetime] = None
+
+    approved_by: Optional[UserResponseSchema] = None
+    approved_at: Optional[datetime] = None
+    rejected_by: Optional[UserResponseSchema] = None
+    rejected_at: Optional[datetime] = None
+    rejected_reason: Optional[str] = None
+
+    updated_at: Optional[datetime] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateGrowingSchema(BaseModel):
@@ -48,3 +97,33 @@ class CreateGrowingSchema(BaseModel):
             raise RequestValidationError(errors)
 
         return values
+
+
+class ListGrowingSchema(BaseModel):
+    id: Optional[int] = None
+    date_produced: Optional[datetime] = None
+    shift: Optional[ShiftDTO] = None
+    production_object: Optional[ProductionObjectDTO] = None
+    production_type: Optional[ProductionTypeDTO] = None
+    diet: Optional[DietDTO] = None
+    factory: Optional[FactoryDTO] = None
+    number_crates: Optional[int] = None
+    substrate_moisture: Optional[float] = None
+    notes: Optional[str] = None
+    status: Optional[int] = None
+
+    # Zone Level
+    assigned_zone_levels: Optional[list[GrowingZoneLevelDTO]] = None
+
+    is_active: Optional[bool] = None
+    # Creator
+    created_by: Optional[UserDTO] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    # Rejector
+    rejected_by: Optional[UserDTO] = None
+    rejected_at: Optional[datetime] = None
+    rejected_reason: Optional[str] = None
+    # Approver
+    approved_by: Optional[UserDTO] = None
+    approved_at: Optional[datetime] = None

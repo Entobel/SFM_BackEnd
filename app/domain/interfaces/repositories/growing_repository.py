@@ -28,4 +28,10 @@ class IGrowingRepository(ABC):
         substrate_moisture_upper_bound: float | None,
         report_status: int | None,
         is_active: bool | None,
-    ): ...
+    ) -> dict[
+        "items" : list[list[GrowingEntity], list[GrowingZoneLevelEntity]],
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+    ]: ...

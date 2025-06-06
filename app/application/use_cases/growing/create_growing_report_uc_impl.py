@@ -120,9 +120,9 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
                 snapshot_level_name=zl.level.name,
                 snapshot_zone_number=zl.zone.zone_number,
                 zone_level=ZoneLevelEntity(id=zl.id),
+                is_assigned=zl.id in requested_zone_level_ids,
             )
             for zl in available_zone_levels
-            if zl.id in requested_zone_level_ids
         ]
 
         is_success = self.growing_repo.create_growing_report(

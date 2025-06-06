@@ -1,5 +1,17 @@
 from abc import ABC, abstractmethod
 
+from app.domain.entities.growing_entity import GrowingEntity
+from app.domain.entities.growing_zone_level_entity import GrowingZoneLevelEntity
+from typing import TypedDict
+
+
+class ListGrowimgReportType(TypedDict):
+    items: tuple[list[GrowingEntity], list[GrowingZoneLevelEntity]]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
 
 class IListGrowingReportUC(ABC):
     @abstractmethod
@@ -18,4 +30,4 @@ class IListGrowingReportUC(ABC):
         substrate_moisture_upper_bound: float | None,
         report_status: int | None,
         is_active: bool | None,
-    ): ...
+    ) -> ListGrowimgReportType: ...

@@ -13,9 +13,26 @@ from app.presentation.api.v1.dependencies.growing_dependencies import (
     GetListGrowingReportUseCaseDep,
 )
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from app.presentation.schemas.filter_schema import FilterSchema
-from app.presentation.schemas.growing_schema import CreateGrowingSchema
+from app.presentation.schemas.diet_schema import DietResponseSchema
+from app.presentation.schemas.factory_schema import FactoryResponseSchema
+from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
+from app.presentation.schemas.growing_schema import (
+    CreateGrowingSchema,
+    GrowingResponseSchema,
+)
+from app.presentation.schemas.growing_zone_level_schema import (
+    GrowingZoneLevelResponseSchema,
+)
+from app.presentation.schemas.level_schema import LevelResponseSchema
+from app.presentation.schemas.production_object_schema import (
+    ProductionObjectResponseSchema,
+)
+from app.presentation.schemas.production_type_schema import ProductionTypeResponseSchema
 from app.presentation.schemas.response import Response
+from app.presentation.schemas.shift_schema import ShiftResponseSchema
+from app.presentation.schemas.user_schema import UserResponseSchema
+from app.presentation.schemas.zone_level_schema import ZoneLevelResponseSchema
+from app.presentation.schemas.zone_schema import ZoneResponseSchema
 
 
 router = APIRouter(prefix="/growings", tags=["Growings"])
@@ -65,7 +82,7 @@ async def get_list_growing_report(
     filter_params: FilterSchema = Depends(),
 ):
 
-    use_case.execute(
+    result = use_case.execute(
         page=filter_params.page,
         page_size=filter_params.page_size,
         diet_id=filter_params.diet_id,
@@ -81,4 +98,98 @@ async def get_list_growing_report(
         substrate_moisture_upper_bound=filter_params.substrate_moisture_upper_bound,
     )
 
-    return True
+    [growings, growing_zone_levels] = result["items"]
+
+    growing_zone_level_map: dict[int, list[GrowingZoneLevelResponseSchema]] = {}
+
+    for gzl in growing_zone_levels:
+        gzl_schema = GrowingZoneLevelResponseSchema(
+            id=gzl.id,
+            is_assigned=gzl.is_assigned,
+            snapshot_level_name=gzl.snapshot_level_name,
+            snapshot_zone_number=gzl.snapshot_zone_number,
+            zone_level=ZoneLevelResponseSchema(
+                id=gzl.zone_level.id,
+            ),
+        ).model_dump(exclude_none=True)
+
+        growing_id = gzl.growing.id
+        growing_zone_level_map.setdefault(growing_id, []).append(gzl_schema)
+
+    list_growing_response = [
+        GrowingResponseSchema(
+            id=g.id,
+            date_produced=g.date_produced,
+            shift=ShiftResponseSchema(
+                id=g.shift.id,
+                name=g.shift.name,
+            ),
+            production_type=ProductionTypeResponseSchema(
+                id=g.production_type.id,
+                name=g.production_type.name,
+                description=g.production_type.description,
+                abbr_name=g.production_type.abbr_name,
+            ),
+            production_object=ProductionObjectResponseSchema(
+                id=g.production_object.id,
+                name=g.production_object.name,
+                description=g.production_object.description,
+            ),
+            diet=DietResponseSchema(
+                id=g.diet.id,
+                name=g.diet.name,
+                description=g.diet.description,
+            ),
+            factory=FactoryResponseSchema(
+                id=g.factory.id,
+                name=g.factory.name,
+                abbr_name=g.factory.abbr_name,
+            ),
+            assigned_zone_levels=growing_zone_level_map.get(g.id, []),
+            substrate_moisture=g.substrate_moisture,
+            number_crates=g.number_crates,
+            notes=g.notes,
+            is_active=g.is_active,
+            status=g.status,
+            created_by=UserResponseSchema(
+                id=g.created_by.id,
+                first_name=g.created_by.first_name,
+                last_name=g.created_by.last_name,
+                email=g.created_by.email,
+                phone=g.created_by.phone,
+            ),
+            rejected_by=UserResponseSchema(
+                id=g.rejected_by.id,
+                first_name=g.rejected_by.first_name,
+                last_name=g.rejected_by.last_name,
+                email=g.rejected_by.email,
+                phone=g.rejected_by.phone,
+            ),
+            rejected_at=g.rejected_at,
+            rejected_reason=g.rejected_reason,
+            approved_by=UserResponseSchema(
+                id=g.approved_by.id,
+                first_name=g.approved_by.first_name,
+                last_name=g.approved_by.last_name,
+                email=g.approved_by.email,
+                phone=g.approved_by.phone,
+            ),
+            approved_at=g.approved_at,
+            created_at=g.created_at,
+            updated_at=g.updated_at,
+        ).model_dump(exclude_none=True)
+        for g in growings
+    ]
+
+    paginate_schema = PaginateDTO(
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"],
+        total_pages=result["total_pages"],
+        items=list_growing_response,
+    )
+
+    return Response.success_response(
+        code="ETB-lay_danh_sach_growing_report_thanh_cong",
+        data=paginate_schema,
+    ).get_dict()

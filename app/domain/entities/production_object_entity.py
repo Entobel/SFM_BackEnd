@@ -7,6 +7,7 @@ class ProductionObjectEntity:
     id: Optional[int] = None
     name: Optional[str] = None
     description: Optional[str] = None
+    abbr_name: Optional[str] = None
     is_active: Optional[bool] = None
 
     def change_name(self, name: str):
@@ -25,4 +26,5 @@ class ProductionObjectEntity:
             name=row["po_name"],
             description=row["po_description"],
             is_active=row["po_is_active"],
+            abbr_name=row["po_abbr_name"],
         )

@@ -1,6 +1,8 @@
 from app.application.interfaces.use_cases.growing.list_growing_report_uc import (
     IListGrowingReportUC,
+    ListGrowimgReportType,
 )
+
 from app.domain.interfaces.repositories.growing_repository import IGrowingRepository
 
 
@@ -23,7 +25,7 @@ class ListGrowingReportUC(IListGrowingReportUC):
         substrate_moisture_upper_bound: float | None,
         report_status: int | None,
         is_active: bool | None,
-    ):
+    ) -> ListGrowimgReportType:
         return self.growing_repo.get_list_growing_report(
             page=page,
             page_size=page_size,

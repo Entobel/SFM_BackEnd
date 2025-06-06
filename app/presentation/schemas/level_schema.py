@@ -1,5 +1,17 @@
+from datetime import datetime
+from typing import Optional
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ConfigDict
+
+
+class LevelResponseSchema(BaseModel):
+    id: Optional[int] = None
+    name: Optional[str] = None
+    is_active: Optional[bool] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateLevelSchema(BaseModel):
