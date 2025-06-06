@@ -72,7 +72,6 @@ async def get_list_zones(
         )
         zones.append(zone_dto)
 
-    # Bước 3: Gói vào PaginateDTO
     paginate_schema = PaginateDTO(
         total=result["total"],
         page=result["page"],

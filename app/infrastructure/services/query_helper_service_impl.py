@@ -3,6 +3,7 @@ from typing import Any, List, Optional, Tuple
 
 from dateutil.parser import isoparse
 
+from app.core.exception import BadRequestError
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
@@ -11,6 +12,7 @@ class QueryHelper(IQueryHelperService):
         self.where_clauses: List[str] = []
         self.params: List[Any] = []
         self.join_clauses: List[str] = []
+        self.tables: List[Any] = []
 
     def add_eq(self, column: str, value: Any):
         """= filter"""
@@ -39,6 +41,12 @@ class QueryHelper(IQueryHelperService):
 
         self.where_clauses.append(f"{column} BETWEEN %s AND %s")
         self.params.extend([start_dt, end_dt])
+
+    def add_between_value(
+        self, column: str, lower_bound: int | float, upper_bound: int | float
+    ) -> None:
+        self.where_clauses.append(f"{column} BETWEEN %s AND %s")
+        self.params.extend([lower_bound, upper_bound])
 
     def where_sql(self) -> str:
         if not self.where_clauses:
@@ -76,6 +84,7 @@ class QueryHelper(IQueryHelperService):
         )
         self.join_clauses.append(join_fragment)
         self.params.append(_id)
+        self.tables.append(table_name)
 
     def join_sql(self) -> str:
         if not self.join_clauses:
@@ -84,3 +93,15 @@ class QueryHelper(IQueryHelperService):
 
     def _get_abbr_table(self, name: str) -> str:
         return "".join(word[0] for word in name.split("_"))
+
+    def verify_ids(self, targets: List[str], sources: List[str]):
+        diff_keys = [item for item in sources if item not in targets]
+
+        if len(diff_keys) > 0:
+            for item in diff_keys:
+                raise BadRequestError(f"ETB_{item}-khong-tim-thay")
+
+    def all_tables(
+        self,
+    ) -> List[str]:
+        return self.tables

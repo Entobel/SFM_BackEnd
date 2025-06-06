@@ -83,7 +83,7 @@ class LevelRepository(ILevelRepository):
     def get_level_by_id(self, level_entity: LevelEntity) -> LevelEntity | None:
         query = """
                 SELECT id, name, is_active, created_at, updated_at
-                FROM level
+                FROM levels
                 WHERE id = %s;
                 """
 
@@ -110,7 +110,7 @@ class LevelRepository(ILevelRepository):
 
     def create_level(self, level_entity: LevelEntity) -> bool:
         query = """
-                INSERT INTO level (name)
+                INSERT INTO levels (name)
                 VALUES (%s);
                 """
         level_name = level_entity.name
@@ -149,3 +149,22 @@ class LevelRepository(ILevelRepository):
             else:
                 self.conn.rollback()
                 return False
+
+    def check_level_is_used(self, level_entity: LevelEntity) -> bool:
+        query = """
+        SELECT
+            *
+        FROM levels l
+        JOIN zone_levels zl ON
+            l.id = zl.level_id
+        WHERE
+            l.id = %s AND zl.is_used = true        
+        """
+
+        level_id = level_entity.id
+
+        with self.conn.cursor() as cur:
+            cur.execute(query=query, vars=(level_id,))
+            cur.fetchone()
+
+            return True if cur.rowcount > 0 else False

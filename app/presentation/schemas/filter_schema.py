@@ -29,6 +29,15 @@ class FilterSchema(BaseModel):
     end_date: Optional[str] = Field(default=None, description="Filter by end date")
     diet_id: Optional[int] = Field(default=None, description="Filter by diet ID")
     shift_id: Optional[int] = Field(default=None, description="Filter by shift ID")
+    substrate_moisture_lower_bound: Optional[float] = Field(
+        default=None, description="Filter by start range moisture ID"
+    )
+    substrate_moisture_upper_bound: Optional[float] = Field(
+        default=None, description="Filter by end range moisture ID"
+    )
+    report_status: Optional[int] = Field(
+        default=None, description="Filter by status of report"
+    )
     model_config = ConfigDict(from_attributes=True)
 
 

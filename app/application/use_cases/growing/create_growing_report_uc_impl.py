@@ -55,78 +55,84 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
         requested_zone_level_ids = self._extract_zone_level_ids(zone_level_dtos)
 
         if growing_dto.shift.id:
-            self.query_helper.add_table(table_name="shift", _id=growing_dto.shift.id)
+            self.query_helper.add_table(table_name="shifts", _id=growing_dto.shift.id)
+
+        if zone_id:
+            self.query_helper.add_table(table_name="zones", _id=zone_id)
 
         if growing_dto.production_object.id:
             self.query_helper.add_table(
-                table_name="production_object", _id=growing_dto.production_object.id
+                table_name="production_objects", _id=growing_dto.production_object.id
             )
 
         if growing_dto.production_type.id:
             self.query_helper.add_table(
-                table_name="production_type", _id=growing_dto.production_type.id
+                table_name="production_types", _id=growing_dto.production_type.id
             )
 
         if growing_dto.diet.id:
-            self.query_helper.add_table(table_name="diet", _id=growing_dto.diet.id)
+            self.query_helper.add_table(table_name="diets", _id=growing_dto.diet.id)
 
         if growing_dto.factory.id:
             self.query_helper.add_table(
-                table_name="factory", _id=growing_dto.factory.id
+                table_name="factories", _id=growing_dto.factory.id
             )
 
         if growing_dto.user.id:
-            self.query_helper.add_table(table_name='"user"', _id=growing_dto.user.id)
+            self.query_helper.add_table(table_name="users", _id=growing_dto.user.id)
 
         join_sql = self.query_helper.join_sql()
         ids_for_check = self.query_helper.all_params()
 
-        print(join_sql)
-        # result = self.common_repo.check_ids(sql=join_sql, ids=ids_for_check)
+        result = self.common_repo.check_ids(sql=join_sql, ids=ids_for_check)
 
-        # # Get vailable zone level for zone_id
-        # available_zone_levels = self.zone_repo.get_list_zone_level_by_id(
-        #     zone_id=zone_id, is_active=True, is_used=False
-        # )
+        self.query_helper.verify_ids(
+            targets=[row[0] for row in result], sources=self.query_helper.all_tables()
+        )
 
-        # if not available_zone_levels:
-        #     raise BadRequestError("ETB_khong_con_zone_level_nao_hop_le")
+        # Get vailable zone level for zone_id
+        available_zone_levels = self.zone_repo.get_list_zone_level_by_id(
+            zone_id=zone_id, is_active=True, is_used=False
+        )
 
-        # available_zone_level_ids = {level.id for level in available_zone_levels}
+        if not available_zone_levels:
+            raise BadRequestError("ETB_khong_con_zone_level_nao_hop_le")
 
-        # invalid_zone_level_ids = (
-        #     set(requested_zone_level_ids) - available_zone_level_ids
-        # )
+        available_zone_level_ids = {level.id for level in available_zone_levels}
 
-        # if invalid_zone_level_ids:
-        #     raise BadRequestError(
-        #         f"ETB_zone_da_duoc_su_dung, các zone_level_id không hợp lệ: {(invalid_zone_level_ids)}"
-        #     )
+        invalid_zone_level_ids = (
+            set(requested_zone_level_ids) - available_zone_level_ids
+        )
 
-        # selected_zone_level_ids = [
-        #     zone_level.id
-        #     for zone_level in available_zone_levels
-        #     if zone_level.id in requested_zone_level_ids
-        # ]
+        if invalid_zone_level_ids:
+            raise BadRequestError(
+                f"ETB_zone_da_duoc_su_dung, các zone_level_id không hợp lệ: {(invalid_zone_level_ids)}"
+            )
 
-        # list_growing_zone_level = [
-        #     GrowingZoneLevelEntity(
-        #         snapshot_level_name=zl.level.name,
-        #         snapshot_zone_number=zl.zone.zone_number,
-        #         zone_level=ZoneLevelEntity(id=zl.id),
-        #     )
-        #     for zl in available_zone_levels
-        #     if zl.id in requested_zone_level_ids
-        # ]
+        selected_zone_level_ids = [
+            zone_level.id
+            for zone_level in available_zone_levels
+            if zone_level.id in requested_zone_level_ids
+        ]
 
-        # is_success = self.growing_repo.create_growing_report(
-        #     growing_entity=growing_entity,
-        #     list_growing_zone_level_entity=list_growing_zone_level,
-        #     zone_level_ids=selected_zone_level_ids,
-        # )
+        list_growing_zone_level = [
+            GrowingZoneLevelEntity(
+                snapshot_level_name=zl.level.name,
+                snapshot_zone_number=zl.zone.zone_number,
+                zone_level=ZoneLevelEntity(id=zl.id),
+            )
+            for zl in available_zone_levels
+            if zl.id in requested_zone_level_ids
+        ]
 
-        # if not is_success:
-        #     raise BadRequestError("ETB_loi_khi_tao")
+        is_success = self.growing_repo.create_growing_report(
+            growing_entity=growing_entity,
+            list_growing_zone_level_entity=list_growing_zone_level,
+            zone_level_ids=selected_zone_level_ids,
+        )
+
+        if not is_success:
+            raise BadRequestError("ETB_loi_khi_tao")
 
         return True
 
@@ -144,7 +150,7 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             factory=FactoryEntity(id=growing_dto.factory.id),
             number_crates=growing_dto.number_crates,
             substrate_moisture=growing_dto.substrate_moisture,
-            created_by=UserEntity(id=growing_dto.user),
+            created_by=UserEntity(id=growing_dto.user.id),
             notes=growing_dto.notes,
         )
 

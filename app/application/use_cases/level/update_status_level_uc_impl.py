@@ -1,5 +1,7 @@
 from app.application.dto.level_dto import LevelDTO
-from app.application.interfaces.use_cases.level.update_status_level_uc import IUpdateStatusLevelUC
+from app.application.interfaces.use_cases.level.update_status_level_uc import (
+    IUpdateStatusLevelUC,
+)
 from app.core.exception import BadRequestError
 from app.domain.entities.level_entity import LevelEntity
 from app.domain.interfaces.repositories.level_repository import ILevelRepository
@@ -20,6 +22,13 @@ class UpdateStatusLevelUC(IUpdateStatusLevelUC):
 
         if not level_entity:
             raise BadRequestError("ETB_level_khong_ton_tai")
+
+        is_level_used = self.level_repo.check_level_is_used(level_entity=query_entity)
+
+        if is_level_used:
+            raise BadRequestError(
+                "ETB_level_dang_su_dung_khong_kha_dung_de_change_status"
+            )
 
         if level_entity.is_active == query_entity.is_active:
             return True

@@ -42,3 +42,17 @@ class IQueryHelperService(ABC):
 
     @abstractmethod
     def add_table(self, table_name: str, _id: int): ...
+
+    @abstractmethod
+    def verify_ids(self, targets: list[str], sources: list[str]): ...
+
+    @abstractmethod
+    def all_tables(self) -> List[str]: ...
+
+    @abstractmethod
+    def add_between_date(self, column: str, start_date: str, end_date: str) -> None: ...
+
+    @abstractmethod
+    def add_between_value(
+        self, column: str, lower_bound: int | float, upper_bound: int | float
+    ) -> None: ...

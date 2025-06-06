@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
+from app.application.dto.user_dto import UserDTO
 from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.production_object_entity import ProductionObjectEntity
 from app.domain.entities.production_type_entity import ProductionTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
-from app.domain.entities.user_entity import UserEntity
 
 
 @dataclass(frozen=True)
@@ -22,4 +22,4 @@ class GrowingDTO:
     number_crates: Optional[int] = None
     substrate_moisture: Optional[float] = None
     notes: Optional[str] = None
-    user: Optional[UserEntity] = None
+    user: Optional[UserDTO] = None

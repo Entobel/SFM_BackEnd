@@ -245,6 +245,7 @@ class ZoneRepository(IZoneRepository):
                 zl.id AS zone_level_id, 
                 zl.level_id AS level_id, 
                 zl.is_active AS zone_level_active, 
+                zl.is_used AS zone_level_used,
                 zl.zone_id AS zone_id,
                 zl.created_at AS created_at,
                 zl.updated_at AS updated_at
@@ -260,6 +261,7 @@ class ZoneRepository(IZoneRepository):
             ZoneLevelEntity(
                 id=row["zone_level_id"],
                 is_active=row["zone_level_active"],
+                is_used=row["ASzone_level_used"],
                 zone=ZoneEntity(id=row["zone_id"]),
                 level=LevelEntity(id=row["level_id"]),
                 created_at=row["created_at"],
@@ -305,6 +307,7 @@ class ZoneRepository(IZoneRepository):
                 zl.id             AS zone_level_id,
                 zl.zone_id        AS zone_id,
                 zl.is_active      AS zone_level_active,
+                zl.is_used         AS zone_level_used,
                 l.name            AS level_name,
                 l.id              AS level_id,
                 l.is_active       AS level_active,
@@ -334,6 +337,7 @@ class ZoneRepository(IZoneRepository):
             ZoneLevelEntity(
                 id=row["zone_level_id"],
                 is_active=row["zone_level_active"],
+                is_used=row["zone_level_used"],
                 zone=ZoneEntity(
                     id=row["zone_id"],
                     zone_number=row["zone_number"],

@@ -4,8 +4,14 @@ from typing import Annotated
 from app.application.interfaces.use_cases.growing.create_growing_report_uc import (
     ICreateGrowingReportUC,
 )
+from app.application.interfaces.use_cases.growing.list_growing_report_uc import (
+    IListGrowingReportUC,
+)
 from app.application.use_cases.growing.create_growing_report_uc_impl import (
     CreateGrowingReportUC,
+)
+from app.application.use_cases.growing.list_growing_report_uc_impl import (
+    ListGrowingReportUC,
 )
 from app.domain.interfaces.repositories.growing_repository import IGrowingRepository
 from app.infrastructure.database.repositories.growing_repository_impl import (
@@ -43,6 +49,15 @@ def get_create_growing_report_uc(
     )
 
 
-CreateGrowingReportUCDep = Annotated[
+def get_list_growing_report_uc(
+    growing_repo: GrowingRepositoryDep,
+) -> IListGrowingReportUC:
+    return ListGrowingReportUC(growing_repo=growing_repo)
+
+
+CreateGrowingReportUseCaseDep = Annotated[
     ICreateGrowingReportUC, Depends(get_create_growing_report_uc)
+]
+GetListGrowingReportUseCaseDep = Annotated[
+    IListGrowingReportUC, Depends(get_list_growing_report_uc)
 ]
