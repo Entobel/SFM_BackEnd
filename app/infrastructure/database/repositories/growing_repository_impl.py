@@ -224,6 +224,7 @@ class GrowingRepository(IGrowingRepository):
             po.id                AS po_id,
             po."name"            AS po_name,
             po.description       AS po_description,
+            po.abbr_name         AS po_abbr_name,
             pt.id                AS pt_id,
             pt."name"            AS pt_name,
             pt.abbr_name         AS pt_abbr_name,
@@ -294,6 +295,7 @@ class GrowingRepository(IGrowingRepository):
                     id=row["po_id"],
                     name=row["po_name"],
                     description=row["po_description"],
+                    abbr_name=row["po_abbr_name"],
                 ),
                 production_type=ProductionTypeEntity(
                     id=row["pt_id"],
@@ -375,3 +377,43 @@ class GrowingRepository(IGrowingRepository):
             "page_size": page_size,
             "total_pages": sql_helper.total_pages(total=total, page_size=page_size),
         }
+
+    def update_status_growing_report(
+        self,
+        status: int,
+        rejected_at: str,
+        rejected_by: int,
+        rejected_reason: str,
+        approved_at: str,
+        approved_by: int,
+        growing_id: int,
+    ) -> bool:
+
+        update_growing_query = """
+        UPDATE growings g SET
+        g.rejected_at = %s
+        g.rejected_by = %s
+        g.rejected_reason = %s
+        g.approved_by = %s
+        g.approved_at = %s
+        WHERE g.id = %s
+        """
+
+        update_growing_vars = (
+            rejected_at,
+            rejected_by,
+            rejected_reason,
+            approved_by,
+            approved_at,
+            growing_id,
+        )
+
+        with self.conn.cursor() as cur:
+            cur.execute(query=update_growing_query, vars=update_growing_vars)
+
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False

@@ -86,7 +86,7 @@ class QueryHelper(IQueryHelperService):
         self.params.append(_id)
         self.tables.append(table_name)
 
-    def join_sql(self) -> str:
+    def join_ids_sql(self) -> str:
         if not self.join_clauses:
             return ""
         return " UNION ALL ".join(self.join_clauses)

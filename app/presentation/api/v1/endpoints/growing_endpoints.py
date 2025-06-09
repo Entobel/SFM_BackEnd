@@ -11,6 +11,7 @@ from app.application.dto.zone_level_dto import ZoneLevelDTO
 from app.presentation.api.v1.dependencies.growing_dependencies import (
     CreateGrowingReportUseCaseDep,
     GetListGrowingReportUseCaseDep,
+    UpdateStatusGrowingReportUseCaseDep,
 )
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from app.presentation.schemas.diet_schema import DietResponseSchema
@@ -19,6 +20,7 @@ from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.growing_schema import (
     CreateGrowingSchema,
     GrowingResponseSchema,
+    UpdateGrowingSchema,
 )
 from app.presentation.schemas.growing_zone_level_schema import (
     GrowingZoneLevelResponseSchema,
@@ -134,6 +136,7 @@ async def get_list_growing_report(
                 id=g.production_object.id,
                 name=g.production_object.name,
                 description=g.production_object.description,
+                abbr_name=g.production_object.abbr_name,
             ),
             diet=DietResponseSchema(
                 id=g.diet.id,
@@ -193,3 +196,24 @@ async def get_list_growing_report(
         code="ETB-lay_danh_sach_growing_report_thanh_cong",
         data=paginate_schema,
     ).get_dict()
+
+
+@router.patch("/{growing_id}/status")
+async def update_status_growing(
+    token_verify: TokenVerifyDep,
+    body: UpdateGrowingSchema,
+    growing_id: int,
+    use_case: UpdateStatusGrowingReportUseCaseDep,
+):
+    print(body)
+    use_case.execute(
+        status=body.status,
+        rejected_at=body.rejected_at,
+        rejected_by=body.rejected_by,
+        rejected_reason=body.rejected_reason,
+        approved_at=body.approved_at,
+        approved_by=body.approved_by,
+        growing_id=growing_id,
+    )
+
+    return True

@@ -35,3 +35,15 @@ class IGrowingRepository(ABC):
         "page_size":int,
         "total_pages":int,
     ]: ...
+
+    @abstractmethod
+    def update_status_growing_report(
+        self,
+        status: int,
+        rejected_at: str,
+        rejected_by: int,
+        rejected_reason: str,
+        approved_at: str,
+        approved_by: int,
+        growing_id: int,
+    ) -> bool: ...

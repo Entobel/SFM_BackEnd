@@ -2,13 +2,19 @@ from fastapi import APIRouter, Depends
 
 from app.application.dto.production_object_dto import ProductionObjectDTO
 from app.presentation.api.v1.dependencies.production_object_dependencies import (
-    CreateProductionObjectUCDep, ListProductionObjectUCDep,
-    UpdateProductionObjectUCDep, UpdateStatusProductionObjectUCDep)
+    CreateProductionObjectUCDep,
+    ListProductionObjectUCDep,
+    UpdateProductionObjectUCDep,
+    UpdateStatusProductionObjectUCDep,
+)
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.production_object_schema import (
-    CreateProductionObjectSchema, UpdateProductionObjectDTO,
-    UpdateStatusProductionObjectSchema)
+    CreateProductionObjectSchema,
+    ProductionObjectResponseSchema,
+    UpdateProductionObjectDTO,
+    UpdateStatusProductionObjectSchema,
+)
 from app.presentation.schemas.response import Response
 
 router = APIRouter(prefix="/production-objects", tags=["Production Object"])
@@ -32,12 +38,13 @@ async def get_production_objects(
 
     for production_object in result["items"]:
         production_objects.append(
-            ProductionObjectDTO(
+            ProductionObjectResponseSchema(
                 id=production_object.id,
                 name=production_object.name,
+                abbr_name=production_object.abbr_name,
                 description=production_object.description,
                 is_active=production_object.is_active,
-            )
+            ).model_dump(exclude_none=True)
         )
 
     paginate_data = PaginateDTO(

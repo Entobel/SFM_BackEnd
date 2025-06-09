@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, model_validator, ConfigDict
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 from app.application.dto.diet_dto import DietDTO
 from app.application.dto.factory_dto import FactoryDTO
@@ -127,3 +127,34 @@ class ListGrowingSchema(BaseModel):
     # Approver
     approved_by: Optional[UserDTO] = None
     approved_at: Optional[datetime] = None
+
+
+class UpdateGrowingSchema(BaseModel):
+    status: Optional[int] = None
+    rejected_at: Optional[str] = Field(default=None)
+    rejected_by: Optional[int] = Field(default=None)
+    rejected_reason: Optional[str] = Field(default=None)
+    approved_at: Optional[str] = Field(default=None)
+    approved_by: Optional[int] = Field(default=None)
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_required_fields(cls, values: dict[str, any]):
+        required_fields = {
+            "status": "ETB-thieu_truong_status",
+        }
+
+        errors = []
+        for field, error_code in required_fields.items():
+            if field not in values or values[field] is None:
+                errors.append(
+                    {
+                        "loc": ("body", field),
+                        "msg": error_code,
+                        "type": "value_error.missing",
+                    }
+                )
+        if errors:
+            raise RequestValidationError(errors)
+
+        return values

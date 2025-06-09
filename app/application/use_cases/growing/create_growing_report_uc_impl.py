@@ -81,7 +81,7 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
         if growing_dto.user.id:
             self.query_helper.add_table(table_name="users", _id=growing_dto.user.id)
 
-        join_sql = self.query_helper.join_sql()
+        join_sql = self.query_helper.join_ids_sql()
         ids_for_check = self.query_helper.all_params()
 
         result = self.common_repo.check_ids(sql=join_sql, ids=ids_for_check)
