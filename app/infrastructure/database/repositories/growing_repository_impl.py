@@ -407,16 +407,18 @@ class GrowingRepository(IGrowingRepository):
     ) -> bool:
 
         update_growing_query = """
-        UPDATE growings g SET
-        g.rejected_at = %s
-        g.rejected_by = %s
-        g.rejected_reason = %s
-        g.approved_by = %s
-        g.approved_at = %s
-        WHERE g.id = %s
+        UPDATE growings SET
+        status = %s,
+        rejected_at = %s,
+        rejected_by = %s,
+        rejected_reason = %s,
+        approved_by = %s,
+        approved_at = %s
+        WHERE id = %s
         """
 
         update_growing_vars = (
+            status,
             rejected_at,
             rejected_by,
             rejected_reason,
