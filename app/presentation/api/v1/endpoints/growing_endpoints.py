@@ -34,7 +34,6 @@ from app.presentation.schemas.response import Response
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.user_schema import UserResponseSchema
 from app.presentation.schemas.zone_level_schema import ZoneLevelResponseSchema
-from app.presentation.schemas.zone_schema import ZoneResponseSchema
 
 
 router = APIRouter(prefix="/growings", tags=["Growings"])
@@ -100,7 +99,9 @@ async def get_list_growing_report(
         substrate_moisture_upper_bound=filter_params.substrate_moisture_upper_bound,
     )
 
-    [growings, growing_zone_levels] = result["items"]
+    [growings, growing_zone_levels, [growing_pending_count, growing_rejected_count]] = (
+        result["items"]
+    )
 
     growing_zone_level_map: dict[int, list[GrowingZoneLevelResponseSchema]] = {}
 
@@ -194,7 +195,13 @@ async def get_list_growing_report(
 
     return Response.success_response(
         code="ETB-lay_danh_sach_growing_report_thanh_cong",
-        data=paginate_schema,
+        data={
+            **paginate_schema.model_dump(),
+            "counts": {
+                "pending": growing_pending_count,
+                "rejected": growing_rejected_count,
+            },
+        },
     ).get_dict()
 
 
@@ -205,7 +212,7 @@ async def update_status_growing(
     growing_id: int,
     use_case: UpdateStatusGrowingReportUseCaseDep,
 ):
-    print(body)
+
     use_case.execute(
         status=body.status,
         rejected_at=body.rejected_at,

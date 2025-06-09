@@ -3,6 +3,9 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from loguru import logger
+from app.application.interfaces.use_cases.growing.list_growing_report_uc import (
+    ListGrowimgReportType,
+)
 from app.core.exception import BadRequestError
 from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
@@ -127,13 +130,7 @@ class GrowingRepository(IGrowingRepository):
         substrate_moisture_upper_bound: float | None,
         report_status: int | None,
         is_active: bool | None,
-    ) -> dict[
-        "items" : list[list[GrowingEntity], list[GrowingZoneLevelEntity]],
-        "total":int,
-        "page":int,
-        "page_size":int,
-        "total_pages":int,
-    ]:
+    ) -> ListGrowimgReportType:
         sql_helper = self.query_helper
 
         if search:
@@ -370,8 +367,28 @@ class GrowingRepository(IGrowingRepository):
             for row in growing_zone_level_rows
         ]
 
+        count_growing_report_sql = """
+        SELECT g.status, COUNT(*) 
+        FROM growings g 
+        WHERE g.status IN (0, 2) 
+        GROUP BY g.status
+        """
+
+        with self.conn.cursor() as cur:
+            cur.execute(count_growing_report_sql)
+            rows = cur.fetchall()
+
+        counts = {status: count for status, count in rows}
+
+        growing_pending_count = counts.get(0, 0)
+        growing_rejected_count = counts.get(2, 0)
+
         return {
-            "items": (growings, growing_zone_levels),
+            "items": (
+                growings,
+                growing_zone_levels,
+                (growing_pending_count, growing_rejected_count),
+            ),
             "total": total,
             "page": page,
             "page_size": page_size,

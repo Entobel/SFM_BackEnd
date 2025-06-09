@@ -6,7 +6,7 @@ from typing import TypedDict
 
 
 class ListGrowimgReportType(TypedDict):
-    items: tuple[list[GrowingEntity], list[GrowingZoneLevelEntity]]
+    items: tuple[list[GrowingEntity], list[GrowingZoneLevelEntity], tuple[int, int]]
     total: int
     page: int
     page_size: int

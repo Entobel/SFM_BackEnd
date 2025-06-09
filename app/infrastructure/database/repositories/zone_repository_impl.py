@@ -261,7 +261,7 @@ class ZoneRepository(IZoneRepository):
             ZoneLevelEntity(
                 id=row["zone_level_id"],
                 is_active=row["zone_level_active"],
-                is_used=row["ASzone_level_used"],
+                is_used=row["zone_level_used"],
                 zone=ZoneEntity(id=row["zone_id"]),
                 level=LevelEntity(id=row["level_id"]),
                 created_at=row["created_at"],

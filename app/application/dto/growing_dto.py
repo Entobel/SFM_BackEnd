@@ -23,3 +23,13 @@ class GrowingDTO:
     substrate_moisture: Optional[float] = None
     notes: Optional[str] = None
     user: Optional[UserDTO] = None
+
+
+@dataclass
+class UpdateStatusGrowingDTO:
+    growing_id: Optional[int] = None
+    rejected_at: Optional[str] = None
+    rejected_by: Optional[int] = None
+    rejected_reason: Optional[str] = None
+    approved_at: Optional[str] = None
+    approved_by: Optional[int] = None

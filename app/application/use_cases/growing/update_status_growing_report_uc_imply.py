@@ -1,3 +1,4 @@
+from app.application.dto.growing_dto import UpdateStatusGrowingDTO
 from app.application.interfaces.use_cases.growing.update_status_growing_report_uc import (
     IUpdateStatusGrowingReportUC,
 )
@@ -29,18 +30,38 @@ class UpdateStatusGrowingReportUC(IUpdateStatusGrowingReportUC):
         approved_at: str,
         approved_by: int,
     ):
-        logger.debug(f"{status} {rejected_by}")
+        # Validate allowed status
+        if status not in (0, 1, 2):
+            raise BadRequestError("ETB_invalid_status")
 
-        if status == 2 and not rejected_by:
-            raise BadRequestError("ETB_rejected_need_user")
-        else:
+        # Build DTO
+        update_growing_dto = UpdateStatusGrowingDTO(
+            growing_id=growing_id,
+            approved_at=approved_at,
+            approved_by=approved_by,
+            rejected_at=rejected_at,
+            rejected_by=rejected_by,
+            rejected_reason=rejected_reason,
+        )
+
+        # Process rejected case
+        if status == 2:
+            if not rejected_by:
+                raise BadRequestError("ETB_rejected_need_user")
             self.query_helper.add_table(table_name="users", _id=rejected_by)
 
-        if status == 1 and not approved_by:
-            raise BadRequestError("ETB_approved_need_user")
-        else:
+        # Process approved case
+        if status == 1:
+            if not approved_by:
+                raise BadRequestError("ETB_approved_need_user")
             self.query_helper.add_table(table_name="users", _id=approved_by)
 
+            # If approved, clear rejected fields
+            update_growing_dto.rejected_at = None
+            update_growing_dto.rejected_by = None
+            update_growing_dto.rejected_reason = None
+
+        # Validate related IDs
         join_sql = self.query_helper.join_ids_sql()
         ids_for_check = self.query_helper.all_params()
 
@@ -48,6 +69,17 @@ class UpdateStatusGrowingReportUC(IUpdateStatusGrowingReportUC):
 
         self.query_helper.verify_ids(
             targets=[row[0] for row in result], sources=self.query_helper.all_tables()
+        )
+
+        # Update growing report status
+        self.growing_report.update_status_growing_report(
+            status=status,
+            growing_id=growing_id,
+            approved_at=update_growing_dto.approved_at,
+            approved_by=update_growing_dto.approved_by,
+            rejected_at=update_growing_dto.rejected_at,
+            rejected_by=update_growing_dto.rejected_by,
+            rejected_reason=update_growing_dto.rejected_reason,
         )
 
         return True
