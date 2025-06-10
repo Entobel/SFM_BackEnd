@@ -10,6 +10,7 @@ from app.domain.entities.zone_entity import ZoneEntity
 class ZoneLevelDTO:
     id: Optional[int] = None
     level: Optional[LevelEntity] = None
+    zone: Optional[ZoneEntity] = None
     is_active: Optional[bool] = None
     is_used: Optional[bool] = None
     created_at: Optional[datetime] = None

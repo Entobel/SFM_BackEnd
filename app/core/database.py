@@ -1,14 +1,11 @@
 import logging
 from contextlib import contextmanager
 from typing import Generator
-
+from psycopg2 import pool
 import psycopg2
-from psycopg2 import OperationalError, pool
-
+from loguru import logger
 from app.core.config import config
 
-# Configure logging
-logger = logging.getLogger("uvicorn")
 
 
 class Database:
@@ -17,12 +14,12 @@ class Database:
         logger.info(f"[DATABASE]:: Connecting to {masked_url}")
 
         try:
-            self.connection_pool = psycopg2.pool.SimpleConnectionPool(
+            self.connection_pool = pool.SimpleConnectionPool(
                 minconn=1, maxconn=15, dsn=db_url
             )
             if self.connection_pool:
                 logger.info("[DATABASE]:: Connection pool created successfully")
-        except OperationalError as e:
+        except psycopg2.OperationalError as e:
             logger.error("[DATABASE]:: Failed to create connection pool", exc_info=True)
             raise
 
@@ -58,7 +55,7 @@ class Database:
                     cur.execute("SELECT 1")
                     result = cur.fetchone()
                     logger.info(
-                        f"[DATABASE]:: Connected to DB '{config.database.DB_NAME}' successfully"
+                        f"Connected to DB '{config.database.DB_NAME}' successfully"
                     )
                     return result == (1,)
         except Exception:

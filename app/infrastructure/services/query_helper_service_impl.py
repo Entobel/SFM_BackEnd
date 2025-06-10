@@ -68,7 +68,6 @@ class QueryHelper(IQueryHelperService):
         column: str,
         flag: Optional[bool],
     ):
-        """Nếu flag=None → skip; nếu flag=True/False → filter column = flag"""
         if flag is not None:
             self.where_clauses.append(f"{column} = %s")
             self.params.append(flag)

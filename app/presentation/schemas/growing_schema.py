@@ -22,6 +22,7 @@ from app.presentation.schemas.production_object_schema import (
 from app.presentation.schemas.production_type_schema import ProductionTypeResponseSchema
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.user_schema import UserResponseSchema
+from app.presentation.schemas.zone_schema import ZoneResponseSchema
 
 
 class GrowingResponseSchema(BaseModel):
@@ -32,6 +33,7 @@ class GrowingResponseSchema(BaseModel):
     production_type: Optional[ProductionTypeResponseSchema] = None
     diet: Optional[DietResponseSchema] = None
     factory: Optional[FactoryResponseSchema] = None
+    zone: Optional[ZoneResponseSchema] = None
     number_crates: Optional[int] = None
     substrate_moisture: Optional[float] = None
     notes: Optional[str] = None

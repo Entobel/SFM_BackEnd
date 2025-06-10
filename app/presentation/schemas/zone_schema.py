@@ -44,14 +44,14 @@ class CreateZoneSchema(BaseModel):
 
     @field_validator("zone_number")
     @classmethod
-    def validate_zone_number(cls, v: int):
+    def validate_zone_number_zone(cls, v: int):
         if v <= 0:
             raise ValueError("ETB-so_zone_khong_duoc_am")
         return v
 
     @field_validator("factory_id")
     @classmethod
-    def validate_zone_number(cls, v: int):
+    def validate_zone_number_factory(cls, v: int):
         if v <= 0:
             raise ValueError("ETB-factory_id_khong_hop_le")
         return v

@@ -17,17 +17,7 @@ from app.domain.entities.user_entity import UserEntity
 from app.domain.entities.zone_entity import ZoneEntity
 from app.domain.entities.zone_level_entity import ZoneLevelEntity
 from app.domain.interfaces.repositories.common_repository import ICommonRepository
-from app.domain.interfaces.repositories.diet_repository import IDietRepository
-from app.domain.interfaces.repositories.factory_repository import IFactoryRepository
 from app.domain.interfaces.repositories.growing_repository import IGrowingRepository
-from app.domain.interfaces.repositories.production_object_repository import (
-    IProductionObjectRepository,
-)
-from app.domain.interfaces.repositories.production_type_repository import (
-    IProductionTypeRepository,
-)
-from app.domain.interfaces.repositories.shift_repository import IShiftRepository
-from app.domain.interfaces.repositories.user_repository import IUserRepository
 from app.domain.interfaces.repositories.zone_repository import IZoneRepository
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
@@ -119,11 +109,12 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             GrowingZoneLevelEntity(
                 snapshot_level_name=zl.level.name,
                 snapshot_zone_number=zl.zone.zone_number,
-                zone_level=ZoneLevelEntity(id=zl.id),
+                zone_level=ZoneLevelEntity(id=zl.id, zone=ZoneEntity(id=zl.zone.id)),
                 is_assigned=zl.id in requested_zone_level_ids,
             )
             for zl in available_zone_levels
         ]
+        logger.debug(list_growing_zone_level)
 
         is_success = self.growing_repo.create_growing_report(
             growing_entity=growing_entity,

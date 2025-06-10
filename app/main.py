@@ -57,7 +57,7 @@ class AppCreator:
 
         # Ensure DB connection works
         if not db.test_connection():
-            logger.error("[APP]:: Failed to connect to the database")
+            logger.error("Failed to connect to the database")
             raise RuntimeError("❌ Failed to connect to the database.")
 
         # Configure CORS middleware if applicable
@@ -71,7 +71,7 @@ class AppCreator:
             )
 
             logger.success(
-                f"[APP]:: CORS configured with origins: {config.BACKEND_CORS_ORIGINS}"
+                f"CORS configured with origins: {config.BACKEND_CORS_ORIGINS}"
             )
 
         # Health check endpoint

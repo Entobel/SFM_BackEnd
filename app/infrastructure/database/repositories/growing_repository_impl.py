@@ -15,6 +15,7 @@ from app.domain.entities.production_object_entity import ProductionObjectEntity
 from app.domain.entities.production_type_entity import ProductionTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
+from app.domain.entities.zone_entity import ZoneEntity
 from app.domain.entities.zone_level_entity import ZoneLevelEntity
 from app.domain.interfaces.repositories.growing_repository import IGrowingRepository
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
@@ -87,7 +88,7 @@ class GrowingRepository(IGrowingRepository):
             insert_growing_zone_level_query = """
                 INSERT INTO 
                 growing_zone_levels 
-                (growing_id, snapshot_level_name, snapshot_zone_number, zone_level_id, is_assigned)
+                (growing_id, snapshot_level_name, snapshot_zone_number, zone_level_id, is_assigned, zone_id)
                 VALUES %s
             """
 
@@ -98,6 +99,7 @@ class GrowingRepository(IGrowingRepository):
                     entity.snapshot_zone_number,
                     entity.zone_level.id,
                     entity.is_assigned,
+                    entity.zone_level.zone.id,
                 )
                 for entity in list_growing_zone_level_entity
             ]
@@ -134,7 +136,7 @@ class GrowingRepository(IGrowingRepository):
         sql_helper = self.query_helper
 
         if search:
-            sql_helper.add_search(cols="g.notes", query=search)
+            sql_helper.add_search(cols=["g.notes"], query=search)
 
         if production_object_id is not None:
             sql_helper.add_eq(
@@ -342,6 +344,7 @@ class GrowingRepository(IGrowingRepository):
             gzl.zone_level_id as zone_level_id,
             gzl.snapshot_level_name as gzl_snapshot_level_name,
             gzl.snapshot_zone_number as gzl_snapshot_zone_number,
+            gzl.zone_id as gzl_zone_id,
             gzl.is_assigned as gzl_is_assigned,
             gzl.created_at as gzl_created_at,
             gzl.updated_at as gzl_updated_at
@@ -358,7 +361,9 @@ class GrowingRepository(IGrowingRepository):
                 id=row["gzl_id"],
                 growing=GrowingEntity(id=row["growing_id"]),
                 is_assigned=row["gzl_is_assigned"],
-                zone_level=ZoneLevelEntity(id=row["zone_level_id"]),
+                zone_level=ZoneLevelEntity(
+                    id=row["zone_level_id"], zone=ZoneEntity(id=row["gzl_zone_id"])
+                ),
                 snapshot_level_name=row["gzl_snapshot_level_name"],
                 snapshot_zone_number=row["gzl_snapshot_zone_number"],
                 created_at=row["gzl_created_at"],

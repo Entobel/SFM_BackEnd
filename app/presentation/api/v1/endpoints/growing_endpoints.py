@@ -7,6 +7,7 @@ from app.application.dto.produciton_type_dto import ProductionTypeDTO
 from app.application.dto.production_object_dto import ProductionObjectDTO
 from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
+from app.application.dto.zone_dto import ZoneDTO
 from app.application.dto.zone_level_dto import ZoneLevelDTO
 from app.presentation.api.v1.dependencies.growing_dependencies import (
     CreateGrowingReportUseCaseDep,
@@ -61,7 +62,7 @@ async def create_growing_report(
     list_zone_level_dtos: list[ZoneLevelDTO] = []
 
     for id in body.zone_level_ids:
-        zone_leve_dto = ZoneLevelDTO(id=id)
+        zone_leve_dto = ZoneLevelDTO(id=id, zone=ZoneDTO(id=body.zone_id))
 
         list_zone_level_dtos.append(zone_leve_dto)
 
@@ -113,6 +114,7 @@ async def get_list_growing_report(
             snapshot_zone_number=gzl.snapshot_zone_number,
             zone_level=ZoneLevelResponseSchema(
                 id=gzl.zone_level.id,
+                zone=ZoneLevelResponseSchema(id=gzl.zone_level.zone.id),
             ),
         ).model_dump(exclude_none=True)
 

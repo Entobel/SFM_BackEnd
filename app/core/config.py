@@ -4,9 +4,7 @@ from typing import Dict, List, Optional
 from dotenv import load_dotenv
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
-
-# Configure logging
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 # Load environment variables from .env file
 load_dotenv()
