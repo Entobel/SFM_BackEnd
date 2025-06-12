@@ -16,7 +16,7 @@ class UpdateStatusGrowingReportUC(IUpdateStatusGrowingReportUC):
         common_repo: ICommonRepository,
         query_helper: IQueryHelperService,
     ) -> None:
-        self.growing_report = growing_repo
+        self.growing_repo = growing_repo
         self.common_repo = common_repo
         self.query_helper = query_helper
 
@@ -72,7 +72,7 @@ class UpdateStatusGrowingReportUC(IUpdateStatusGrowingReportUC):
         )
 
         # Update growing report status
-        self.growing_report.update_status_growing_report(
+        self.growing_repo.update_status_growing_report(
             status=status,
             growing_id=growing_id,
             approved_at=update_growing_dto.approved_at,

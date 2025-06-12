@@ -13,6 +13,9 @@ class IGrowingRepository(ABC):
     ): ...
 
     @abstractmethod
+    def get_growing_report_by_id(self, growing_entity: GrowingEntity) -> GrowingEntity | None:...
+
+    @abstractmethod
     def get_list_growing_report(
         self,
         page: int,
@@ -47,3 +50,6 @@ class IGrowingRepository(ABC):
         approved_by: int,
         growing_id: int,
     ) -> bool: ...
+
+    @abstractmethod
+    def update_growing_report(self, growing_entity: GrowingEntity, old_zone_level_ids: list[int], new_zone_levels_ids: list[int]):...

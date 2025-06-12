@@ -1,8 +1,10 @@
+from re import I
 from fastapi import APIRouter, Depends
+from loguru import logger
 
 from app.application.dto.diet_dto import DietDTO
 from app.application.dto.factory_dto import FactoryDTO
-from app.application.dto.growing_dto import GrowingDTO
+from app.application.dto.growing_dto import GrowingDTO, UpdateGrowingDTO
 from app.application.dto.produciton_type_dto import ProductionTypeDTO
 from app.application.dto.production_object_dto import ProductionObjectDTO
 from app.application.dto.shift_dto import ShiftDTO
@@ -12,6 +14,7 @@ from app.application.dto.zone_level_dto import ZoneLevelDTO
 from app.presentation.api.v1.dependencies.growing_dependencies import (
     CreateGrowingReportUseCaseDep,
     GetListGrowingReportUseCaseDep,
+    UpdateGrowingReportUseCaseDep,
     UpdateStatusGrowingReportUseCaseDep,
 )
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
@@ -22,6 +25,7 @@ from app.presentation.schemas.growing_schema import (
     CreateGrowingSchema,
     GrowingResponseSchema,
     UpdateGrowingSchema,
+    UpdateStatusGrowingSchema,
 )
 from app.presentation.schemas.growing_zone_level_schema import (
     GrowingZoneLevelResponseSchema,
@@ -35,6 +39,7 @@ from app.presentation.schemas.response import Response
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.user_schema import UserResponseSchema
 from app.presentation.schemas.zone_level_schema import ZoneLevelResponseSchema
+from app.presentation.schemas.zone_schema import ZoneResponseSchema
 
 
 router = APIRouter(prefix="/growings", tags=["Growings"])
@@ -114,7 +119,8 @@ async def get_list_growing_report(
             snapshot_zone_number=gzl.snapshot_zone_number,
             zone_level=ZoneLevelResponseSchema(
                 id=gzl.zone_level.id,
-                zone=ZoneLevelResponseSchema(id=gzl.zone_level.zone.id),
+                zone=ZoneResponseSchema(id=gzl.zone_level.zone.id),
+                status=gzl.zone_level.status
             ),
         ).model_dump(exclude_none=True)
 
@@ -210,7 +216,7 @@ async def get_list_growing_report(
 @router.patch("/{growing_id}/status")
 async def update_status_growing(
     token_verify: TokenVerifyDep,
-    body: UpdateGrowingSchema,
+    body: UpdateStatusGrowingSchema,
     growing_id: int,
     use_case: UpdateStatusGrowingReportUseCaseDep,
 ):
@@ -224,5 +230,32 @@ async def update_status_growing(
         approved_by=body.approved_by,
         growing_id=growing_id,
     )
+
+    return True
+
+@router.put("/{growing_id}")
+async def update_growing_report(
+    token_verify: TokenVerifyDep,
+    body: UpdateGrowingSchema,
+    growing_id: int,
+    use_case: UpdateGrowingReportUseCaseDep
+):
+    growing_dto = UpdateGrowingDTO(
+        id=growing_id,
+        diet=DietDTO(id=body.diet_id),
+        shift=ShiftDTO(id=body.shift_id),
+        date_produced=body.date_produced,
+        factory=FactoryDTO(id=body.factory_id),
+        notes=body.notes,
+        number_crates=body.number_crates,
+        production_object=ProductionObjectDTO(id=body.production_object_id),
+        production_type=ProductionTypeDTO(id=body.production_type_id),
+        created_by=UserDTO(id=body.created_by),
+        approved_at=body.approved_at,
+        approved_by=UserDTO(id=body.approved_by),
+        status=body.status,
+    )
+
+    use_case.execute(growing_dto=growing_dto, new_zone_level_ids=body.new_zone_level_ids, old_zone_level_ids=body.old_zone_level_ids, zone_id=body.zone_id)
 
     return True

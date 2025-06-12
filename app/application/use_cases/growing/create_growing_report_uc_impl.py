@@ -1,7 +1,7 @@
 from app.application.dto.growing_dto import GrowingDTO
 from app.application.dto.zone_level_dto import ZoneLevelDTO
 from loguru import logger
-
+from app.core.constants.common_enums import ZoneLevelStatusEnum
 from app.application.interfaces.use_cases.growing.create_growing_report_uc import (
     ICreateGrowingReportUC,
 )
@@ -80,9 +80,10 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             targets=[row[0] for row in result], sources=self.query_helper.all_tables()
         )
 
+
         # Get vailable zone level for zone_id
         available_zone_levels = self.zone_repo.get_list_zone_level_by_id(
-            zone_id=zone_id, is_active=True, is_used=False
+            zone_id=zone_id, is_active=True, status=ZoneLevelStatusEnum.INACTIVE.value
         )
 
         if not available_zone_levels:
@@ -112,9 +113,9 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
                 zone_level=ZoneLevelEntity(id=zl.id, zone=ZoneEntity(id=zl.zone.id)),
                 is_assigned=zl.id in requested_zone_level_ids,
             )
-            for zl in available_zone_levels
+            for zl in available_zone_levels if zl.id in selected_zone_level_ids
         ]
-        logger.debug(list_growing_zone_level)
+        
 
         is_success = self.growing_repo.create_growing_report(
             growing_entity=growing_entity,

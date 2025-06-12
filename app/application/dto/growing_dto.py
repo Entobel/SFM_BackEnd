@@ -2,23 +2,24 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
+from app.application.dto.diet_dto import DietDTO
+from app.application.dto.factory_dto import FactoryDTO
+from app.application.dto.produciton_type_dto import ProductionTypeDTO
+from app.application.dto.production_object_dto import ProductionObjectDTO
+from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
-from app.domain.entities.diet_entity import DietEntity
-from app.domain.entities.factory_entity import FactoryEntity
-from app.domain.entities.production_object_entity import ProductionObjectEntity
-from app.domain.entities.production_type_entity import ProductionTypeEntity
-from app.domain.entities.shift_entity import ShiftEntity
+
 
 
 @dataclass(frozen=True)
 class GrowingDTO:
     id: Optional[int] = None
     date_produced: Optional[datetime] = None
-    shift: Optional[ShiftEntity] = None
-    production_object: Optional[ProductionObjectEntity] = None
-    production_type: Optional[ProductionTypeEntity] = None
-    diet: Optional[DietEntity] = None
-    factory: Optional[FactoryEntity] = None
+    shift: Optional[ShiftDTO] = None
+    production_object: Optional[ProductionObjectDTO] = None
+    production_type: Optional[ProductionTypeDTO] = None
+    diet: Optional[DietDTO] = None
+    factory: Optional[FactoryDTO] = None
     number_crates: Optional[int] = None
     substrate_moisture: Optional[float] = None
     notes: Optional[str] = None
@@ -33,3 +34,23 @@ class UpdateStatusGrowingDTO:
     rejected_reason: Optional[str] = None
     approved_at: Optional[str] = None
     approved_by: Optional[int] = None
+
+@dataclass(frozen=True)
+class UpdateGrowingDTO:
+    id: Optional[int] = None
+    date_produced: Optional[datetime] = None
+    shift: Optional[ShiftDTO] = None
+    production_object: Optional[ProductionObjectDTO] = None
+    production_type: Optional[ProductionTypeDTO] = None
+    diet: Optional[DietDTO] = None
+    factory: Optional[FactoryDTO] = None
+    number_crates: Optional[int] = None
+    substrate_moisture: Optional[float] = None
+    notes: Optional[str] = None
+    status: Optional[int] = None
+    created_by: Optional[UserDTO] = None
+    approved_by: Optional[UserDTO] = None
+    approved_at: Optional[str] = None
+    rejected_at: Optional[str] = None
+    rejected_by: Optional[UserDTO] = None
+    rejected_reason: Optional[str] = None

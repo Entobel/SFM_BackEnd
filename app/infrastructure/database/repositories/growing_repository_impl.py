@@ -28,6 +28,136 @@ class GrowingRepository(IGrowingRepository):
         self.conn = conn
         self.query_helper = query_helper
 
+    def get_growing_report_by_id(self, growing_entity):
+        
+        get_growing_sql = """
+        SELECT g.id              AS g_id,
+            g.date_produced      AS g_date_produced,
+            g.number_crates      AS g_number_crates,
+            g.substrate_moisture AS g_substrate_moisture,
+            g.status             AS g_status,
+            g.notes              AS g_notes,
+            g.is_active          AS g_is_active,
+            g.approved_at        AS g_approved_at,
+            g.rejected_at        AS g_rejected_at,
+            g.rejected_reason    AS g_rejected_reason,
+            s.id                 AS s_id,
+            s.name               AS s_name,
+            po.id                AS po_id,
+            po."name"            AS po_name,
+            po.description       AS po_description,
+            po.abbr_name         AS po_abbr_name,
+            pt.id                AS pt_id,
+            pt."name"            AS pt_name,
+            pt.abbr_name         AS pt_abbr_name,
+            pt.description       AS pt_description,
+            d.id                 AS d_id,
+            d."name"             AS d_name,
+            d.description        AS d_description,
+            f.id                 AS f_id,
+            f.abbr_name          AS f_abbr_name,
+            f."name"             AS f_name,
+            u1.id                AS created_by_id,
+            u1.first_name        AS created_by_first_name,
+            u1.last_name         AS created_by_last_name,
+            u1.phone             AS created_by_phone,
+            u1.email             AS created_by_email,
+            u2.id                AS rejected_by_id,
+            u2.first_name        AS rejected_by_first_name,
+            u2.last_name         AS rejected_by_last_name,
+            u2.email             AS rejected_by_email,
+            u2.phone             AS rejected_by_phone,
+            u3.id                AS approved_by_id,
+            u3.first_name        AS approved_by_first_name,
+            u3.last_name         AS approved_by_last_name,
+            u3.email             AS approved_by_email,
+            u3.phone             AS approved_by_phone
+        FROM growings g
+                JOIN shifts s ON
+            g.shift_id = s.id
+                JOIN production_objects po ON
+            g.production_object_id = po.id
+                JOIN production_types pt ON
+            g.production_type_id = pt.id
+                JOIN diets d ON
+            g.diet_id = d.id
+                JOIN factories f ON
+            g.factory_id = f.id
+                LEFT JOIN users u1 ON
+            g.created_by = u1.id
+                LEFT JOIN users u2 ON
+            g.rejected_by = u2.id
+                LEFT JOIN users u3 ON
+            g.approved_by = u3.id
+        WHERE g.id = %s
+        """
+
+        growing_id = growing_entity.id
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query=get_growing_sql, vars=(growing_id,))
+            row = cur.fetchone()[0]
+
+            if row is None:
+                return None
+            
+            growing_entity = GrowingEntity(
+                id=row["g_id"],
+                date_produced=row["g_date_produced"],
+                number_crates=row["g_number_crates"],
+                substrate_moisture=row["g_substrate_moisture"],
+                status=row["g_status"],
+                notes=row["g_notes"],
+                is_active=row["g_is_active"],
+                approved_at=row["g_approved_at"],
+                shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
+                rejected_at=row["g_rejected_at"],
+                rejected_reason=row["g_rejected_reason"],
+                production_object=ProductionObjectEntity(
+                    id=row["po_id"],
+                    name=row["po_name"],
+                    description=row["po_description"],
+                    abbr_name=row["po_abbr_name"],
+                ),
+                production_type=ProductionTypeEntity(
+                    id=row["pt_id"],
+                    name=row["pt_name"],
+                    abbr_name=row["pt_abbr_name"],
+                    description=row["pt_description"],
+                ),
+                diet=DietEntity(
+                    id=row["d_id"], name=row["d_name"], description=row["d_description"]
+                ),
+                factory=FactoryEntity(
+                    id=row["f_id"],
+                    abbr_name=row["f_abbr_name"],
+                    name=row["f_name"],
+                ),
+                created_by=UserEntity(
+                    id=row["created_by_id"],
+                    first_name=row["created_by_first_name"],
+                    last_name=row["created_by_last_name"],
+                    phone=row["created_by_phone"],
+                    email=row["created_by_email"],
+                ),
+                rejected_by=UserEntity(
+                    id=row["rejected_by_id"],
+                    first_name=row["rejected_by_first_name"],
+                    last_name=row["rejected_by_last_name"],
+                    phone=row["rejected_by_phone"],
+                    email=row["rejected_by_email"],
+                ),
+                approved_by=UserEntity(
+                    id=row["approved_by_id"],
+                    first_name=row["approved_by_first_name"],
+                    last_name=row["approved_by_last_name"],
+                    phone=row["approved_by_phone"],
+                    email=row["approved_by_email"],
+                ),
+            )
+
+            return growing_entity
+
     def create_growing_report(
         self,
         growing_entity: GrowingEntity,
@@ -38,7 +168,7 @@ class GrowingRepository(IGrowingRepository):
         with self.conn.cursor() as cur:
             update_zone_level_query = """
                 UPDATE zone_levels 
-                SET is_used = true 
+                SET status = 1
                 WHERE id = ANY(%s)
             """
 
@@ -103,6 +233,10 @@ class GrowingRepository(IGrowingRepository):
                 )
                 for entity in list_growing_zone_level_entity
             ]
+
+            logger.debug(
+                f"List tuple growing zone level: {list_tuple_growing_zone_level}"
+            )
 
             execute_values(
                 cur=cur,
@@ -342,13 +476,15 @@ class GrowingRepository(IGrowingRepository):
             gzl.id as gzl_id,
             gzl.growing_id as growing_id,
             gzl.zone_level_id as zone_level_id,
+            zl.status as zone_level_status,
             gzl.snapshot_level_name as gzl_snapshot_level_name,
             gzl.snapshot_zone_number as gzl_snapshot_zone_number,
             gzl.zone_id as gzl_zone_id,
             gzl.is_assigned as gzl_is_assigned,
             gzl.created_at as gzl_created_at,
             gzl.updated_at as gzl_updated_at
-        FROM growing_zone_levels gzl
+        FROM growing_zone_levels gzl JOIN 
+            zone_levels zl ON gzl.zone_level_id = zl.id
         WHERE gzl.growing_id = ANY(%s);         
         """
 
@@ -362,7 +498,7 @@ class GrowingRepository(IGrowingRepository):
                 growing=GrowingEntity(id=row["growing_id"]),
                 is_assigned=row["gzl_is_assigned"],
                 zone_level=ZoneLevelEntity(
-                    id=row["zone_level_id"], zone=ZoneEntity(id=row["gzl_zone_id"])
+                    id=row["zone_level_id"], zone=ZoneEntity(id=row["gzl_zone_id"]), status=row["zone_level_status"]
                 ),
                 snapshot_level_name=row["gzl_snapshot_level_name"],
                 snapshot_zone_number=row["gzl_snapshot_zone_number"],
@@ -441,3 +577,12 @@ class GrowingRepository(IGrowingRepository):
             else:
                 self.conn.rollback()
                 return False
+
+    def update_growing_report(self, growing_entity, old_zone_level_ids, new_zone_levels_ids):
+        with self.conn.cursor() as cur:
+            update_growing_report_sql = """
+            UPDATE growings 
+            """
+            ...
+
+        return super().update_growing_report(growing_entity, old_zone_level_ids, new_zone_levels_ids)

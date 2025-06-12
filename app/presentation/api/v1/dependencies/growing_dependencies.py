@@ -7,6 +7,7 @@ from app.application.interfaces.use_cases.growing.create_growing_report_uc impor
 from app.application.interfaces.use_cases.growing.list_growing_report_uc import (
     IListGrowingReportUC,
 )
+from app.application.interfaces.use_cases.growing.update_growing_report_uc import IUpdateGrowingReportUC
 from app.application.interfaces.use_cases.growing.update_status_growing_report_uc import (
     IUpdateStatusGrowingReportUC,
 )
@@ -16,6 +17,7 @@ from app.application.use_cases.growing.create_growing_report_uc_impl import (
 from app.application.use_cases.growing.list_growing_report_uc_impl import (
     ListGrowingReportUC,
 )
+from app.application.use_cases.growing.update_growing_report_uc_impl import UpdateGrowingReport
 from app.application.use_cases.growing.update_status_growing_report_uc_imply import (
     UpdateStatusGrowingReportUC,
 )
@@ -60,20 +62,19 @@ def get_list_growing_report_uc(
 ) -> IListGrowingReportUC:
     return ListGrowingReportUC(growing_repo=growing_repo)
 
-
-#  self.growing_report = growing_report
-#         self.common_repository = common_repository
-#         self.query_helper = query_helper
-
-
 def get_update_status_growing_report_uc(
     growing_repo: GrowingRepositoryDep,
     common_repo: CommonRepositoryDep,
-    queyr_helper: QueryHelperDep,
+    query_helper: QueryHelperDep,
 ) -> IUpdateStatusGrowingReportUC:
     return UpdateStatusGrowingReportUC(
-        growing_repo=growing_repo, common_repo=common_repo, query_helper=queyr_helper
+        growing_repo=growing_repo, common_repo=common_repo, query_helper=query_helper
     )
+
+def get_update_growing_report_uc(growing_repo: GrowingRepositoryDep,
+    common_repo: CommonRepositoryDep,
+    query_helper: QueryHelperDep) -> IUpdateGrowingReportUC:
+    return UpdateGrowingReport(growing_repo=growing_repo, common_repo=common_repo, query_helper=query_helper)
 
 
 CreateGrowingReportUseCaseDep = Annotated[
@@ -85,3 +86,4 @@ GetListGrowingReportUseCaseDep = Annotated[
 UpdateStatusGrowingReportUseCaseDep = Annotated[
     IUpdateStatusGrowingReportUC, Depends(get_update_status_growing_report_uc)
 ]
+UpdateGrowingReportUseCaseDep = Annotated[IUpdateGrowingReportUC, Depends(get_update_growing_report_uc)]

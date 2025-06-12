@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from app.core.constants.common_enums import ZoneLevelStatusEnum
 from app.domain.entities.zone_entity import ZoneEntity
 from app.domain.entities.zone_level_entity import ZoneLevelEntity
 
@@ -53,5 +54,5 @@ class IZoneRepository(ABC):
 
     @abstractmethod
     def get_list_zone_level_by_id(
-        self, zone_id: int, is_active: bool = True, is_used: bool = False
+        self, zone_id: int, status: ZoneLevelStatusEnum, is_active: bool = True
     ) -> list[ZoneLevelEntity]: ...

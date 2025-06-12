@@ -1,3 +1,4 @@
+from loguru import logger
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -126,7 +127,7 @@ class ZoneRepository(IZoneRepository):
                 zl.id             AS zone_level_id,
                 zl.zone_id        AS zone_id,
                 zl.is_active      AS zone_level_active,
-                zl.is_used        AS zone_level_used,
+                zl.status         AS zone_level_status,
                 l.name            AS level_name,
                 l.id              AS level_id,
                 l.is_active       AS level_active,
@@ -161,7 +162,7 @@ class ZoneRepository(IZoneRepository):
                     created_at=row["level_created_at"],
                     updated_at=row["level_updated_at"],
                 ),
-                is_used=row["zone_level_used"],
+                status=row["zone_level_status"],
             )
             for row in zone_level_rows
         ]
@@ -245,7 +246,7 @@ class ZoneRepository(IZoneRepository):
                 zl.id AS zone_level_id, 
                 zl.level_id AS level_id, 
                 zl.is_active AS zone_level_active, 
-                zl.is_used AS zone_level_used,
+                zl.status AS zone_level_status,
                 zl.zone_id AS zone_id,
                 zl.created_at AS created_at,
                 zl.updated_at AS updated_at
@@ -261,7 +262,7 @@ class ZoneRepository(IZoneRepository):
             ZoneLevelEntity(
                 id=row["zone_level_id"],
                 is_active=row["zone_level_active"],
-                is_used=row["zone_level_used"],
+                status=row["zone_level_status"],
                 zone=ZoneEntity(id=row["zone_id"]),
                 level=LevelEntity(id=row["level_id"]),
                 created_at=row["created_at"],
@@ -307,7 +308,7 @@ class ZoneRepository(IZoneRepository):
                 zl.id             AS zone_level_id,
                 zl.zone_id        AS zone_id,
                 zl.is_active      AS zone_level_active,
-                zl.is_used         AS zone_level_used,
+                zl.status         AS zone_level_status,
                 l.name            AS level_name,
                 l.id              AS level_id,
                 l.is_active       AS level_active,
@@ -337,7 +338,7 @@ class ZoneRepository(IZoneRepository):
             ZoneLevelEntity(
                 id=row["zone_level_id"],
                 is_active=row["zone_level_active"],
-                is_used=row["zone_level_used"],
+                status=row["zone_level_status"],
                 zone=ZoneEntity(
                     id=row["zone_id"],
                     zone_number=row["zone_number"],
@@ -366,14 +367,12 @@ class ZoneRepository(IZoneRepository):
             "total_pages": qb.total_pages(total=total, page_size=page_size),
         }
 
-    def get_list_zone_level_by_id(
-        self, zone_id: int, is_active: bool = True, is_used: bool = False
-    ) -> list[ZoneLevelEntity]:
+    def get_list_zone_level_by_id(self, zone_id, status, is_active = True):
         query = """
         SELECT 
         zl.id AS zone_level_id,
         zl.is_active AS zone_level_is_active,
-        zl.is_used AS zone_level_is_used,
+        zl.status AS zone_level_status,
         l.id as level_id,
         l.name AS level_name,
         z.id as zone_id,
@@ -381,11 +380,13 @@ class ZoneRepository(IZoneRepository):
         FROM zone_levels zl JOIN levels l
         ON zl.level_id = l.id JOIN zones z
         ON zl.zone_id = z.id
-        WHERE zl.zone_id = %s AND (zl.is_active = %s AND zl.is_used = %s)
+        WHERE zl.zone_id = %s AND (zl.is_active = %s AND zl.status = %s)
         """
+        
+        logger.debug("STATUS of get_list_zone_level_by_id: ", status)
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(query=query, vars=(zone_id, is_active, is_used))
+            cur.execute(query=query, vars=(zone_id, is_active, status,))
             rows = cur.fetchall()
 
         zone_levels = [
@@ -394,7 +395,7 @@ class ZoneRepository(IZoneRepository):
                 level=LevelEntity(id=row["level_id"], name=row["level_name"]),
                 zone=ZoneEntity(id=row["zone_id"], zone_number=row["zone_zone_number"]),
                 is_active=row["zone_level_is_active"],
-                is_used=row["zone_level_is_used"],
+                status=row["zone_level_status"],
             )
             for row in rows
         ]
