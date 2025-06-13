@@ -14,6 +14,7 @@ from app.presentation.api.v1.dependencies.zone_dependencies import (
 )
 from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
+from app.presentation.schemas.zone_level_schema import ZoneLevelResponseSchema
 from app.presentation.schemas.zone_schema import (
     CreateZoneSchema,
     UpdateStatusLevelZoneSchema,
@@ -44,14 +45,15 @@ async def get_list_zones(
     zone_level_map: dict[int, list[ZoneLevelDTO]] = {}
 
     for zl in zone_level_entities:
-        dto = ZoneLevelDTO(
+        dto = ZoneLevelResponseSchema(
             id=zl.id,
             level=zl.level,
             is_active=zl.is_active,
             created_at=zl.created_at,
             updated_at=zl.updated_at,
             status=zl.status,
-        )
+        ).model_dump(exclude_none=True)
+
         zone_id = zl.zone.id
         zone_level_map.setdefault(zone_id, []).append(dto)
 

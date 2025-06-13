@@ -30,7 +30,6 @@ from app.presentation.schemas.growing_schema import (
 from app.presentation.schemas.growing_zone_level_schema import (
     GrowingZoneLevelResponseSchema,
 )
-from app.presentation.schemas.level_schema import LevelResponseSchema
 from app.presentation.schemas.production_object_schema import (
     ProductionObjectResponseSchema,
 )
@@ -109,12 +108,13 @@ async def get_list_growing_report(
         result["items"]
     )
 
-    growing_zone_level_map: dict[int, list[GrowingZoneLevelResponseSchema]] = {}
+    growing_zone_level_map: dict[int,
+                                 list[GrowingZoneLevelResponseSchema]] = {}
 
     for gzl in growing_zone_levels:
         gzl_schema = GrowingZoneLevelResponseSchema(
             id=gzl.id,
-            is_assigned=gzl.is_assigned,
+            status=gzl.status,
             snapshot_level_name=gzl.snapshot_level_name,
             snapshot_zone_number=gzl.snapshot_zone_number,
             zone_level=ZoneLevelResponseSchema(
@@ -231,7 +231,10 @@ async def update_status_growing(
         growing_id=growing_id,
     )
 
-    return True
+    return Response.success_response(
+        data="Success", code="ETB_cap_nhat_trang_thai_growing_report_thanh_cong"
+    ).get_dict()
+
 
 @router.put("/{growing_id}")
 async def update_growing_report(
@@ -244,18 +247,20 @@ async def update_growing_report(
         id=growing_id,
         diet=DietDTO(id=body.diet_id),
         shift=ShiftDTO(id=body.shift_id),
-        date_produced=body.date_produced,
         factory=FactoryDTO(id=body.factory_id),
         notes=body.notes,
+        substrate_moisture=body.substrate_moisture,
         number_crates=body.number_crates,
         production_object=ProductionObjectDTO(id=body.production_object_id),
         production_type=ProductionTypeDTO(id=body.production_type_id),
-        created_by=UserDTO(id=body.created_by),
         approved_at=body.approved_at,
         approved_by=UserDTO(id=body.approved_by),
         status=body.status,
     )
 
-    use_case.execute(growing_dto=growing_dto, new_zone_level_ids=body.new_zone_level_ids, old_zone_level_ids=body.old_zone_level_ids, zone_id=body.zone_id)
+    use_case.execute(growing_dto=growing_dto, new_zone_level_ids=body.zone_level_ids,
+                     old_zone_level_ids=body.old_zone_level_ids, old_zone_id=body.old_zone_id, new_zone_id=body.zone_id)
 
-    return True
+    return Response.success_response(
+        data="Success", code="ETB_cap_nhat_growing_report_thanh_cong"
+    ).get_dict()

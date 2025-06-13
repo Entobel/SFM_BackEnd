@@ -1,7 +1,7 @@
 from app.application.dto.growing_dto import GrowingDTO
 from app.application.dto.zone_level_dto import ZoneLevelDTO
 from loguru import logger
-from app.core.constants.common_enums import ZoneLevelStatusEnum
+from app.core.constants.common_enums import GrowingZoneLevelStatusEnum, ZoneLevelStatusEnum
 from app.application.interfaces.use_cases.growing.create_growing_report_uc import (
     ICreateGrowingReportUC,
 )
@@ -42,10 +42,12 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
         zone_level_dtos: list[ZoneLevelDTO],
     ) -> bool:
         growing_entity = self._create_growing_entity(growing_dto)
-        requested_zone_level_ids = self._extract_zone_level_ids(zone_level_dtos)
+        requested_zone_level_ids = self._extract_zone_level_ids(
+            zone_level_dtos)
 
         if growing_dto.shift.id:
-            self.query_helper.add_table(table_name="shifts", _id=growing_dto.shift.id)
+            self.query_helper.add_table(
+                table_name="shifts", _id=growing_dto.shift.id)
 
         if zone_id:
             self.query_helper.add_table(table_name="zones", _id=zone_id)
@@ -61,7 +63,8 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             )
 
         if growing_dto.diet.id:
-            self.query_helper.add_table(table_name="diets", _id=growing_dto.diet.id)
+            self.query_helper.add_table(
+                table_name="diets", _id=growing_dto.diet.id)
 
         if growing_dto.factory.id:
             self.query_helper.add_table(
@@ -69,7 +72,8 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             )
 
         if growing_dto.user.id:
-            self.query_helper.add_table(table_name="users", _id=growing_dto.user.id)
+            self.query_helper.add_table(
+                table_name="users", _id=growing_dto.user.id)
 
         join_sql = self.query_helper.join_ids_sql()
         ids_for_check = self.query_helper.all_params()
@@ -80,7 +84,6 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             targets=[row[0] for row in result], sources=self.query_helper.all_tables()
         )
 
-
         # Get vailable zone level for zone_id
         available_zone_levels = self.zone_repo.get_list_zone_level_by_id(
             zone_id=zone_id, is_active=True, status=ZoneLevelStatusEnum.INACTIVE.value
@@ -89,7 +92,8 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
         if not available_zone_levels:
             raise BadRequestError("ETB_khong_con_zone_level_nao_hop_le")
 
-        available_zone_level_ids = {level.id for level in available_zone_levels}
+        available_zone_level_ids = {
+            level.id for level in available_zone_levels}
 
         invalid_zone_level_ids = (
             set(requested_zone_level_ids) - available_zone_level_ids
@@ -110,12 +114,12 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             GrowingZoneLevelEntity(
                 snapshot_level_name=zl.level.name,
                 snapshot_zone_number=zl.zone.zone_number,
-                zone_level=ZoneLevelEntity(id=zl.id, zone=ZoneEntity(id=zl.zone.id)),
-                is_assigned=zl.id in requested_zone_level_ids,
+                zone_level=ZoneLevelEntity(
+                    id=zl.id, zone=ZoneEntity(id=zl.zone.id)),
+                status=GrowingZoneLevelStatusEnum.TEMPORARY.value,
             )
             for zl in available_zone_levels if zl.id in selected_zone_level_ids
         ]
-        
 
         is_success = self.growing_repo.create_growing_report(
             growing_entity=growing_entity,
@@ -137,7 +141,8 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             production_object=ProductionObjectEntity(
                 id=growing_dto.production_object.id
             ),
-            production_type=ProductionTypeEntity(id=growing_dto.production_type.id),
+            production_type=ProductionTypeEntity(
+                id=growing_dto.production_type.id),
             diet=DietEntity(id=growing_dto.diet.id),
             factory=FactoryEntity(id=growing_dto.factory.id),
             number_crates=growing_dto.number_crates,

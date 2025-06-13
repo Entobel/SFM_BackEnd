@@ -10,7 +10,6 @@ from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
 
 
-
 @dataclass(frozen=True)
 class GrowingDTO:
     id: Optional[int] = None
@@ -35,6 +34,7 @@ class UpdateStatusGrowingDTO:
     approved_at: Optional[str] = None
     approved_by: Optional[int] = None
 
+
 @dataclass(frozen=True)
 class UpdateGrowingDTO:
     id: Optional[int] = None
@@ -48,9 +48,5 @@ class UpdateGrowingDTO:
     substrate_moisture: Optional[float] = None
     notes: Optional[str] = None
     status: Optional[int] = None
-    created_by: Optional[UserDTO] = None
     approved_by: Optional[UserDTO] = None
     approved_at: Optional[str] = None
-    rejected_at: Optional[str] = None
-    rejected_by: Optional[UserDTO] = None
-    rejected_reason: Optional[str] = None

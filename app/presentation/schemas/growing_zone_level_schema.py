@@ -10,7 +10,7 @@ class GrowingZoneLevelResponseSchema(BaseModel):
     zone_level: Optional[ZoneLevelResponseSchema] = None
     snapshot_zone_number: Optional[int] = None
     snapshot_level_name: Optional[str] = None
-    is_assigned: Optional[bool] = None
+    status: Optional[int] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

@@ -10,7 +10,7 @@ class GrowingZoneLevelEntity:
     id: Optional[int] = None
     growing: Optional[GrowingEntity] = None
     zone_level: Optional[ZoneLevelEntity] = None
-    is_assigned: Optional[bool] = None
+    status: Optional[int] = None
     snapshot_zone_number: Optional[int] = None
     snapshot_level_name: Optional[str] = None
     created_at: Optional[datetime] = None

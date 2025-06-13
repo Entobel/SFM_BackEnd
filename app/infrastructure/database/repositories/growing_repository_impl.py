@@ -6,6 +6,7 @@ from loguru import logger
 from app.application.interfaces.use_cases.growing.list_growing_report_uc import (
     ListGrowimgReportType,
 )
+from app.core.constants.common_enums import GrowingStatusEnum
 from app.core.exception import BadRequestError
 from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
@@ -29,7 +30,7 @@ class GrowingRepository(IGrowingRepository):
         self.query_helper = query_helper
 
     def get_growing_report_by_id(self, growing_entity):
-        
+
         get_growing_sql = """
         SELECT g.id              AS g_id,
             g.date_produced      AS g_date_produced,
@@ -92,15 +93,17 @@ class GrowingRepository(IGrowingRepository):
         WHERE g.id = %s
         """
 
+        logger.debug("run here")
+
         growing_id = growing_entity.id
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query=get_growing_sql, vars=(growing_id,))
-            row = cur.fetchone()[0]
+            row = cur.fetchone()
 
             if row is None:
                 return None
-            
+
             growing_entity = GrowingEntity(
                 id=row["g_id"],
                 date_produced=row["g_date_produced"],
@@ -175,7 +178,7 @@ class GrowingRepository(IGrowingRepository):
             cur.execute(update_zone_level_query, (zone_level_ids,))
 
             if cur.rowcount < 0:
-                raise BadRequestError("ETB_tao_khong_duoc_grow_report")
+                raise BadRequestError("ETB_tao_khong_duoc_grow_report_1")
 
             # Insert growing
             insert_growing_query = """
@@ -212,13 +215,13 @@ class GrowingRepository(IGrowingRepository):
             growing_id = cur.fetchone()[0]
 
             if cur.rowcount < 0:
-                raise BadRequestError("ETB_tao_khong_duoc_grow_report")
+                raise BadRequestError("ETB_tao_khong_duoc_grow_report_2")
 
             # Insert for growing_zone_level
             insert_growing_zone_level_query = """
                 INSERT INTO 
                 growing_zone_levels 
-                (growing_id, snapshot_level_name, snapshot_zone_number, zone_level_id, is_assigned, zone_id)
+                (growing_id, snapshot_level_name, snapshot_zone_number, zone_level_id, zone_id)
                 VALUES %s
             """
 
@@ -228,7 +231,6 @@ class GrowingRepository(IGrowingRepository):
                     entity.snapshot_level_name,
                     entity.snapshot_zone_number,
                     entity.zone_level.id,
-                    entity.is_assigned,
                     entity.zone_level.zone.id,
                 )
                 for entity in list_growing_zone_level_entity
@@ -245,7 +247,7 @@ class GrowingRepository(IGrowingRepository):
             )
 
             if cur.rowcount < 0:
-                raise BadRequestError("ETB_tao_khong_duoc_grow_report")
+                raise BadRequestError("ETB_tao_khong_duoc_grow_report_3")
 
             logger.success("CREATE GROWING SUCCESS")
 
@@ -278,7 +280,8 @@ class GrowingRepository(IGrowingRepository):
             )
 
         if production_type_id is not None:
-            sql_helper.add_eq(column="g.production_type_id", value=production_type_id)
+            sql_helper.add_eq(column="g.production_type_id",
+                              value=production_type_id)
 
         if diet_id is not None:
             sql_helper.add_eq(column="g.diet_id", value=diet_id)
@@ -339,7 +342,8 @@ class GrowingRepository(IGrowingRepository):
             total = cur.fetchone()[0]
 
         # Query page
-        limit_sql, limit_params = sql_helper.paginate(page=page, page_size=page_size)
+        limit_sql, limit_params = sql_helper.paginate(
+            page=page, page_size=page_size)
 
         growing_data_sql = f"""
         SELECT g.id              AS g_id,
@@ -480,7 +484,7 @@ class GrowingRepository(IGrowingRepository):
             gzl.snapshot_level_name as gzl_snapshot_level_name,
             gzl.snapshot_zone_number as gzl_snapshot_zone_number,
             gzl.zone_id as gzl_zone_id,
-            gzl.is_assigned as gzl_is_assigned,
+            gzl.status as gzl_status,
             gzl.created_at as gzl_created_at,
             gzl.updated_at as gzl_updated_at
         FROM growing_zone_levels gzl JOIN 
@@ -496,7 +500,7 @@ class GrowingRepository(IGrowingRepository):
             GrowingZoneLevelEntity(
                 id=row["gzl_id"],
                 growing=GrowingEntity(id=row["growing_id"]),
-                is_assigned=row["gzl_is_assigned"],
+                status=row["gzl_status"],
                 zone_level=ZoneLevelEntity(
                     id=row["zone_level_id"], zone=ZoneEntity(id=row["gzl_zone_id"]), status=row["zone_level_status"]
                 ),
@@ -546,29 +550,38 @@ class GrowingRepository(IGrowingRepository):
         approved_by: int,
         growing_id: int,
     ) -> bool:
-
-        update_growing_query = """
-        UPDATE growings SET
-        status = %s,
-        rejected_at = %s,
-        rejected_by = %s,
-        rejected_reason = %s,
-        approved_by = %s,
-        approved_at = %s
-        WHERE id = %s
-        """
-
-        update_growing_vars = (
-            status,
-            rejected_at,
-            rejected_by,
-            rejected_reason,
-            approved_by,
-            approved_at,
-            growing_id,
-        )
-
         with self.conn.cursor() as cur:
+            if status == GrowingStatusEnum.APPROVED.value:
+                update_growing_zone_level_status_by_growing_id_sql = """
+                UPDATE growing_zone_levels SET status = 1 WHERE growing_id = %s
+                """
+
+                cur.execute(
+                    query=update_growing_zone_level_status_by_growing_id_sql, vars=(growing_id,))
+                if cur.rowcount < 0:
+                    raise BadRequestError("ETB_cap_nhat_status_that_bai")
+
+            update_growing_query = """
+            UPDATE growings SET
+            status = %s,
+            rejected_at = %s,
+            rejected_by = %s,
+            rejected_reason = %s,
+            approved_by = %s,
+            approved_at = %s
+            WHERE id = %s
+            """
+
+            update_growing_vars = (
+                status,
+                rejected_at,
+                rejected_by,
+                rejected_reason,
+                approved_by,
+                approved_at,
+                growing_id,
+            )
+
             cur.execute(query=update_growing_query, vars=update_growing_vars)
 
             if cur.rowcount > 0:
@@ -578,11 +591,231 @@ class GrowingRepository(IGrowingRepository):
                 self.conn.rollback()
                 return False
 
-    def update_growing_report(self, growing_entity, old_zone_level_ids, new_zone_levels_ids):
-        with self.conn.cursor() as cur:
-            update_growing_report_sql = """
-            UPDATE growings 
-            """
-            ...
+    def update_growing_report(self, growing_entity, new_zone_id, old_zone_id, old_zone_level_ids, new_zone_level_ids):
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            if old_zone_id != new_zone_id:
+                # # Remove growing_zone_level record with old_zone_level_ids
+                delete_growing_zone_levels_by_zone_level_ids_sql = """
+                    DELETE FROM growing_zone_levels WHERE zone_level_id = ANY(%s)
+                    """
 
-        return super().update_growing_report(growing_entity, old_zone_level_ids, new_zone_levels_ids)
+                cur.execute(query=delete_growing_zone_levels_by_zone_level_ids_sql, vars=(
+                    old_zone_level_ids,))
+
+                if len(old_zone_level_ids):
+                    #  Make status = 0 with old_zone_level_ids
+                    update_zone_levels_status_by_old_zone_level_ids_sql = """
+                        UPDATE zone_levels SET status = 0 WHERE id = ANY(%s)
+                        """
+                    cur.execute(query=update_zone_levels_status_by_old_zone_level_ids_sql, vars=(
+                        old_zone_level_ids,))
+
+                # Make status = 2 with new_zone_level_ids
+                update_zone_levels_status_by_new_zone_level_ids_sql = """
+                    UPDATE zone_levels SET status = 2 WHERE id = ANY(%s)
+                    """
+
+                cur.execute(query=update_zone_levels_status_by_new_zone_level_ids_sql, vars=(
+                    new_zone_level_ids,))
+
+                # find_growing_zone_level_with_new_zone_level_ids
+                select_growing_zone_levels_unassigned_by_zone_level_ids_sql = """
+                    SELECT gzl.id, gzl.zone_level_id FROM growing_zone_levels gzl 
+                    WHERE gzl.zone_level_id = ANY(%s) AND status = 0
+                    """
+
+                cur.execute(query=select_growing_zone_levels_unassigned_by_zone_level_ids_sql, vars=(
+                    new_zone_level_ids,))
+                rows = cur.fetchall()
+                list_gzl_id_and_zone_level_id = [
+                    {"gzl_id": row["id"], "gzl_zone_level_id": row["zone_level_id"]} for row in rows]
+
+                list_gzl_ids_in_db = [item["gzl_id"]
+                                      for item in list_gzl_id_and_zone_level_id]
+
+                list_zone_level_ids_in_db = [item["gzl_zone_level_id"]
+                                             for item in list_gzl_id_and_zone_level_id]
+
+                list_zone_level_ids_diff = [
+                    item for item in new_zone_level_ids if item not in list_zone_level_ids_in_db]
+
+                # set growing_id for current gzl
+                update_growing_id_for_current_zone_level_ids = """
+                        UPDATE growing_zone_levels SET growing_id = %s WHERE id = ANY(%s)
+                        """
+
+                cur.execute(query=update_growing_id_for_current_zone_level_ids, vars=(
+                    growing_entity.id, list_gzl_ids_in_db,))
+
+                create_growing_zone_level_with_diff_zone_level_ids = """
+                    WITH cte_growing_zone_level as (
+                        SELECT
+                            zl.id as zone_level_id,
+                            z.zone_number as snapshot_zone_number,
+                            z.id as zone_id,
+                            l."name" as snapshot_level_name
+                        FROM
+                            zone_levels zl
+                        JOIN zones z ON
+                            zl.zone_id = z.id
+                        JOIN levels l ON
+                            zl.level_id = l.id
+                        WHERE
+                            zl.id = any(%(zone_level_ids)s)
+                    )
+                    INSERT INTO growing_zone_levels (
+                        growing_id,
+                        zone_level_id,
+                        zone_id,
+                        snapshot_level_name,
+                        snapshot_zone_number,
+                        status
+                    )
+                    SELECT
+                        %(growing_id)s,
+                        cte_gzl.zone_level_id,
+                        cte_gzl.zone_id,
+                        cte_gzl.snapshot_level_name,
+                        cte_gzl.snapshot_zone_number,
+                        1
+                    FROM
+                        cte_growing_zone_level cte_gzl
+                    """
+
+                cur.execute(
+                    query=create_growing_zone_level_with_diff_zone_level_ids,
+                    vars={
+                        "zone_level_ids": list_zone_level_ids_diff,
+                        "growing_id": growing_entity.id
+                    }
+                )
+            else:
+                set_old_zone_level_ids = set(old_zone_level_ids)
+                set_new_zone_level_ids = set(new_zone_level_ids)
+
+                zone_level_ids = list(set_old_zone_level_ids.union(
+                    set_new_zone_level_ids))
+
+                diff_level_ids = list(
+                    set_new_zone_level_ids.difference(set_old_zone_level_ids))
+
+                # Find and remove growing_zone_level records with diff_level_ids
+                delete_growing_zone_levels_by_diff_zone_level_ids_sql = """DELETE FROM growing_zone_levels  WHERE zone_level_id = ANY(%s) AND status = 0"""
+
+                cur.execute(query=delete_growing_zone_levels_by_diff_zone_level_ids_sql, vars=(
+                    diff_level_ids,))
+
+                # Update status to 2
+                update_zone_levels_status_by_union_zone_level_ids_sql = """
+                    UPDATE zone_levels SET status = 2 WHERE id = ANY(%s)
+                    """
+
+                cur.execute(query=update_zone_levels_status_by_union_zone_level_ids_sql, vars=(
+                    zone_level_ids,))
+
+                if cur.rowcount == 0:
+                    raise BadRequestError("ETB_cap_nhat_khong_thanh_conh")
+
+                create_growing_zone_level_with_diff_zone_level_ids = """
+                    WITH cte_growing_zone_level as (
+                        SELECT
+                            zl.id as zone_level_id,
+                            z.zone_number as snapshot_zone_number,
+                            z.id as zone_id,
+                            l."name" as snapshot_level_name
+                        FROM
+                            zone_levels zl
+                        JOIN zones z ON
+                            zl.zone_id = z.id
+                        JOIN levels l ON
+                            zl.level_id = l.id
+                        WHERE
+                            zl.id = any(%(zone_level_ids)s)
+                    )
+                    INSERT INTO growing_zone_levels (
+                        growing_id,
+                        zone_level_id,
+                        zone_id,
+                        snapshot_level_name,
+                        snapshot_zone_number,
+                        status
+                    )
+                    SELECT
+                        %(growing_id)s,
+                        cte_gzl.zone_level_id,
+                        cte_gzl.zone_id,
+                        cte_gzl.snapshot_level_name,
+                        cte_gzl.snapshot_zone_number,
+                        1
+                    FROM
+                        cte_growing_zone_level cte_gzl
+                    """
+
+                cur.execute(
+                    query=create_growing_zone_level_with_diff_zone_level_ids,
+                    vars={
+                        "zone_level_ids": diff_level_ids,
+                        "growing_id": growing_entity.id
+                    }
+                )
+
+            growing_shift_id = growing_entity.shift.id
+            growing_diet_id = growing_entity.diet.id
+            growing_production_object_id = growing_entity.production_object.id
+            growing_production_type_id = growing_entity.production_type.id
+            growing_factory_id = growing_entity.factory.id
+            growing_number_crates = growing_entity.number_crates
+            growing_substrate_moisture = growing_entity.substrate_moisture
+            growing_notes = growing_entity.notes
+            growing_status = growing_entity.status
+            growing_approved_at = growing_entity.approved_at
+            growing_approved_by = growing_entity.approved_by.id
+            growing_id = growing_entity.id
+            growing_rejected_at = growing_entity.rejected_at
+            growing_rejected_by = growing_entity.rejected_by.id if growing_entity.rejected_by else None
+            growing_rejected_reason = growing_entity.rejected_reason
+
+            tuple_update_growing = (
+                growing_shift_id,
+                growing_diet_id,
+                growing_production_object_id,
+                growing_production_type_id,
+                growing_factory_id,
+                growing_number_crates,
+                growing_substrate_moisture,
+                growing_notes,
+                growing_status,
+                growing_approved_at,
+                growing_approved_by,
+                growing_rejected_at,
+                growing_rejected_by,
+                growing_rejected_reason,
+                growing_id
+            )
+
+            update_growing = """
+            UPDATE growings SET 
+            shift_id = %s,
+            diet_id = %s,
+            production_object_id = %s,
+            production_type_id = %s,
+            factory_id = %s,
+            number_crates = %s,
+            substrate_moisture = %s,
+            notes = %s,
+            status = %s,
+            approved_at = %s,
+            approved_by = %s,
+            rejected_at = %s,
+            rejected_by = %s,
+            rejected_reason = %s
+            WHERE id = %s
+            """
+
+            cur.execute(query=update_growing, vars=tuple_update_growing)
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                raise BadRequestError("ETB_cap_nhat_growing_khong_thanh_cong")

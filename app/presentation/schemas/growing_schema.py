@@ -161,8 +161,8 @@ class UpdateStatusGrowingSchema(BaseModel):
 
         return values
 
+
 class UpdateGrowingSchema(BaseModel):
-    date_produced: Optional[str] = None
     shift_id: Optional[int] = None
     production_type_id: Optional[int] = None
     production_object_id: Optional[int] = None
@@ -170,10 +170,10 @@ class UpdateGrowingSchema(BaseModel):
     factory_id: Optional[int] = None
     substrate_moisture: Optional[float] = None
     number_crates: Optional[int] = None
-    created_by: Optional[int] = None
     zone_id: Optional[int] = None
+    old_zone_id: Optional[int] = None
     old_zone_level_ids: Optional[list[int]] = None
-    new_zone_level_ids: Optional[list[int]] = None
+    zone_level_ids: Optional[list[int]] = None
     approved_by: Optional[int] = None
     approved_at: Optional[str] = None
     notes: Optional[str] = None
@@ -183,22 +183,19 @@ class UpdateGrowingSchema(BaseModel):
     @classmethod
     def check_required_fields(cls, values: dict[str, any]):
         required_fields = {
-            "date_produced": "ETB-thieu_truong_date_produced",
             "shift_id": "ETB-thieu_truong_shift_id",
             "production_type_id": "ETB-thieu_truong_production_type_id",
             "production_object_id": "ETB-thieu_truong_production_object_id",
             "diet_id": "ETB-thieu_truong_diet_id",
-            "factory_id": "ETB-thieu_truong_factory_id",        
+            "factory_id": "ETB-thieu_truong_factory_id",
             "substrate_moisture": "ETB-thieu_truong_substrate_moisture",
             "number_crates": "ETB-thieu_truong_number_crates",
-            "created_by": "ETB-thieu_truong_created_by",
             "zone_id": "ETB-thieu_truong_zone_id",
             "old_zone_level_ids": "ETB-thieu_truong_old_zone_level_ids",
-            "new_zone_level_ids": "ETB-thieu_truong_new_zone_level_ids",
+            "zone_level_ids": "ETB-thieu_truong_zone_level_ids",
             "approved_by": "ETB-thieu_truong_approved_by",
             "approved_at": "ETB-thieu_truong_approved_at",
             "status": "ETB-thieu_truong_status",
-
         }
 
         errors = []

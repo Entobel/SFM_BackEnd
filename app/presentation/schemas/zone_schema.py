@@ -4,6 +4,8 @@ from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
+from app.presentation.schemas.factory_schema import FactoryResponseSchema
+
 
 class ZoneResponseSchema(BaseModel):
     id: Optional[int] = None
