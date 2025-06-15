@@ -8,6 +8,7 @@ from app.presentation.api.v1.dependencies.zone_dependencies import (
     CreateZoneUseCaseDep,
     GetListZoneLevelUseCaseDep,
     GetListZoneUseCaseDep,
+    GetSpecificGrowingUCDep,
     UpdateStatusZoneLevelUseCaseDep,
     UpdateStatusZoneUseCaseDep,
     UpdateZoneUseCaseDep,
@@ -37,6 +38,7 @@ async def get_list_zones(
         search=filter_params.search,
         is_active=filter_params.is_active,
         factory_id=filter_params.factory_id,
+        zone_level_status=filter_params.zone_level_status,
     )
 
     zone_level_entities = result["items"][0]
@@ -184,4 +186,20 @@ async def get_list_zone_levels(
     return Response.success_response(
         code="ETB-lay_danh_sach_thanh_cong",
         data=paginate_schema,
+    ).get_dict()
+
+
+@router.get('/{zone_id}/growings/')
+async def get_growings_by_zone(
+    token: TokenVerifyDep,
+    zone_id: int,
+    use_case: GetSpecificGrowingUCDep,
+    filter_params: FilterSchema = Depends(),
+):
+    result = use_case.execute(
+        zone_id=zone_id, growing_zone_status=filter_params.growing_zone_status)
+
+    return Response.success_response(
+        code="ETB-lay_growing_id_thanh_cong",
+        data=result,
     ).get_dict()

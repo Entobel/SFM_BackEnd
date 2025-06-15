@@ -14,9 +14,9 @@ class IZoneRepository(ABC):
 
     @abstractmethod
     def get_list_zones(
-        self, page: int, page_size: int, search: str, is_active: bool, factory_id: int
+        self, page: int, page_size: int, zone_level_status: int, search: str, is_active: bool, factory_id: int
     ) -> dict[
-        "items" : list[ZoneEntity],
+        "items": list[ZoneEntity],
         "total":int,
         "page":int,
         "page_size":int,
@@ -27,7 +27,7 @@ class IZoneRepository(ABC):
     def get_list_zone_levels(
         self, page: int, page_size: int, search: str, zone_id: int, is_active: bool
     ) -> dict[
-        "items" : list[ZoneLevelEntity],
+        "items": list[ZoneLevelEntity],
         "total":int,
         "page":int,
         "page_size":int,
@@ -38,7 +38,8 @@ class IZoneRepository(ABC):
     def get_zone_by_id(self, zone_entity: ZoneEntity) -> ZoneEntity | None: ...
 
     @abstractmethod
-    def check_zone_existed(self, zone_entity: ZoneEntity) -> ZoneEntity | None: ...
+    def check_zone_existed(
+        self, zone_entity: ZoneEntity) -> ZoneEntity | None: ...
 
     @abstractmethod
     def update_status_zone(self, zone_entity: ZoneEntity) -> bool: ...
@@ -50,9 +51,15 @@ class IZoneRepository(ABC):
     def update_zone(self, zone_entity: ZoneEntity) -> bool: ...
 
     @abstractmethod
-    def update_status_zone_level(self, zone_level_entity: ZoneLevelEntity) -> bool: ...
+    def update_status_zone_level(
+        self, zone_level_entity: ZoneLevelEntity) -> bool: ...
 
     @abstractmethod
     def get_list_zone_level_by_id(
         self, zone_id: int, status: ZoneLevelStatusEnum, is_active: bool = True
     ) -> list[ZoneLevelEntity]: ...
+
+    @abstractmethod
+    def get_growing_by_zone_id(
+        self, zone_id: int, growing_zone_status: int
+    ) -> int | None: ...

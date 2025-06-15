@@ -13,6 +13,8 @@ from app.presentation.api.v1.endpoints import (
     zone_endpoints,
     level_endpoints,
     growing_endpoints,
+    harvesting_endpoints,
+    grinding_endpoints
 )
 
 routers = APIRouter()
@@ -29,6 +31,8 @@ router_list = [
     zone_endpoints.router,
     level_endpoints.router,
     growing_endpoints.router,
+    harvesting_endpoints.router,
+    grinding_endpoints.router
 ]
 
 for router in router_list:

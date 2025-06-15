@@ -1,7 +1,7 @@
 from re import I, S
 from loguru import logger
 from app.application.interfaces.use_cases.growing.update_growing_report_uc import IUpdateGrowingReportUC
-from app.core.constants.common_enums import GrowingStatusEnum
+from app.core.constants.common_enums import FormStatusEnum
 from app.core.exception import BadRequestError
 from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
@@ -59,7 +59,7 @@ class UpdateGrowingReport(IUpdateGrowingReportUC):
         if not growing_entity:
             raise BadRequestError("ETB_khong_tim_thay_bao_cao_growing")
 
-        if query_entity.status == GrowingStatusEnum.APPROVED.value:
+        if query_entity.status == FormStatusEnum.APPROVED.value:
             growing_entity.change_shift(new_shift=query_entity.shift)
             growing_entity.change_diet(new_diet=query_entity.diet)
             growing_entity.change_production_object(

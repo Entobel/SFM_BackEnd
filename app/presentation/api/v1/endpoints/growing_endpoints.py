@@ -1,6 +1,4 @@
-from re import I
 from fastapi import APIRouter, Depends
-from loguru import logger
 
 from app.application.dto.diet_dto import DietDTO
 from app.application.dto.factory_dto import FactoryDTO
@@ -66,9 +64,9 @@ async def create_growing_report(
     list_zone_level_dtos: list[ZoneLevelDTO] = []
 
     for id in body.zone_level_ids:
-        zone_leve_dto = ZoneLevelDTO(id=id, zone=ZoneDTO(id=body.zone_id))
+        zone_level_dto = ZoneLevelDTO(id=id, zone=ZoneDTO(id=body.zone_id))
 
-        list_zone_level_dtos.append(zone_leve_dto)
+        list_zone_level_dtos.append(zone_level_dto)
 
     use_case.execute(
         zone_id=body.zone_id,
@@ -77,7 +75,7 @@ async def create_growing_report(
     )
 
     return Response.success_response(
-        data="Success", code="ETB_tao_grow_report_thanh_cong"
+        data="Success", code="ETB_tao_growing_report_thanh_cong"
     ).get_dict()
 
 

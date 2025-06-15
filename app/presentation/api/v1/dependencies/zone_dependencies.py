@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from app.application.interfaces.use_cases.zone.create_zone_uc import ICreateZoneUC
+from app.application.interfaces.use_cases.zone.get_specific_growing_uc import IGetSpecificGrowingUC
 from app.application.interfaces.use_cases.zone.list_zone_level_uc import (
     IListZoneLevelUC,
 )
@@ -14,6 +15,7 @@ from app.application.interfaces.use_cases.zone.update_status_zone_uc import (
     IUpdateStatusZoneUC,
 )
 from app.application.interfaces.use_cases.zone.update_zone_uc import IUpdateZoneUC
+from app.application.use_cases.growing.get_specific_growing_uc_impl import GetSpecificGrowingUC
 from app.application.use_cases.zone.create_zone_uc_impl import CreateZoneUC
 from app.application.use_cases.zone.list_zone_level_uc_impl import ListZoneLevelUC
 from app.application.use_cases.zone.list_zone_uc_impl import ListZoneUC
@@ -75,6 +77,12 @@ def get_list_zone_level_uc(
     return ListZoneLevelUC(repo=zone_repo)
 
 
+def get_get_specific_growing_uc(
+    zone_repo: ZoneRepositoryDep,
+) -> IGetSpecificGrowingUC:
+    return GetSpecificGrowingUC(zone_repo=zone_repo)
+
+
 GetListZoneUseCaseDep = Annotated[IListZoneUC, Depends(get_list_zone_uc)]
 CreateZoneUseCaseDep = Annotated[ICreateZoneUC, Depends(get_create_zone_uc)]
 UpdateZoneUseCaseDep = Annotated[IUpdateZoneUC, Depends(get_update_zone_uc)]
@@ -86,4 +94,7 @@ UpdateStatusZoneLevelUseCaseDep = Annotated[
 ]
 GetListZoneLevelUseCaseDep = Annotated[
     IListZoneLevelUC, Depends(get_list_zone_level_uc)
+]
+GetSpecificGrowingUCDep = Annotated[
+    IGetSpecificGrowingUC, Depends(get_get_specific_growing_uc)
 ]

@@ -1,7 +1,7 @@
 from app.application.dto.growing_dto import GrowingDTO
 from app.application.dto.zone_level_dto import ZoneLevelDTO
 from loguru import logger
-from app.core.constants.common_enums import GrowingZoneLevelStatusEnum, ZoneLevelStatusEnum
+from app.core.constants.common_enums import FormStatusEnum, GrowingZoneLevelStatusEnum, ZoneLevelStatusEnum
 from app.application.interfaces.use_cases.growing.create_growing_report_uc import (
     ICreateGrowingReportUC,
 )
@@ -128,7 +128,7 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
         )
 
         if not is_success:
-            raise BadRequestError("ETB_loi_khi_tao")
+            raise BadRequestError("ETB_loi_khi_tao_growing_report")
 
         return True
 
@@ -149,6 +149,7 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             substrate_moisture=growing_dto.substrate_moisture,
             created_by=UserEntity(id=growing_dto.user.id),
             notes=growing_dto.notes,
+            status=FormStatusEnum.PENDING.value
         )
 
     def _extract_zone_level_ids(self, zone_level_dtos: list[ZoneLevelDTO]) -> list[int]:

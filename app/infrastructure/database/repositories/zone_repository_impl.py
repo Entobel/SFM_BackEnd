@@ -53,9 +53,7 @@ class ZoneRepository(IZoneRepository):
 
             return cur.rowcount > 0
 
-    def get_list_zones(
-        self, page: int, page_size: int, search: str, is_active: bool, factory_id: int
-    ) -> dict:
+    def get_list_zones(self, page, page_size, zone_level_status, search, is_active, factory_id):
         qb = self.query_helper
 
         # Filters
@@ -66,11 +64,15 @@ class ZoneRepository(IZoneRepository):
         if factory_id is not None:
             qb.add_eq("z.factory_id", factory_id)
 
+        if zone_level_status is not None:
+            qb.add_eq("zl.status", zone_level_status)
+
         # Count query
         count_sql = f"""
-            SELECT COUNT(*)
+            SELECT COUNT(DISTINCT z.id)
             FROM zones z
             JOIN factories f ON z.factory_id = f.id
+            JOIN zone_levels zl ON zl.zone_id = z.id
             {qb.where_sql()}
         """
 
@@ -84,7 +86,7 @@ class ZoneRepository(IZoneRepository):
         # Data query
         data_sql = f"""
             SELECT
-                z.id              AS id,
+                DISTINCT z.id     AS id,
                 z.zone_number     AS z_zone_number,
                 z.is_active       AS z_is_active,
                 f.abbr_name       AS f_abbr_name,
@@ -93,6 +95,7 @@ class ZoneRepository(IZoneRepository):
                 z.updated_at      AS z_updated_at
             FROM zones z
             JOIN factories f ON z.factory_id = f.id
+            JOIN zone_levels zl ON zl.zone_id = z.id
             {qb.where_sql()}
             ORDER BY z.zone_number DESC
             {limit_sql};
@@ -221,7 +224,8 @@ class ZoneRepository(IZoneRepository):
                 """
         with self.conn.cursor() as cur:
             cur.execute(
-                query, (zone_entity.zone_number, zone_entity.is_active, zone_entity.id)
+                query, (zone_entity.zone_number,
+                        zone_entity.is_active, zone_entity.id)
             )
 
             return cur.rowcount > 0
@@ -275,7 +279,7 @@ class ZoneRepository(IZoneRepository):
     def get_list_zone_levels(
         self, page: int, page_size: int, search: str, zone_id: int, is_active: bool
     ) -> dict[
-        "items" : list[ZoneLevelEntity],
+        "items": list[ZoneLevelEntity],
         "total":int,
         "page":int,
         "page_size":int,
@@ -367,7 +371,7 @@ class ZoneRepository(IZoneRepository):
             "total_pages": qb.total_pages(total=total, page_size=page_size),
         }
 
-    def get_list_zone_level_by_id(self, zone_id, status, is_active = True):
+    def get_list_zone_level_by_id(self, zone_id, status, is_active=True):
         query = """
         SELECT 
         zl.id AS zone_level_id,
@@ -382,7 +386,7 @@ class ZoneRepository(IZoneRepository):
         ON zl.zone_id = z.id
         WHERE zl.zone_id = %s AND (zl.is_active = %s AND zl.status = %s)
         """
-        
+
         logger.debug("STATUS of get_list_zone_level_by_id: ", status)
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -393,7 +397,8 @@ class ZoneRepository(IZoneRepository):
             ZoneLevelEntity(
                 id=row["zone_level_id"],
                 level=LevelEntity(id=row["level_id"], name=row["level_name"]),
-                zone=ZoneEntity(id=row["zone_id"], zone_number=row["zone_zone_number"]),
+                zone=ZoneEntity(id=row["zone_id"],
+                                zone_number=row["zone_zone_number"]),
                 is_active=row["zone_level_is_active"],
                 status=row["zone_level_status"],
             )
@@ -401,3 +406,23 @@ class ZoneRepository(IZoneRepository):
         ]
 
         return zone_levels
+
+    def get_growing_by_zone_id(self, zone_id, growing_zone_status) -> int | None:
+        select_growing_by_zone_id_sql = """
+        SELECT DISTINCT 
+        gzl.growing_id 
+        FROM growing_zone_levels gzl JOIN 
+        zones z ON z.id = gzl.zone_id 
+        WHERE gzl.status = %s AND z.id = %s;
+        """
+
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                query=select_growing_by_zone_id_sql, vars=(
+                    growing_zone_status, zone_id)
+            )
+            rows = cur.fetchone()
+
+            growing_id = rows["growing_id"] if rows else None
+
+        return growing_id if growing_id else None
