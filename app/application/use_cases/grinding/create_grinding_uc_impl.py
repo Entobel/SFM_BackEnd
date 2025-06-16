@@ -58,7 +58,7 @@ class CreateGrindingUC(ICreateGrindingUC):
         return True
 
     def _create_grinding_entity(self, grinding_dto: GrindingDTO) -> GrindingEntity:
-        """Create a GrowingEntity from DTO with proper entity mapping."""
+        """Create a Grinding from DTO with proper entity mapping."""
 
         return GrindingEntity(
             date_reported=grinding_dto.date_reported,

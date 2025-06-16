@@ -53,7 +53,7 @@ class ZoneRepository(IZoneRepository):
 
             return cur.rowcount > 0
 
-    def get_list_zones(self, page, page_size, zone_level_status, search, is_active, factory_id):
+    def get_list_zones(self, page, page_size, search, is_active, factory_id):
         qb = self.query_helper
 
         # Filters
@@ -64,15 +64,11 @@ class ZoneRepository(IZoneRepository):
         if factory_id is not None:
             qb.add_eq("z.factory_id", factory_id)
 
-        if zone_level_status is not None:
-            qb.add_eq("zl.status", zone_level_status)
-
         # Count query
         count_sql = f"""
             SELECT COUNT(DISTINCT z.id)
             FROM zones z
             JOIN factories f ON z.factory_id = f.id
-            JOIN zone_levels zl ON zl.zone_id = z.id
             {qb.where_sql()}
         """
 

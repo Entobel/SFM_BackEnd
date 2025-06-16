@@ -258,7 +258,7 @@ class UserRepository(IUserRepository):
         JOIN factories f ON f.id = df.factory_id
         JOIN roles r ON dfr.role_id = r.id
         JOIN departments dp ON dp.id = df.department_id
-        {qb.where_sql()}
+        {qb.where_sql()} AND r.id not in (1)
         """
         with self.conn.cursor() as cur:
             cur.execute(count_sql, qb.all_params())
@@ -308,6 +308,7 @@ class UserRepository(IUserRepository):
             JOIN departments dp ON
                 dp.id = df.department_id
             {qb.where_sql()}
+            AND r.id not in (1)
             ORDER BY u.created_at DESC
             {limit_sql};
         """

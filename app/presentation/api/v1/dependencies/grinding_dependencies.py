@@ -4,15 +4,14 @@ from fastapi import Depends
 from app.application.interfaces.use_cases.grinding.create_grinding_uc import ICreateGrindingUC
 from app.application.use_cases.grinding.create_grinding_uc_impl import CreateGrindingUC
 from app.domain.interfaces.repositories.grinding_repository import IGrindingRepository
-from app.domain.interfaces.repositories.growing_repository import IGrowingRepository
-from app.infrastructure.database.repositories.growing_repository_impl import GrowingRepository
+from app.infrastructure.database.repositories.grinding_repository_impl import GrindingRepository
 from app.presentation.api.v1.dependencies.common_dependencies import CommonRepositoryDep, DatabaseDep, QueryHelperDep
 
 
 def get_grinding_repository(
     db: DatabaseDep, query_helper: QueryHelperDep
 ) -> IGrindingRepository:
-    return GrowingRepository(conn=db, query_helper=query_helper)
+    return GrindingRepository(conn=db, query_helper=query_helper)
 
 
 GrindingRepositoryDep = Annotated[IGrindingRepository, Depends(

@@ -38,7 +38,6 @@ async def get_list_zones(
         search=filter_params.search,
         is_active=filter_params.is_active,
         factory_id=filter_params.factory_id,
-        zone_level_status=filter_params.zone_level_status,
     )
 
     zone_level_entities = result["items"][0]

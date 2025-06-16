@@ -10,6 +10,26 @@ class IGrindingRepository(ABC):
         pass
 
     @abstractmethod
+    def get_list_growing_report(
+        self,
+        page: int,
+        page_size: int,
+        search: str,
+        diet_id: int | None,
+        factory_id: int | None,
+        start_date: str | None,
+        end_date: str | None,
+        report_status: int | None,
+        is_active: bool | None,
+    ) -> dict[
+        "items": list[GrindingEntity],
+        "total":int,
+        "page":int,
+        "page_size":int,
+        "total_pages":int,
+    ]: ...
+
+    @abstractmethod
     def get_grinding_by_name(self, grinding_entity: GrindingEntity) -> Optional[GrindingEntity]:
         pass
 

@@ -137,22 +137,24 @@ class GrindingRepository(IGrindingRepository):
             shift_id,
             batch_grinding_information,
             quantity,
+            factory_id,
             packing_type_id,
             antioxidant_type_id, 
             notes,
             created_by
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s)"""
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
             tuple_grinding_values = (
                 grinding_entity.date_reported,
                 grinding_entity.shift.id,
                 grinding_entity.batch_grinding_information,
                 grinding_entity.quantity,
+                grinding_entity.factory.id,
                 grinding_entity.packing_type.id,
                 grinding_entity.antioxidant_type.id,
                 grinding_entity.notes,
-                grinding_entity.created_by.id
+                grinding_entity.created_by.id,
             )
 
             cur.execute(query=insert_grinding_query,
