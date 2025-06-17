@@ -59,11 +59,6 @@ class CreateHarvestingReportUC(ICreateHarvestingReportUC):
                 table_name="users", _id=harvesting_dto.created_by.id
             )
 
-        if harvesting_dto.growing.id:
-            self.query_helper.add_table(
-                table_name="growings", _id=harvesting_dto.growing.id
-            )
-
         join_sql = self.query_helper.join_ids_sql()
 
         ids_for_check = self.query_helper.all_params()
@@ -75,7 +70,7 @@ class CreateHarvestingReportUC(ICreateHarvestingReportUC):
         )
 
         available_zone_levels = self.zone_repo.get_list_zone_level_by_id(
-            zone_id=zone_id, is_active=True, status=ZoneLevelStatusEnum.ON_GROWING.value
+            zone_id=zone_id, is_active=True, status=ZoneLevelStatusEnum.INACTIVE.value
         )
 
         selected_zone_level_ids = [
@@ -94,6 +89,8 @@ class CreateHarvestingReportUC(ICreateHarvestingReportUC):
             )
             for zl in available_zone_levels if zl.id in requested_harvested_zone_level_ids
         ]
+
+        logger.debug(f"LIST HARVESTING: {list_harvesting_zone_level_entities}")
 
         is_success = self.harvesting_repo.create_harvesting_report(
             harvesting_entity=harvesting_entity,
@@ -117,7 +114,6 @@ class CreateHarvestingReportUC(ICreateHarvestingReportUC):
             number_crates=harvesting_dto.number_crates,
             number_crates_discarded=harvesting_dto.number_crates_discarded,
             quantity_larvae=harvesting_dto.quantity_larvae,
-            growing=harvesting_dto.growing,
             created_by=UserEntity(id=harvesting_dto.created_by.id),
             notes=harvesting_dto.notes,
             status=FormStatusEnum.PENDING.value

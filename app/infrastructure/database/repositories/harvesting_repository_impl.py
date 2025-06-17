@@ -24,33 +24,19 @@ class HarvestingRepository(IHarvestingRepository):
 
     def create_harvesting_report(self, harvesting_entity,  list_harvesting_zone_level_entity, zone_level_ids):
         with self.conn.cursor() as cur:
-            #  Update zone_level with status is on harvesting
-            update_zone_level_query = """
-            UPDATE zone_levels
-            SET status = %s
-            WHERE id = ANY(%s)
-            RETURNING id;
-            """
-
-            cur.execute(
-                query=update_zone_level_query,
-                vars=(ZoneLevelStatusEnum.ON_HARVESTING.value, (zone_level_ids,))
-            )
-
             # Insert harvesting report base on harvesting_entity
             insert_harvesting_query = """
             INSERT INTO harvestings 
             (date_harvested,
             shift_id,
             factory_id,
-            growing_id,
             number_crates,
             number_crates_discarded,
             quantity_larvae,
             notes,
             status,
             created_by)
-            VALUES (%s, %s, %s, %s,%s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s,  %s,%s, %s, %s, %s, %s, %s)
             RETURNING id;
             """
 
@@ -58,12 +44,11 @@ class HarvestingRepository(IHarvestingRepository):
                 harvesting_entity.date_harvested,
                 harvesting_entity.shift.id,
                 harvesting_entity.factory.id,
-                harvesting_entity.growing.id,
                 harvesting_entity.number_crates,
                 harvesting_entity.number_crates_discarded,
                 harvesting_entity.quantity_larvae,
                 harvesting_entity.notes,
-                harvesting_entity.status,
+                1,
                 harvesting_entity.created_by.id
             )
 

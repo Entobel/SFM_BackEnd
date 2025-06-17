@@ -59,7 +59,6 @@ class CreateHarvestingSchema(BaseModel):
             "date_harvested": "ETB-thieu_truong_date_harvested",
             "shift_id": "ETB-thieu_truong_shift_id",
             "factory_id": "ETB-thieu_truong_factory_id",
-            "growing_id": "ETB-thieu_truong_growing_id",
             "number_crates": "ETB-thieu_truong_number_crates",
             "number_crates_discarded": "ETB-thieu_truong_number_crates_discarded",
             "quantity_larvae": "ETB-thieu_truong_quantity_larvae",

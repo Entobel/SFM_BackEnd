@@ -13,12 +13,19 @@ from app.presentation.schemas.response import Response
 
 router = APIRouter(prefix="/grindings", tags=["Grinding"])
 
+# Get List Grinding
+
+
+@router.get("/")
+async def get_list_grinding_report(token_verify_dep: TokenVerifyDep): ...
 
 # Create Grinding Report
+
+
 @router.post("/")
-def create_grinding_report(token_verify_dep: TokenVerifyDep,
-                           body: CreateGrindingSchema,
-                           use_case: CreateGrindingUCDep):
+async def create_grinding_report(token_verify_dep: TokenVerifyDep,
+                                 body: CreateGrindingSchema,
+                                 use_case: CreateGrindingUCDep):
     grinding_dto = GrindingDTO(
         date_reported=body.date_reported,
         antioxidant_type=AntioxidantTypeDTO(
