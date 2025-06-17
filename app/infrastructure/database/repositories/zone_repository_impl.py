@@ -383,8 +383,6 @@ class ZoneRepository(IZoneRepository):
         WHERE zl.zone_id = %s AND (zl.is_active = %s AND zl.status = %s)
         """
 
-        logger.debug("STATUS of get_list_zone_level_by_id: ", status)
-
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query=query, vars=(zone_id, is_active, status,))
             rows = cur.fetchall()

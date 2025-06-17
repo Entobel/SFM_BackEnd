@@ -10,7 +10,7 @@ class IGrindingRepository(ABC):
         pass
 
     @abstractmethod
-    def get_list_growing_report(
+    def get_list_grinding_report(
         self,
         page: int,
         page_size: int,

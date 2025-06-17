@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 @dataclass(frozen=True)
-class ProductionTypeDTO:
+class OperationTypeDTO:
     id: Optional[int] = None
     name: Optional[str] = None
     abbr_name: Optional[str] = None

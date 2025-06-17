@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 
-class ProductionTypeResponseSchema(BaseModel):
+class OperationTypeResponseSchema(BaseModel):
     id: Optional[int] = None
     name: Optional[str] = None
     abbr_name: Optional[str] = None
@@ -17,7 +17,7 @@ class ProductionTypeResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CreateProductionTypeSchema(BaseModel):
+class CreateOperationTypeSchema(BaseModel):
     name: str
     abbr_name: str
     description: Optional[str] = None
@@ -53,7 +53,7 @@ class CreateProductionTypeSchema(BaseModel):
         return v
 
 
-class UpdateStatusProductionTypeSchema(BaseModel):
+class UpdateStatusOperationTypeSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")
@@ -79,7 +79,7 @@ class UpdateStatusProductionTypeSchema(BaseModel):
         return values
 
 
-class UpdateProductionTypeSchema(BaseModel):
+class UpdateOperationTypeSchema(BaseModel):
     name: Optional[str] = None
     abbr_name: Optional[str] = None
     description: Optional[str] = None
@@ -102,7 +102,8 @@ class UpdateProductionTypeSchema(BaseModel):
     @classmethod
     def validate_abbr_name(cls, v: str):
         if len(v) < 1:
-            raise ValueError("ETB-ten_viet_tat_loai_san_pham_phai_lon_hon_1_ky_tu")
+            raise ValueError(
+                "ETB-ten_viet_tat_loai_san_pham_phai_lon_hon_1_ky_tu")
         return v
 
     @field_validator("description")

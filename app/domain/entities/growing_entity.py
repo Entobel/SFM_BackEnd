@@ -5,7 +5,7 @@ from typing import Optional
 from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.production_object_entity import ProductionObjectEntity
-from app.domain.entities.production_type_entity import ProductionTypeEntity
+from app.domain.entities.operation_type_entity import OperationTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
 
@@ -16,7 +16,7 @@ class GrowingEntity:
     date_produced: Optional[datetime] = None
     shift: Optional[ShiftEntity] = None
     production_object: Optional[ProductionObjectEntity] = None
-    production_type: Optional[ProductionTypeEntity] = None
+    operation_type: Optional[OperationTypeEntity] = None
     diet: Optional[DietEntity] = None
     factory: Optional[FactoryEntity] = None
     number_crates: Optional[int] = None
@@ -42,8 +42,8 @@ class GrowingEntity:
     def change_production_object(self, new_production_object: ProductionObjectEntity):
         self.production_object = new_production_object
 
-    def change_production_type(self, new_production_type: ProductionTypeEntity):
-        self.production_type = new_production_type
+    def change_operation_type(self, new_operation_type: OperationTypeEntity):
+        self.operation_type = new_operation_type
 
     def change_diet(self, new_diet: DietEntity):
         self.diet = new_diet
@@ -75,7 +75,7 @@ class GrowingEntity:
     def change_updated_at(self, new_updated_at: datetime):
         self.updated_at = new_updated_at
 
-    def change_rejected_by(self, new_rejected_by: UserEntity):      
+    def change_rejected_by(self, new_rejected_by: UserEntity):
         self.rejected_by = new_rejected_by
 
     def change_rejected_at(self, new_rejected_at: datetime):
@@ -86,7 +86,6 @@ class GrowingEntity:
 
     def change_approved_by(self, new_approved_by: UserEntity):
         self.approved_by = new_approved_by
-        
+
     def change_approved_at(self, new_approved_at: datetime):
         self.approved_at = new_approved_at
-    

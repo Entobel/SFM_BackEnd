@@ -40,7 +40,7 @@ class AppCreator:
                 {"name": "Diet", "description": "Endpoints for managing diets"},
                 {"name": "Shift", "description": "Endpoints for managing shifts"},
                 {
-                    "name": "Production Type",
+                    "name": "Operation Type",
                     "description": "Endpoints for managing production types",
                 },
                 {

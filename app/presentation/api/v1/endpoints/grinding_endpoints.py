@@ -15,10 +15,6 @@ router = APIRouter(prefix="/grindings", tags=["Grinding"])
 
 # Get List Grinding
 
-
-@router.get("/")
-async def get_list_grinding_report(token_verify_dep: TokenVerifyDep): ...
-
 # Create Grinding Report
 
 

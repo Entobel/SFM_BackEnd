@@ -3,7 +3,7 @@ from typing import Optional
 
 
 @dataclass
-class ProductionTypeEntity:
+class OperationTypeEntity:
     id: Optional[int] = None
     name: Optional[str] = None
     abbr_name: Optional[str] = None
@@ -23,11 +23,11 @@ class ProductionTypeEntity:
         self.is_active = is_active
 
     @classmethod
-    def from_row(cls, row: dict) -> "ProductionTypeEntity":
+    def from_row(cls, row: dict) -> "OperationTypeEntity":
         return cls(
-            id=row["pt_id"],
-            name=row["pt_name"],
-            abbr_name=row["pt_abbr_name"],
-            description=row["pt_description"],
-            is_active=row["pt_is_active"],
+            id=row["ot_id"],
+            name=row["ot_name"],
+            abbr_name=row["ot_abbr_name"],
+            description=row["ot_description"],
+            is_active=row["ot_is_active"],
         )

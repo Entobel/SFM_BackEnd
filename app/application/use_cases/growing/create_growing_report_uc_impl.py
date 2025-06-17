@@ -11,7 +11,7 @@ from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.growing_entity import GrowingEntity
 from app.domain.entities.growing_zone_level_entity import GrowingZoneLevelEntity
 from app.domain.entities.production_object_entity import ProductionObjectEntity
-from app.domain.entities.production_type_entity import ProductionTypeEntity
+from app.domain.entities.operation_type_entity import OperationTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
 from app.domain.entities.zone_entity import ZoneEntity
@@ -57,9 +57,9 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
                 table_name="production_objects", _id=growing_dto.production_object.id
             )
 
-        if growing_dto.production_type.id:
+        if growing_dto.operation_type.id:
             self.query_helper.add_table(
-                table_name="production_types", _id=growing_dto.production_type.id
+                table_name="operation_types", _id=growing_dto.operation_type.id
             )
 
         if growing_dto.diet.id:
@@ -141,8 +141,8 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             production_object=ProductionObjectEntity(
                 id=growing_dto.production_object.id
             ),
-            production_type=ProductionTypeEntity(
-                id=growing_dto.production_type.id),
+            operation_type=OperationTypeEntity(
+                id=growing_dto.operation_type.id),
             diet=DietEntity(id=growing_dto.diet.id),
             factory=FactoryEntity(id=growing_dto.factory.id),
             number_crates=growing_dto.number_crates,

@@ -13,7 +13,7 @@ from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.growing_entity import GrowingEntity
 from app.domain.entities.growing_zone_level_entity import GrowingZoneLevelEntity
 from app.domain.entities.production_object_entity import ProductionObjectEntity
-from app.domain.entities.production_type_entity import ProductionTypeEntity
+from app.domain.entities.operation_type_entity import OperationTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
 from app.domain.entities.zone_entity import ZoneEntity
@@ -78,8 +78,8 @@ class GrowingRepository(IGrowingRepository):
             g.shift_id = s.id
                 JOIN production_objects po ON
             g.production_object_id = po.id
-                JOIN production_types pt ON
-            g.production_type_id = pt.id
+                JOIN operation_types pt ON
+            g.operation_type_id = pt.id
                 JOIN diets d ON
             g.diet_id = d.id
                 JOIN factories f ON
@@ -120,7 +120,7 @@ class GrowingRepository(IGrowingRepository):
                     description=row["po_description"],
                     abbr_name=row["po_abbr_name"],
                 ),
-                production_type=ProductionTypeEntity(
+                operation_type=OperationTypeEntity(
                     id=row["pt_id"],
                     name=row["pt_name"],
                     abbr_name=row["pt_abbr_name"],
@@ -181,23 +181,45 @@ class GrowingRepository(IGrowingRepository):
             date_produced,
             shift_id,
             production_object_id,
-            production_type_id,
+            production_object_name,
+            operation_type_id,
+            operation_type_name,
             diet_id,
+            diet_name,
             factory_id,
             number_crates,
             substrate_moisture,
             notes,
             status,
-            created_by)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            RETURNING id
+            created_by
+            )
+            VALUES (
+                %s,  -- date_produced
+                %s,  -- shift_id
+                %s,  -- production_object_id
+                (SELECT name FROM production_objects WHERE id = %s),
+                %s,  -- operation_type_id
+                (SELECT name FROM operation_types WHERE id = %s),
+                %s,  -- diet_id
+                (SELECT name FROM diets WHERE id = %s),
+                %s,  -- factory_id
+                %s,  -- number_crates
+                %s,  -- substrate_moisture
+                %s,  -- notes
+                %s,  -- status
+                %s   -- created_by
+            )
+            RETURNING id;
             """
 
             tuple_growing_agrs = (
                 growing_entity.date_produced,
                 growing_entity.shift.id,
                 growing_entity.production_object.id,
-                growing_entity.production_type.id,
+                growing_entity.production_object.id,
+                growing_entity.operation_type.id,
+                growing_entity.operation_type.id,
+                growing_entity.diet.id,
                 growing_entity.diet.id,
                 growing_entity.factory.id,
                 growing_entity.number_crates,
@@ -250,7 +272,7 @@ class GrowingRepository(IGrowingRepository):
         page_size: int,
         search: str,
         production_object_id: int | None,
-        production_type_id: int | None,
+        operation_type_id: int | None,
         diet_id: int | None,
         factory_id: int | None,
         start_date: str | None,
@@ -263,16 +285,17 @@ class GrowingRepository(IGrowingRepository):
         sql_helper = self.query_helper
 
         if search:
-            sql_helper.add_search(cols=["g.notes"], query=search)
+            sql_helper.add_search(
+                cols=["g.notes", "g.diet_name", "g.operation_type_name", "g.production_object_name"], query=search)
 
         if production_object_id is not None:
             sql_helper.add_eq(
                 column="g.production_object_id", value=production_object_id
             )
 
-        if production_type_id is not None:
-            sql_helper.add_eq(column="g.production_type_id",
-                              value=production_type_id)
+        if operation_type_id is not None:
+            sql_helper.add_eq(column="g.operation_type_id",
+                              value=operation_type_id)
 
         if diet_id is not None:
             sql_helper.add_eq(column="g.diet_id", value=diet_id)
@@ -311,8 +334,8 @@ class GrowingRepository(IGrowingRepository):
             g.shift_id = s.id
         JOIN production_objects po ON
             g.production_object_id = po.id
-        JOIN production_types pt ON 
-            g.production_type_id = pt.id
+        JOIN operation_types ot ON 
+            g.operation_type_id = ot.id
         JOIN diets d ON
             g.diet_id = d.id
         JOIN factories f ON
@@ -341,6 +364,9 @@ class GrowingRepository(IGrowingRepository):
             g.date_produced      AS g_date_produced,
             g.number_crates      AS g_number_crates,
             g.substrate_moisture AS g_substrate_moisture,
+            g.operation_type_name AS g_operation_type_name,
+            g.production_object_name AS g_production_object_name,
+            g.diet_name          AS g_diet_name,
             g.status             AS g_status,
             g.notes              AS g_notes,
             g.is_active          AS g_is_active,
@@ -354,10 +380,10 @@ class GrowingRepository(IGrowingRepository):
             po."name"            AS po_name,
             po.description       AS po_description,
             po.abbr_name         AS po_abbr_name,
-            pt.id                AS pt_id,
-            pt."name"            AS pt_name,
-            pt.abbr_name         AS pt_abbr_name,
-            pt.description       AS pt_description,
+            ot.id                AS ot_id,
+            ot."name"            AS ot_name,
+            ot.abbr_name         AS ot_abbr_name,
+            ot.description       AS ot_description,
             d.id                 AS d_id,
             d."name"             AS d_name,
             d.description        AS d_description,
@@ -384,8 +410,8 @@ class GrowingRepository(IGrowingRepository):
             g.shift_id = s.id
                 JOIN production_objects po ON
             g.production_object_id = po.id
-                JOIN production_types pt ON
-            g.production_type_id = pt.id
+                JOIN operation_types ot ON
+            g.operation_type_id = ot.id
                 JOIN diets d ON
             g.diet_id = d.id
                 JOIN factories f ON
@@ -422,18 +448,18 @@ class GrowingRepository(IGrowingRepository):
                 rejected_reason=row["g_rejected_reason"],
                 production_object=ProductionObjectEntity(
                     id=row["po_id"],
-                    name=row["po_name"],
+                    name=row["g_production_object_name"],
                     description=row["po_description"],
                     abbr_name=row["po_abbr_name"],
                 ),
-                production_type=ProductionTypeEntity(
-                    id=row["pt_id"],
-                    name=row["pt_name"],
-                    abbr_name=row["pt_abbr_name"],
-                    description=row["pt_description"],
+                operation_type=OperationTypeEntity(
+                    id=row["ot_id"],
+                    name=row["g_operation_type_name"],
+                    abbr_name=row["ot_abbr_name"],
+                    description=row["ot_description"],
                 ),
                 diet=DietEntity(
-                    id=row["d_id"], name=row["d_name"], description=row["d_description"]
+                    id=row["d_id"], name=row["g_diet_name"], description=row["d_description"]
                 ),
                 factory=FactoryEntity(
                     id=row["f_id"],
@@ -761,7 +787,7 @@ class GrowingRepository(IGrowingRepository):
             growing_shift_id = growing_entity.shift.id
             growing_diet_id = growing_entity.diet.id
             growing_production_object_id = growing_entity.production_object.id
-            growing_production_type_id = growing_entity.production_type.id
+            growing_operation_type_id = growing_entity.operation_type.id
             growing_factory_id = growing_entity.factory.id
             growing_number_crates = growing_entity.number_crates
             growing_substrate_moisture = growing_entity.substrate_moisture
@@ -778,7 +804,7 @@ class GrowingRepository(IGrowingRepository):
                 growing_shift_id,
                 growing_diet_id,
                 growing_production_object_id,
-                growing_production_type_id,
+                growing_operation_type_id,
                 growing_factory_id,
                 growing_number_crates,
                 growing_substrate_moisture,
@@ -797,7 +823,7 @@ class GrowingRepository(IGrowingRepository):
             shift_id = %s,
             diet_id = %s,
             production_object_id = %s,
-            production_type_id = %s,
+            operation_type_id = %s,
             factory_id = %s,
             number_crates = %s,
             substrate_moisture = %s,

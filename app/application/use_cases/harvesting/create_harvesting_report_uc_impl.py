@@ -90,8 +90,6 @@ class CreateHarvestingReportUC(ICreateHarvestingReportUC):
             for zl in available_zone_levels if zl.id in requested_harvested_zone_level_ids
         ]
 
-        logger.debug(f"LIST HARVESTING: {list_harvesting_zone_level_entities}")
-
         is_success = self.harvesting_repo.create_harvesting_report(
             harvesting_entity=harvesting_entity,
             list_harvesting_zone_level_entity=list_harvesting_zone_level_entities,
@@ -105,7 +103,6 @@ class CreateHarvestingReportUC(ICreateHarvestingReportUC):
 
     def _create_harvesting_entity(self, harvesting_dto: HarvestingDTO) -> HarvestingEntity:
         """Create a HarvestingEntity from DTO with proper entity mapping."""
-        logger.debug(f"Harvesting DTO: {harvesting_dto}")
 
         return HarvestingEntity(
             date_harvested=harvesting_dto.date_harvested,

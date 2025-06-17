@@ -23,7 +23,7 @@ class FilterSchema(BaseModel):
         default=None, description="Filter by role ID")
     is_active: Optional[bool] = Field(
         default=None, description="Filter by is active")
-    production_type_id: Optional[int] = Field(
+    operation_type_id: Optional[int] = Field(
         default=None, description="Filter by production type ID"
     )
     production_object_id: Optional[int] = Field(

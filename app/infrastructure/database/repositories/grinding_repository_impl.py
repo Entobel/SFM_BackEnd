@@ -139,11 +139,24 @@ class GrindingRepository(IGrindingRepository):
             quantity,
             factory_id,
             packing_type_id,
-            antioxidant_type_id, 
+            packing_type_name,
+            antioxidant_type_id,
+            antioxidant_type_name,
             notes,
             created_by
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            VALUES (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            (SELECT name FROM packing_types WHERE id = %s),
+            %s,
+            (SELECT name FROM antioxidant_types WHERE id = %s),
+            %s,
+            %s)"""
 
             tuple_grinding_values = (
                 grinding_entity.date_reported,
@@ -152,6 +165,8 @@ class GrindingRepository(IGrindingRepository):
                 grinding_entity.quantity,
                 grinding_entity.factory.id,
                 grinding_entity.packing_type.id,
+                grinding_entity.packing_type.id,
+                grinding_entity.antioxidant_type.id,
                 grinding_entity.antioxidant_type.id,
                 grinding_entity.notes,
                 grinding_entity.created_by.id,
@@ -172,3 +187,6 @@ class GrindingRepository(IGrindingRepository):
 
     def update_status_grinding(self, grinding_entity):
         return super().update_status_grinding(grinding_entity)
+
+    def get_list_grinding_report(self, page, page_size, search, diet_id, factory_id, start_date, end_date, report_status, is_active):
+        return super().get_list_grinding_report(page, page_size, search, diet_id, factory_id, start_date, end_date, report_status, is_active)

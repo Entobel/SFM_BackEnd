@@ -7,7 +7,7 @@ from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.growing_entity import GrowingEntity
 from app.domain.entities.production_object_entity import ProductionObjectEntity
-from app.domain.entities.production_type_entity import ProductionTypeEntity
+from app.domain.entities.operation_type_entity import OperationTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
 from app.domain.interfaces.repositories.common_repository import ICommonRepository
@@ -44,8 +44,8 @@ class UpdateGrowingReport(IUpdateGrowingReportUC):
             production_object=ProductionObjectEntity(
                 id=growing_dto.production_object.id
             ),
-            production_type=ProductionTypeEntity(
-                id=growing_dto.production_type.id),
+            operation_type=OperationTypeEntity(
+                id=growing_dto.operation_type.id),
             approved_at=growing_dto.approved_at,
             approved_by=UserEntity(
                 id=growing_dto.approved_by.id
@@ -64,8 +64,8 @@ class UpdateGrowingReport(IUpdateGrowingReportUC):
             growing_entity.change_diet(new_diet=query_entity.diet)
             growing_entity.change_production_object(
                 new_production_object=query_entity.production_object)
-            growing_entity.change_production_type(
-                new_production_type=query_entity.production_type)
+            growing_entity.change_operation_type(
+                new_operation_type=query_entity.operation_type)
             growing_entity.change_factory(new_factory=query_entity.factory)
             growing_entity.change_number_crates(
                 new_number_crates=query_entity.number_crates)

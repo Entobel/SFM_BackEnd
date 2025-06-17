@@ -10,8 +10,8 @@ coverage==7.8.0
 cryptography==44.0.3
 ecdsa==0.19.1
 fastapi==0.115.12
-h11==0.14.0
-httpcore==0.17.3
+h11==0.16.0
+httpcore>=1.0.0
 httptools==0.6.4
 httpx==0.24.1
 idna==3.10

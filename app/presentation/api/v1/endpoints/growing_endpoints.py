@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.application.dto.diet_dto import DietDTO
 from app.application.dto.factory_dto import FactoryDTO
 from app.application.dto.growing_dto import GrowingDTO, UpdateGrowingDTO
-from app.application.dto.produciton_type_dto import ProductionTypeDTO
+from app.application.dto.operation_type_dto import OperationTypeDTO
 from app.application.dto.production_object_dto import ProductionObjectDTO
 from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
@@ -31,7 +31,7 @@ from app.presentation.schemas.growing_zone_level_schema import (
 from app.presentation.schemas.production_object_schema import (
     ProductionObjectResponseSchema,
 )
-from app.presentation.schemas.production_type_schema import ProductionTypeResponseSchema
+from app.presentation.schemas.operation_type_schema import OperationTypeResponseSchema
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.user_schema import UserResponseSchema
@@ -53,7 +53,7 @@ async def create_growing_report(
         diet=DietDTO(id=body.diet_id),
         factory=FactoryDTO(id=body.factory_id),
         production_object=ProductionObjectDTO(id=body.production_object_id),
-        production_type=ProductionTypeDTO(id=body.production_type_id),
+        operation_type=OperationTypeDTO(id=body.operation_type_id),
         shift=ShiftDTO(id=body.shift_id),
         notes=body.notes,
         number_crates=body.number_crates,
@@ -92,7 +92,7 @@ async def get_list_growing_report(
         diet_id=filter_params.diet_id,
         factory_id=filter_params.factory_id,
         production_object_id=filter_params.production_object_id,
-        production_type_id=filter_params.production_type_id,
+        operation_type_id=filter_params.operation_type_id,
         is_active=filter_params.is_active,
         start_date=filter_params.start_date,
         end_date=filter_params.end_date,
@@ -133,11 +133,11 @@ async def get_list_growing_report(
                 id=g.shift.id,
                 name=g.shift.name,
             ),
-            production_type=ProductionTypeResponseSchema(
-                id=g.production_type.id,
-                name=g.production_type.name,
-                description=g.production_type.description,
-                abbr_name=g.production_type.abbr_name,
+            operation_type=OperationTypeResponseSchema(
+                id=g.operation_type.id,
+                name=g.operation_type.name,
+                description=g.operation_type.description,
+                abbr_name=g.operation_type.abbr_name,
             ),
             production_object=ProductionObjectResponseSchema(
                 id=g.production_object.id,
@@ -250,7 +250,7 @@ async def update_growing_report(
         substrate_moisture=body.substrate_moisture,
         number_crates=body.number_crates,
         production_object=ProductionObjectDTO(id=body.production_object_id),
-        production_type=ProductionTypeDTO(id=body.production_type_id),
+        operation_type=OperationTypeDTO(id=body.operation_type_id),
         approved_at=body.approved_at,
         approved_by=UserDTO(id=body.approved_by),
         status=body.status,
