@@ -14,10 +14,13 @@ from app.presentation.api.v1.endpoints import (
     level_endpoints,
     growing_endpoints,
     harvesting_endpoints,
-    grinding_endpoints
+    grinding_endpoints,
+    dd_endpoints,
+    vfbd_endpoints
 )
 
 routers = APIRouter()
+
 router_list = [
     auth_endpoints.router,
     user_endpoints.router,
@@ -32,7 +35,9 @@ router_list = [
     level_endpoints.router,
     growing_endpoints.router,
     harvesting_endpoints.router,
-    grinding_endpoints.router
+    grinding_endpoints.router,
+    dd_endpoints.router,
+    vfbd_endpoints.router
 ]
 
 for router in router_list:

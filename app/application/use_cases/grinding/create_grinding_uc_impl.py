@@ -69,7 +69,7 @@ class CreateGrindingUC(ICreateGrindingUC):
             antioxidant_type=AntioxidantTypeEntity(
                 id=grinding_dto.antioxidant_type.id),
             packing_type=PackingTypeEntity(id=grinding_dto.packing_type.id),
-            created_by=UserEntity(id=grinding_dto.user.id),
+            created_by=UserEntity(id=grinding_dto.created_by.id),
             notes=grinding_dto.notes,
             status=FormStatusEnum.PENDING.value
         )

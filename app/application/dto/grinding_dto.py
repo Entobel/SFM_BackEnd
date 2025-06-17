@@ -21,4 +21,4 @@ class GrindingDTO:
     antioxidant_type: Optional[AntioxidantTypeDTO] = None
     factory: Optional[FactoryDTO] = None
     notes: Optional[str] = None
-    user: Optional[UserDTO] = None
+    created_by: Optional[UserDTO] = None

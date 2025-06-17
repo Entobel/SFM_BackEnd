@@ -37,7 +37,7 @@ async def create_grinding_report(token_verify_dep: TokenVerifyDep,
         shift=ShiftDTO(
             id=body.shift_id
         ),
-        user=UserDTO(
+        created_by=UserDTO(
             id=body.created_by
         )
     )
