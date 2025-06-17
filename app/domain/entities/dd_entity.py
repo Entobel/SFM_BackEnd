@@ -11,14 +11,14 @@ from app.domain.entities.user_entity import UserEntity
 
 
 @dataclass
-class DDEntity:
+class DdEntity:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
     shift: Optional[ShiftEntity] = None
     factory: Optional[FactoryEntity] = None
     dryer_machine_type: Optional[DryerMachineTypeEntity] = None
     quantity_fresh_larvae_input: Optional[float] = None
-    quantity_fresh_larvae_input: Optional[float] = None
+    quantity_dried_larvae_output: Optional[float] = None
     temperature_after_2h: Optional[float] = None
     temperature_after_3h: Optional[float] = None
     temperature_after_3h30: Optional[float] = None
@@ -26,7 +26,7 @@ class DDEntity:
     temperature_after_4h30: Optional[float] = None
     start_time: Optional[time] = None
     end_time: Optional[time] = None
-    dried_larvae_discharge_type_id: Optional[DriedLarvaeDischargeTypeEntity] = None
+    dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeEntity] = None
     drying_results: Optional[bool] = None
     notes: Optional[str] = None
     status: Optional[int] = None

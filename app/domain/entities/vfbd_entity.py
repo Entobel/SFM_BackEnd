@@ -10,7 +10,7 @@ from app.domain.entities.user_entity import UserEntity
 
 
 @dataclass
-class VFBDEntity:
+class VfbdEntity:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
     shift: Optional[ShiftEntity] = None
@@ -20,7 +20,7 @@ class VFBDEntity:
     harvest_time: Optional[time] = None
     temperature_output_1st: Optional[float] = None
     temperature_output_2nd: Optional[float] = None
-    product_type_id: Optional[ProductTypeEntity] = None
+    product_type: Optional[ProductTypeEntity] = None
     dried_larvae_moisture: Optional[float] = None
     quantity_dried_larvae_sold: Optional[float] = None
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeEntity] = None

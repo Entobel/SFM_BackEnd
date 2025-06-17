@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, model_validator
 
 
-class VFBDSchema(BaseModel):
+class CreateVFBDSchema(BaseModel):
     date_reported: Optional[datetime] = None
     shift_id: Optional[int] = None
     factory_id: Optional[int] = None

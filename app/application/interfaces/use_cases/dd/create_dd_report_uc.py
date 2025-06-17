@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from app.application.dto.dd_dto import DDDTO
+from app.application.dto.dd_dto import DdDTO
 
 
-class ICreateDDReportUC(ABC):
+class ICreateDdReportUC(ABC):
     @abstractmethod
-    def execute(self, dd_dto: DDDTO) -> bool: ...
+    def execute(self, dd_dto: DdDTO) -> bool: ...

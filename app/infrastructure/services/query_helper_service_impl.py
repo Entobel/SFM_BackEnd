@@ -3,7 +3,7 @@ from typing import Any, List, Optional, Tuple
 
 from dateutil.parser import isoparse
 
-from app.core.exception import BadRequestError
+from app.core.exception import NotFoundError
 from app.domain.interfaces.services.query_helper_service import IQueryHelperService
 
 
@@ -98,7 +98,7 @@ class QueryHelper(IQueryHelperService):
 
         if len(diff_keys) > 0:
             for item in diff_keys:
-                raise BadRequestError(f"ETB_{item}-khong-tim-thay")
+                raise NotFoundError(f"ETB_{item}-khong-tim-thay")
 
     def all_tables(
         self,

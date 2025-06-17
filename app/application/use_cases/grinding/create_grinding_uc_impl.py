@@ -32,6 +32,11 @@ class CreateGrindingUC(ICreateGrindingUC):
             self.query_helper.add_table(
                 table_name="shifts", _id=grinding_entity.shift.id)
 
+        if grinding_entity.factory.id:
+            self.query_helper.add_table(
+                table_name="factories", _id=grinding_entity.factory.id
+            )
+
         if grinding_entity.packing_type.id:
             self.query_helper.add_table(
                 table_name="packing_types", _id=grinding_entity.packing_type.id)

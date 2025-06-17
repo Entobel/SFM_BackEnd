@@ -83,7 +83,6 @@ class ProductTypeRepository(IProductTypeRepository):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (product_type_id,))
             row = cur.fetchone()
-            logger.debug(f"LOG{row}")
 
             return ProductTypeEntity.from_row(row) if row else None
 

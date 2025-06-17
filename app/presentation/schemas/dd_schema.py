@@ -42,7 +42,7 @@ class CreateDDSchema(BaseModel):
             "end_time": "ETB-thieu_truong_end_time",
             "dried_larvae_discharge_type_id": "ETB-thieu_truong_dried_larvae_discharge_type_id",
             "drying_results": "ETB-thieu_truong_drying_results",
-            "created_by_id": "ETB-thieu_truong_created_by_id",
+            "created_by": "ETB-thieu_truong_created_by_id",
         }
 
         errors = []

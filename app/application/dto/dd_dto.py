@@ -10,7 +10,7 @@ from app.application.dto.user_dto import UserDTO
 
 
 @dataclass(frozen=True)
-class DDDTO:
+class DdDTO:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
     shift: Optional[ShiftDTO] = None
@@ -25,7 +25,7 @@ class DDDTO:
     temperature_after_4h30: Optional[float] = None
     start_time: Optional[time] = None
     end_time: Optional[time] = None
-    dried_larvae_discharge_type_id: Optional[DriedLarvaeDischargeTypeDTO] = None
+    dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeDTO] = None
     drying_results: Optional[bool] = None
     notes: Optional[str] = None
     created_by: Optional[UserDTO] = None

@@ -1,13 +1,16 @@
 from fastapi import APIRouter
 from loguru import logger
 
-from app.application.dto.dd_dto import DDDTO
+from app.application.dto.dd_dto import DdDTO
+from app.application.dto.dried_larvae_discharge_type_dto import DriedLarvaeDischargeTypeDTO
 from app.application.dto.dryer_machine_type_dto import DryerMachineTypeDTO
 from app.application.dto.factory_dto import FactoryDTO
 from app.application.dto.shift_dto import ShiftDTO
+from app.application.dto.user_dto import UserDTO
 from app.presentation.api.v1.dependencies.dd_dependencies import CreateDDReportUseCase
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from app.presentation.schemas.dd_schema import CreateDDSchema
+from app.presentation.schemas.response import Response
 
 
 router = APIRouter(prefix="/dds", tags=["Drum Drying"])
@@ -15,11 +18,15 @@ router = APIRouter(prefix="/dds", tags=["Drum Drying"])
 
 @router.post('/')
 async def create_dd_report(token_verify_dep: TokenVerifyDep, body: CreateDDSchema, use_case: CreateDDReportUseCase):
-    dd_dto = DDDTO(
+    dd_dto = DdDTO(
         date_reported=body.date_reported,
         shift=ShiftDTO(id=body.shift_id),
-        dried_larvae_discharge_type_id=body.dried_larvae_discharge_type_id,
-        created_by=body.created_by,
+        dried_larvae_discharge_type=DriedLarvaeDischargeTypeDTO(
+            id=body.dried_larvae_discharge_type_id
+        ),
+        created_by=UserDTO(
+            id=body.created_by
+        ),
         dryer_machine_type=DryerMachineTypeDTO(
             id=body.dryer_machine_type_id
         ),
@@ -36,7 +43,12 @@ async def create_dd_report(token_verify_dep: TokenVerifyDep, body: CreateDDSchem
         temperature_after_3h30=body.temperature_after_3h30,
         temperature_after_4h=body.temperature_after_4h,
         temperature_after_4h30=body.temperature_after_4h30,
-        notes=body.notes
+        notes=body.notes,
+
     )
 
     use_case.execute(dd_dto=dd_dto)
+
+    return Response.success_response(
+        data="Success", code="ETB_tao_dd_report_thanh_cong"
+    ).get_dict()

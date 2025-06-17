@@ -10,7 +10,7 @@ from app.application.dto.user_dto import UserDTO
 
 
 @dataclass(frozen=True)
-class VFBDDTO:
+class VfbdDTO:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
     shift: Optional[ShiftDTO] = None
@@ -20,7 +20,7 @@ class VFBDDTO:
     harvest_time: Optional[time] = None
     temperature_output_1st: Optional[float] = None
     temperature_output_2nd: Optional[float] = None
-    product_type_id: Optional[ProductTypeDTO] = None
+    product_type: Optional[ProductTypeDTO] = None
     dried_larvae_moisture: Optional[float] = None
     quantity_dried_larvae_sold: Optional[float] = None
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeDTO] = None
