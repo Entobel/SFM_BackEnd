@@ -10,7 +10,7 @@ from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.growing_entity import GrowingEntity
 from app.domain.entities.growing_zone_level_entity import GrowingZoneLevelEntity
-from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.entities.product_type_entity import ProductTypeEntity
 from app.domain.entities.operation_type_entity import OperationTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
@@ -52,9 +52,9 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
         if zone_id:
             self.query_helper.add_table(table_name="zones", _id=zone_id)
 
-        if growing_dto.production_object.id:
+        if growing_dto.product_type.id:
             self.query_helper.add_table(
-                table_name="production_objects", _id=growing_dto.production_object.id
+                table_name="product_types", _id=growing_dto.product_type.id
             )
 
         if growing_dto.operation_type.id:
@@ -138,8 +138,8 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
         return GrowingEntity(
             date_produced=growing_dto.date_produced,
             shift=ShiftEntity(id=growing_dto.shift.id),
-            production_object=ProductionObjectEntity(
-                id=growing_dto.production_object.id
+            product_type=ProductTypeEntity(
+                id=growing_dto.product_type.id
             ),
             operation_type=OperationTypeEntity(
                 id=growing_dto.operation_type.id),

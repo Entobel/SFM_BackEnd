@@ -25,10 +25,11 @@ class OperationTypeRepository(IOperationTypeRepository):
 
         return OperationTypeEntity.from_row(row) if row else None
 
-    def get_operation_type_by_id(self, id: int) -> OperationTypeEntity:
+    def get_operation_type_by_id(self, operation_type_entity: OperationTypeEntity) -> OperationTypeEntity:
         query = """
         SELECT id as ot_id, name as ot_name, abbr_name as ot_abbr_name, description as ot_description, is_active as ot_is_active FROM operation_types WHERE id = %s
         """
+
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (id,))
             row = cur.fetchone()

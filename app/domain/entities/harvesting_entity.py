@@ -5,7 +5,7 @@ from typing import Optional
 from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.growing_entity import GrowingEntity
-from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.entities.product_type_entity import ProductTypeEntity
 from app.domain.entities.operation_type_entity import OperationTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity

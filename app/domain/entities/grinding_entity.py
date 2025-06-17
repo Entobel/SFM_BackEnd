@@ -18,7 +18,7 @@ class GrindingEntity:
     factory: Optional[FactoryEntity] = None
     packing_type: Optional[PackingTypeEntity] = None
     antioxidant_type: Optional[AntioxidantTypeEntity] = None
-    quantity: Optional[int] = None
+    quantity: Optional[float] = None
     batch_grinding_information: Optional[str] = None
     notes: Optional[str] = None
     status: Optional[int] = None

@@ -12,7 +12,7 @@ from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.growing_entity import GrowingEntity
 from app.domain.entities.growing_zone_level_entity import GrowingZoneLevelEntity
-from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.entities.product_type_entity import ProductTypeEntity
 from app.domain.entities.operation_type_entity import OperationTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
@@ -76,8 +76,8 @@ class GrowingRepository(IGrowingRepository):
         FROM growings g
                 JOIN shifts s ON
             g.shift_id = s.id
-                JOIN production_objects po ON
-            g.production_object_id = po.id
+                JOIN product_types po ON
+            g.product_type_id = po.id
                 JOIN operation_types pt ON
             g.operation_type_id = pt.id
                 JOIN diets d ON
@@ -114,7 +114,7 @@ class GrowingRepository(IGrowingRepository):
                 shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
                 rejected_at=row["g_rejected_at"],
                 rejected_reason=row["g_rejected_reason"],
-                production_object=ProductionObjectEntity(
+                product_type=ProductTypeEntity(
                     id=row["po_id"],
                     name=row["po_name"],
                     description=row["po_description"],
@@ -180,8 +180,8 @@ class GrowingRepository(IGrowingRepository):
             INSERT INTO growings (
             date_produced,
             shift_id,
-            production_object_id,
-            production_object_name,
+            product_type_id,
+            product_type_name,
             operation_type_id,
             operation_type_name,
             diet_id,
@@ -196,8 +196,8 @@ class GrowingRepository(IGrowingRepository):
             VALUES (
                 %s,  -- date_produced
                 %s,  -- shift_id
-                %s,  -- production_object_id
-                (SELECT name FROM production_objects WHERE id = %s),
+                %s,  -- product_type_id
+                (SELECT name FROM product_types WHERE id = %s),
                 %s,  -- operation_type_id
                 (SELECT name FROM operation_types WHERE id = %s),
                 %s,  -- diet_id
@@ -215,8 +215,8 @@ class GrowingRepository(IGrowingRepository):
             tuple_growing_agrs = (
                 growing_entity.date_produced,
                 growing_entity.shift.id,
-                growing_entity.production_object.id,
-                growing_entity.production_object.id,
+                growing_entity.product_type.id,
+                growing_entity.product_type.id,
                 growing_entity.operation_type.id,
                 growing_entity.operation_type.id,
                 growing_entity.diet.id,
@@ -271,7 +271,7 @@ class GrowingRepository(IGrowingRepository):
         page: int,
         page_size: int,
         search: str,
-        production_object_id: int | None,
+        product_type_id: int | None,
         operation_type_id: int | None,
         diet_id: int | None,
         factory_id: int | None,
@@ -286,11 +286,11 @@ class GrowingRepository(IGrowingRepository):
 
         if search:
             sql_helper.add_search(
-                cols=["g.notes", "g.diet_name", "g.operation_type_name", "g.production_object_name"], query=search)
+                cols=["g.notes", "g.diet_name", "g.operation_type_name", "g.product_type_name"], query=search)
 
-        if production_object_id is not None:
+        if product_type_id is not None:
             sql_helper.add_eq(
-                column="g.production_object_id", value=production_object_id
+                column="g.product_type_id", value=product_type_id
             )
 
         if operation_type_id is not None:
@@ -332,8 +332,8 @@ class GrowingRepository(IGrowingRepository):
             growings g
         JOIN shifts s ON
             g.shift_id = s.id
-        JOIN production_objects po ON
-            g.production_object_id = po.id
+        JOIN product_types po ON
+            g.product_type_id = po.id
         JOIN operation_types ot ON 
             g.operation_type_id = ot.id
         JOIN diets d ON
@@ -365,7 +365,7 @@ class GrowingRepository(IGrowingRepository):
             g.number_crates      AS g_number_crates,
             g.substrate_moisture AS g_substrate_moisture,
             g.operation_type_name AS g_operation_type_name,
-            g.production_object_name AS g_production_object_name,
+            g.product_type_name AS g_product_type_name,
             g.diet_name          AS g_diet_name,
             g.status             AS g_status,
             g.notes              AS g_notes,
@@ -408,8 +408,8 @@ class GrowingRepository(IGrowingRepository):
         FROM growings g
                 JOIN shifts s ON
             g.shift_id = s.id
-                JOIN production_objects po ON
-            g.production_object_id = po.id
+                JOIN product_types po ON
+            g.product_type_id = po.id
                 JOIN operation_types ot ON
             g.operation_type_id = ot.id
                 JOIN diets d ON
@@ -446,9 +446,9 @@ class GrowingRepository(IGrowingRepository):
                 shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
                 rejected_at=row["g_rejected_at"],
                 rejected_reason=row["g_rejected_reason"],
-                production_object=ProductionObjectEntity(
+                product_type=ProductTypeEntity(
                     id=row["po_id"],
-                    name=row["g_production_object_name"],
+                    name=row["g_product_type_name"],
                     description=row["po_description"],
                     abbr_name=row["po_abbr_name"],
                 ),
@@ -786,7 +786,7 @@ class GrowingRepository(IGrowingRepository):
 
             growing_shift_id = growing_entity.shift.id
             growing_diet_id = growing_entity.diet.id
-            growing_production_object_id = growing_entity.production_object.id
+            growing_product_type_id = growing_entity.product_type.id
             growing_operation_type_id = growing_entity.operation_type.id
             growing_factory_id = growing_entity.factory.id
             growing_number_crates = growing_entity.number_crates
@@ -803,7 +803,7 @@ class GrowingRepository(IGrowingRepository):
             tuple_update_growing = (
                 growing_shift_id,
                 growing_diet_id,
-                growing_production_object_id,
+                growing_product_type_id,
                 growing_operation_type_id,
                 growing_factory_id,
                 growing_number_crates,
@@ -822,7 +822,7 @@ class GrowingRepository(IGrowingRepository):
             UPDATE growings SET 
             shift_id = %s,
             diet_id = %s,
-            production_object_id = %s,
+            product_type_id = %s,
             operation_type_id = %s,
             factory_id = %s,
             number_crates = %s,

@@ -15,7 +15,7 @@ class GrindingDTO:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
     shift: Optional[ShiftDTO] = None
-    quantity: Optional[int] = None
+    quantity: Optional[float] = None
     batch_grinding_information: Optional[str] = None
     packing_type: Optional[PackingTypeDTO] = None
     antioxidant_type: Optional[AntioxidantTypeDTO] = None

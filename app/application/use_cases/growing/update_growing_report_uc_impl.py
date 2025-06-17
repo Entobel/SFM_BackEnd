@@ -6,7 +6,7 @@ from app.core.exception import BadRequestError
 from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.growing_entity import GrowingEntity
-from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.entities.product_type_entity import ProductTypeEntity
 from app.domain.entities.operation_type_entity import OperationTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
@@ -41,8 +41,8 @@ class UpdateGrowingReport(IUpdateGrowingReportUC):
             factory=FactoryEntity(
                 id=growing_dto.factory.id
             ),
-            production_object=ProductionObjectEntity(
-                id=growing_dto.production_object.id
+            product_type=ProductTypeEntity(
+                id=growing_dto.product_type.id
             ),
             operation_type=OperationTypeEntity(
                 id=growing_dto.operation_type.id),
@@ -62,8 +62,8 @@ class UpdateGrowingReport(IUpdateGrowingReportUC):
         if query_entity.status == FormStatusEnum.APPROVED.value:
             growing_entity.change_shift(new_shift=query_entity.shift)
             growing_entity.change_diet(new_diet=query_entity.diet)
-            growing_entity.change_production_object(
-                new_production_object=query_entity.production_object)
+            growing_entity.change_product_type(
+                new_product_type=query_entity.product_type)
             growing_entity.change_operation_type(
                 new_operation_type=query_entity.operation_type)
             growing_entity.change_factory(new_factory=query_entity.factory)

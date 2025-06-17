@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from app.domain.entities.production_object_entity import ProductionObjectEntity
+from app.domain.entities.product_type_entity import ProductTypeEntity
 
 
-class IListProductionObjectUC(ABC):
+class IListProductTypeUC(ABC):
     @abstractmethod
     def execute(
         self,
@@ -16,5 +16,5 @@ class IListProductionObjectUC(ABC):
         "page":int,
         "page_size":int,
         "total_pages":int,
-        "items" : list[ProductionObjectEntity],
+        "items": list[ProductTypeEntity],
     ]: ...

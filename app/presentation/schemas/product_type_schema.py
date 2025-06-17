@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 
-class ProductionObjectResponseSchema(BaseModel):
+class ProductTypeResponseSchema(BaseModel):
     id: Optional[int] = None
     name: Optional[str] = None
     description: Optional[str] = None
@@ -17,7 +17,7 @@ class ProductionObjectResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CreateProductionObjectSchema(BaseModel):
+class CreateProductTypeSchema(BaseModel):
     name: str
     description: Optional[str] = None
 
@@ -51,7 +51,7 @@ class CreateProductionObjectSchema(BaseModel):
         return v
 
 
-class UpdateStatusProductionObjectSchema(BaseModel):
+class UpdateStatusProductTypeSchema(BaseModel):
     is_active: bool
 
     @model_validator(mode="before")
@@ -77,7 +77,7 @@ class UpdateStatusProductionObjectSchema(BaseModel):
         return values
 
 
-class UpdateProductionObjectDTO(BaseModel):
+class UpdateProductTypeDTO(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
 

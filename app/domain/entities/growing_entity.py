@@ -4,8 +4,8 @@ from typing import Optional
 
 from app.domain.entities.diet_entity import DietEntity
 from app.domain.entities.factory_entity import FactoryEntity
-from app.domain.entities.production_object_entity import ProductionObjectEntity
 from app.domain.entities.operation_type_entity import OperationTypeEntity
+from app.domain.entities.product_type_entity import ProductTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
 
@@ -15,7 +15,7 @@ class GrowingEntity:
     id: Optional[int] = None
     date_produced: Optional[datetime] = None
     shift: Optional[ShiftEntity] = None
-    production_object: Optional[ProductionObjectEntity] = None
+    product_type: Optional[ProductTypeEntity] = None
     operation_type: Optional[OperationTypeEntity] = None
     diet: Optional[DietEntity] = None
     factory: Optional[FactoryEntity] = None
@@ -39,8 +39,8 @@ class GrowingEntity:
     def change_shift(self, new_shift: ShiftEntity):
         self.shift = new_shift
 
-    def change_production_object(self, new_production_object: ProductionObjectEntity):
-        self.production_object = new_production_object
+    def change_product_type(self, new_product_type: ProductTypeEntity):
+        self.product_type = new_product_type
 
     def change_operation_type(self, new_operation_type: OperationTypeEntity):
         self.operation_type = new_operation_type

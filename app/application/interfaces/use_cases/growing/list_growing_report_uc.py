@@ -21,7 +21,7 @@ class IListGrowingReportUC(ABC):
         page: int,
         page_size: int,
         search: str,
-        production_object_id: int | None,
+        product_type_id: int | None,
         operation_type_id: int | None,
         diet_id: int | None,
         factory_id: int | None,

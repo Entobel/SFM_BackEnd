@@ -7,7 +7,7 @@ from app.application.dto.diet_dto import DietDTO
 from app.application.dto.factory_dto import FactoryDTO
 from app.application.dto.growing_zone_level_dto import GrowingZoneLevelDTO
 from app.application.dto.operation_type_dto import OperationTypeDTO
-from app.application.dto.production_object_dto import ProductionObjectDTO
+from app.application.dto.product_type_dto import ProductTypeDTO
 from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
 from app.domain.entities.shift_entity import ShiftEntity
@@ -16,8 +16,8 @@ from app.presentation.schemas.factory_schema import FactoryResponseSchema
 from app.presentation.schemas.growing_zone_level_schema import (
     GrowingZoneLevelResponseSchema,
 )
-from app.presentation.schemas.production_object_schema import (
-    ProductionObjectResponseSchema,
+from app.presentation.schemas.product_type_schema import (
+    ProductTypeResponseSchema,
 )
 from app.presentation.schemas.operation_type_schema import OperationTypeResponseSchema
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
@@ -29,7 +29,7 @@ class GrowingResponseSchema(BaseModel):
     id: Optional[int] = None
     date_produced: Optional[datetime] = None
     shift: Optional[ShiftResponseSchema] = None
-    production_object: Optional[ProductionObjectResponseSchema] = None
+    product_type: Optional[ProductTypeResponseSchema] = None
     operation_type: Optional[OperationTypeResponseSchema] = None
     diet: Optional[DietResponseSchema] = None
     factory: Optional[FactoryResponseSchema] = None
@@ -57,7 +57,7 @@ class GrowingResponseSchema(BaseModel):
 class CreateGrowingSchema(BaseModel):
     date_produced: Optional[str] = None
     shift_id: Optional[int] = None
-    production_object_id: Optional[int] = None
+    product_type_id: Optional[int] = None
     operation_type_id: Optional[int] = None
     diet_id: Optional[int] = None
     factory_id: Optional[int] = None
@@ -76,7 +76,7 @@ class CreateGrowingSchema(BaseModel):
             "date_produced": "ETB-thieu_truong_date_produced",
             "shift_id": "ETB-thieu_truong_shift_id",
             "operation_type_id": "ETB-thieu_truong_operation_type_id",
-            "production_object_id": "ETB-thieu_truong_production_object_id",
+            "product_type_id": "ETB-thieu_truong_product_type_id",
             "diet_id": "ETB-thieu_truong_diet_id",
             "factory_id": "ETB-thieu_truong_factory_id",
             "number_crates": "ETB-thieu_truong_number_crates",
@@ -105,7 +105,7 @@ class ListGrowingSchema(BaseModel):
     id: Optional[int] = None
     date_produced: Optional[datetime] = None
     shift: Optional[ShiftDTO] = None
-    production_object: Optional[ProductionObjectDTO] = None
+    product_type: Optional[ProductTypeDTO] = None
     operation_type: Optional[OperationTypeDTO] = None
     diet: Optional[DietDTO] = None
     factory: Optional[FactoryDTO] = None
@@ -165,7 +165,7 @@ class UpdateStatusGrowingSchema(BaseModel):
 class UpdateGrowingSchema(BaseModel):
     shift_id: Optional[int] = None
     operation_type_id: Optional[int] = None
-    production_object_id: Optional[int] = None
+    product_type_id: Optional[int] = None
     diet_id: Optional[int] = None
     factory_id: Optional[int] = None
     substrate_moisture: Optional[float] = None
@@ -185,7 +185,7 @@ class UpdateGrowingSchema(BaseModel):
         required_fields = {
             "shift_id": "ETB-thieu_truong_shift_id",
             "operation_type_id": "ETB-thieu_truong_operation_type_id",
-            "production_object_id": "ETB-thieu_truong_production_object_id",
+            "product_type_id": "ETB-thieu_truong_product_type_id",
             "diet_id": "ETB-thieu_truong_diet_id",
             "factory_id": "ETB-thieu_truong_factory_id",
             "substrate_moisture": "ETB-thieu_truong_substrate_moisture",

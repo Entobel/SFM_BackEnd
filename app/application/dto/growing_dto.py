@@ -5,7 +5,7 @@ from typing import Optional
 from app.application.dto.diet_dto import DietDTO
 from app.application.dto.factory_dto import FactoryDTO
 from app.application.dto.operation_type_dto import OperationTypeDTO
-from app.application.dto.production_object_dto import ProductionObjectDTO
+from app.application.dto.product_type_dto import ProductTypeDTO
 from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
 
@@ -15,7 +15,7 @@ class GrowingDTO:
     id: Optional[int] = None
     date_produced: Optional[datetime] = None
     shift: Optional[ShiftDTO] = None
-    production_object: Optional[ProductionObjectDTO] = None
+    product_type: Optional[ProductTypeDTO] = None
     operation_type: Optional[OperationTypeDTO] = None
     diet: Optional[DietDTO] = None
     factory: Optional[FactoryDTO] = None
@@ -40,7 +40,7 @@ class UpdateGrowingDTO:
     id: Optional[int] = None
     date_produced: Optional[datetime] = None
     shift: Optional[ShiftDTO] = None
-    production_object: Optional[ProductionObjectDTO] = None
+    product_type: Optional[ProductTypeDTO] = None
     operation_type: Optional[OperationTypeDTO] = None
     diet: Optional[DietDTO] = None
     factory: Optional[FactoryDTO] = None

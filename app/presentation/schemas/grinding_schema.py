@@ -8,7 +8,7 @@ class CreateGrindingSchema(BaseModel):
     shift_id: Optional[int] = None
     batch_grinding_information: Optional[str] = None
     factory_id: Optional[int] = None
-    quantity: Optional[int] = None
+    quantity: Optional[float] = None
     packing_type_id: Optional[int] = None
     antioxidant_type_id: Optional[int] = None
     notes: Optional[str] = None

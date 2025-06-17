@@ -26,7 +26,7 @@ class FilterSchema(BaseModel):
     operation_type_id: Optional[int] = Field(
         default=None, description="Filter by production type ID"
     )
-    production_object_id: Optional[int] = Field(
+    product_type_id: Optional[int] = Field(
         default=None, description="Filter by production object ID"
     )
     start_date: Optional[str] = Field(
