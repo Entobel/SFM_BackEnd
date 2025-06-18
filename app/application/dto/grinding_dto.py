@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from datetime import datetime
+from datetime import datetime, time
 from typing import Optional
 
 from app.application.dto.antioxidant_type_dto import AntioxidantTypeDTO
@@ -15,6 +15,8 @@ class GrindingDTO:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
     shift: Optional[ShiftDTO] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
     quantity: Optional[float] = None
     batch_grinding_information: Optional[str] = None
     packing_type: Optional[PackingTypeDTO] = None

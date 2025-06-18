@@ -1,5 +1,5 @@
 from app.application.dto.grinding_dto import GrindingDTO
-from app.application.interfaces.use_cases.grinding.create_grinding_uc import ICreateGrindingUC
+from app.application.interfaces.use_cases.grinding.create_grinding_report_uc import ICreateGrindingUC
 from app.core.constants.common_enums import FormStatusEnum
 from app.core.exception import BadRequestError
 from app.domain.entities.antioxidiant_type_entity import AntioxidantTypeEntity
@@ -68,6 +68,8 @@ class CreateGrindingUC(ICreateGrindingUC):
         return GrindingEntity(
             date_reported=grinding_dto.date_reported,
             quantity=grinding_dto.quantity,
+            start_time=grinding_dto.start_time,
+            end_time=grinding_dto.end_time,
             batch_grinding_information=grinding_dto.batch_grinding_information,
             shift=ShiftEntity(id=grinding_dto.shift.id),
             factory=FactoryEntity(id=grinding_dto.factory.id),

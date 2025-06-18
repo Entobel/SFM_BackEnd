@@ -13,6 +13,7 @@ class PackingTypeEntity:
     quantity: Optional[int] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
+    unit: Optional[UnitEntity] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

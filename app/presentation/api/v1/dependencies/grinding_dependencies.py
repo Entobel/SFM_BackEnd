@@ -1,8 +1,10 @@
 from typing import Annotated
 
 from fastapi import Depends
-from app.application.interfaces.use_cases.grinding.create_grinding_uc import ICreateGrindingUC
-from app.application.use_cases.grinding.create_grinding_uc_impl import CreateGrindingUC
+from app.application.interfaces.use_cases.grinding.create_grinding_report_uc import ICreateGrindingUC
+from app.application.interfaces.use_cases.grinding.list_grinding_report_uc import IListGrindingReportUC
+from app.application.use_cases.grinding.create_grinding_uc_report_impl import CreateGrindingUC
+from app.application.use_cases.grinding.list_grinding_report_uc_impl import ListGrindingReportUC
 from app.domain.interfaces.repositories.grinding_repository import IGrindingRepository
 from app.infrastructure.database.repositories.grinding_repository_impl import GrindingRepository
 from app.presentation.api.v1.dependencies.common_dependencies import CommonRepositoryDep, DatabaseDep, QueryHelperDep
@@ -26,5 +28,14 @@ def get_create_grinding_uc(grinding_repo: GrindingRepositoryDep, common_repo: Co
     )
 
 
-CreateGrindingUCDep = Annotated[ICreateGrindingUC,
-                                Depends(get_create_grinding_uc)]
+def get_list_grinding_report_uc(grinding_repo: GrindingRepositoryDep) -> IListGrindingReportUC:
+    return ListGrindingReportUC(
+        grinding_repo=grinding_repo
+    )
+
+
+CreateGrindingUseCaseDep = Annotated[ICreateGrindingUC,
+                                     Depends(get_create_grinding_uc)]
+
+ListGrindingReportUseCaseDep = Annotated[IListGrindingReportUC,
+                                         Depends(get_list_grinding_report_uc)]

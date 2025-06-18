@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, time
 from typing import Optional
 
 from app.domain.entities.antioxidiant_type_entity import AntioxidantTypeEntity
@@ -16,6 +16,8 @@ class GrindingEntity:
     date_reported: Optional[datetime] = None
     shift: Optional[ShiftEntity] = None
     factory: Optional[FactoryEntity] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
     packing_type: Optional[PackingTypeEntity] = None
     antioxidant_type: Optional[AntioxidantTypeEntity] = None
     quantity: Optional[float] = None
@@ -52,6 +54,12 @@ class GrindingEntity:
 
     def change_batch_grinding_information(self, new_batch_grinding_information: str):
         self.batch_grinding_information = new_batch_grinding_information
+
+    def change_start_time(self, new_start_time: time):
+        self.start_time = new_start_time
+
+    def change_end_time(self, new_end_time: time):
+        self.end_time = new_end_time
 
     def change_notes(self, new_notes: str):
         self.notes = new_notes

@@ -15,7 +15,6 @@ class IGrindingRepository(ABC):
         page: int,
         page_size: int,
         search: str,
-        diet_id: int | None,
         factory_id: int | None,
         start_date: str | None,
         end_date: str | None,

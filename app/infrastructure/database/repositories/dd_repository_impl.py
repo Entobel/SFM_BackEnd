@@ -150,9 +150,9 @@ class DDRepository(IDdRepository):
             dd.dried_larvae_discharge_type_id = dldt.id 
         JOIN users u ON
             dd.created_by = u.id
-        left JOIN users u2 ON
+        LEFT JOIN users u2 ON
             dd.rejected_by = u2.id
-        left JOIN users u3 ON
+        LEFT JOIN users u3 ON
             dd.approved_by = u3.id
         {sql_helper.where_sql()}
         """

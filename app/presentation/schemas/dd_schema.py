@@ -1,4 +1,5 @@
 from datetime import datetime, time
+from token import OP
 from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, model_validator
@@ -31,7 +32,7 @@ class DdResponseSchema(BaseModel):
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeResponseSchema] = None
     drying_results: Optional[bool] = None
     notes: Optional[str] = None
-
+    status: Optional[int] = None
     created_by: Optional[UserResponseSchema] = None
     created_at: Optional[datetime] = None
 
@@ -65,6 +66,7 @@ class CreateDDSchema(BaseModel):
     dried_larvae_discharge_type_id: Optional[int] = None
     drying_results: Optional[bool] = None
     notes: Optional[str] = None
+    status: Optional[int] = None
     created_by: Optional[int] = None
 
     @model_validator(mode="before")
