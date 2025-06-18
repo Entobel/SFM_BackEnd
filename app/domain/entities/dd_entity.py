@@ -5,6 +5,7 @@ from typing import Optional
 
 from app.domain.entities.dried_larvae_discharge_type_entity import DriedLarvaeDischargeTypeEntity
 from app.domain.entities.dryer_machine_type_entity import DryerMachineTypeEntity
+from app.domain.entities.dryer_product_type_entity import DryerProductTypeEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
@@ -17,6 +18,7 @@ class DdEntity:
     shift: Optional[ShiftEntity] = None
     factory: Optional[FactoryEntity] = None
     dryer_machine_type: Optional[DryerMachineTypeEntity] = None
+    dryer_product_type: Optional[DryerProductTypeEntity] = None
     quantity_fresh_larvae_input: Optional[float] = None
     quantity_dried_larvae_output: Optional[float] = None
     temperature_after_2h: Optional[float] = None
@@ -27,6 +29,7 @@ class DdEntity:
     start_time: Optional[time] = None
     end_time: Optional[time] = None
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeEntity] = None
+    dried_larvae_moisture: Optional[float] = None
     drying_results: Optional[bool] = None
     notes: Optional[str] = None
     status: Optional[int] = None
@@ -58,6 +61,12 @@ class DdEntity:
 
     def change_quantity_dried_larvae_output(self, new_quantity: float):
         self.quantity_dried_larvae_output = new_quantity
+
+    def change_dryer_product_type(self, new_dryer_product_type: DryerProductTypeEntity):
+        self.dryer_product_type = new_dryer_product_type
+
+    def change_dried_larvae_moisture(self, new_dried_larvae_moisture: float):
+        self.dried_larvae_moisture = new_dried_larvae_moisture
 
     def change_temperature_after_2h(self, new_temperature: float):
         self.temperature_after_2h = new_temperature

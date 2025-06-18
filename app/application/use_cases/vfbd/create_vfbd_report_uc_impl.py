@@ -4,6 +4,7 @@ from app.application.interfaces.use_cases.vfbd.create_vfbd_report_uc import ICre
 from app.core.constants.common_enums import FormStatusEnum
 from app.core.exception import BadRequestError
 from app.domain.entities.dried_larvae_discharge_type_entity import DriedLarvaeDischargeTypeEntity
+from app.domain.entities.dryer_product_type_entity import DryerProductTypeEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.product_type_entity import ProductTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
@@ -35,9 +36,9 @@ class CreateVfbdReportUC(ICreateVfbdReportUC):
             self.query_helper.add_table(
                 table_name="dried_larvae_discharge_types", _id=vfbd_dto.dried_larvae_discharge_type.id)
 
-        if vfbd_dto.product_type.id:
+        if vfbd_dto.dryer_product_type.id:
             self.query_helper.add_table(
-                table_name="product_types", _id=vfbd_dto.product_type.id)
+                table_name="dryer_product_types", _id=vfbd_dto.dryer_product_type.id)
 
         if vfbd_dto.created_by.id:
             self.query_helper.add_table(
@@ -79,8 +80,8 @@ class CreateVfbdReportUC(ICreateVfbdReportUC):
             harvest_time=vfbd_dto.harvest_time,
             temperature_output_1st=vfbd_dto.temperature_output_1st,
             temperature_output_2nd=vfbd_dto.temperature_output_2nd,
-            product_type=ProductTypeEntity(
-                id=vfbd_dto.product_type.id
+            dryer_product_type=DryerProductTypeEntity(
+                id=vfbd_dto.dryer_product_type.id
             ),
             dried_larvae_moisture=vfbd_dto.dried_larvae_moisture,
             quantity_dried_larvae_sold=vfbd_dto.quantity_dried_larvae_sold,
@@ -89,5 +90,5 @@ class CreateVfbdReportUC(ICreateVfbdReportUC):
             created_by=UserEntity(
                 id=vfbd_dto.created_by.id
             ),
-            status=FormStatusEnum.PENDING.value
+            status=FormStatusEnum.APPROVED.value
         )

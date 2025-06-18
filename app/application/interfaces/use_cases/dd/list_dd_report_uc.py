@@ -1,11 +1,21 @@
 from abc import ABC, abstractmethod
 
+from typing import TypedDict
+
 from app.domain.entities.dd_entity import DdEntity
 
 
-class IDdRepository(ABC):
+class ListDdReportType(TypedDict):
+    items: tuple[list[DdEntity], tuple[int, int]]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
+class IListDdReportUC(ABC):
     @abstractmethod
-    def get_list_dd_report(
+    def execute(
         self,
         page: int,
         page_size: int,
@@ -15,15 +25,4 @@ class IDdRepository(ABC):
         end_date: str | None,
         report_status: int | None,
         is_active: bool | None,
-    ) -> dict[
-        "items": list[DdEntity],
-        "total":int,
-        "page":int,
-        "page_size":int,
-        "total_pages":int,
-    ]: ...
-
-    @abstractmethod
-    def create_dd_report(self, dd_entity: DdEntity) -> bool:
-        """Create a new DD report."""
-        pass
+    ) -> ListDdReportType: ...

@@ -6,6 +6,7 @@ from app.core.exception import BadRequestError
 from app.domain.entities.dd_entity import DdEntity
 from app.domain.entities.dried_larvae_discharge_type_entity import DriedLarvaeDischargeTypeEntity
 from app.domain.entities.dryer_machine_type_entity import DryerMachineTypeEntity
+from app.domain.entities.dryer_product_type_entity import DryerProductTypeEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.user_entity import UserEntity
@@ -41,6 +42,11 @@ class CreateDDReportUC(ICreateDdReportUC):
                 table_name="dryer_machine_types", _id=dd_dto.dryer_machine_type.id
             )
 
+        if dd_dto.dryer_product_type.id:
+            self.query_helper.add_table(
+                table_name="dryer_product_types", _id=dd_dto.dryer_product_type.id
+            )
+
         if dd_dto.created_by.id:
             self.query_helper.add_table(
                 table_name="users", _id=dd_dto.created_by.id)
@@ -72,6 +78,9 @@ class CreateDDReportUC(ICreateDdReportUC):
             dryer_machine_type=DryerMachineTypeEntity(
                 id=dd_dto.dryer_machine_type.id
             ),
+            dryer_product_type=DryerProductTypeEntity(
+                id=dd_dto.dryer_product_type.id
+            ),
             dried_larvae_discharge_type=DriedLarvaeDischargeTypeEntity(
                 id=dd_dto.dried_larvae_discharge_type.id
             ),
@@ -82,11 +91,12 @@ class CreateDDReportUC(ICreateDdReportUC):
             temperature_after_3h30=dd_dto.temperature_after_3h30,
             temperature_after_4h=dd_dto.temperature_after_4h,
             temperature_after_4h30=dd_dto.temperature_after_4h30,
+            dried_larvae_moisture=dd_dto.dried_larvae_moisture,
             start_time=dd_dto.start_time,
             end_time=dd_dto.end_time,
             drying_results=dd_dto.drying_results,
             notes=dd_dto.notes,
             created_by=UserEntity(
                 id=dd_dto.created_by.id) if dd_dto.created_by else None,
-            status=FormStatusEnum.PENDING.value
+            status=FormStatusEnum.APPROVED.value
         )

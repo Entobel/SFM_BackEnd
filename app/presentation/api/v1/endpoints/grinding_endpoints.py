@@ -19,9 +19,7 @@ router = APIRouter(prefix="/grindings", tags=["Grinding"])
 
 
 @router.post("/")
-async def create_grinding_report(token_verify_dep: TokenVerifyDep,
-                                 body: CreateGrindingSchema,
-                                 use_case: CreateGrindingUCDep):
+async def create_grinding_report(token_verify_dep: TokenVerifyDep, body: CreateGrindingSchema, use_case: CreateGrindingUCDep):
     grinding_dto = GrindingDTO(
         date_reported=body.date_reported,
         antioxidant_type=AntioxidantTypeDTO(

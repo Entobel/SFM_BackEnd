@@ -167,14 +167,6 @@ class GrowingRepository(IGrowingRepository):
     ) -> bool:
 
         with self.conn.cursor() as cur:
-            # update_zone_level_query = """
-            #     UPDATE zone_levels
-            #     SET status = 1
-            #     WHERE id = ANY(%s)
-            # """
-
-            # cur.execute(update_zone_level_query, (zone_level_ids,))
-
             # Insert growing
             insert_growing_query = """
             INSERT INTO growings (
@@ -225,7 +217,7 @@ class GrowingRepository(IGrowingRepository):
                 growing_entity.number_crates,
                 growing_entity.substrate_moisture,
                 growing_entity.notes,
-                1,
+                growing_entity.status,
                 growing_entity.created_by.id,
             )
 

@@ -3,6 +3,7 @@ from datetime import datetime, time
 from typing import Optional
 
 from app.application.dto.dried_larvae_discharge_type_dto import DriedLarvaeDischargeTypeDTO
+from app.application.dto.dryer_product_type_dto import DryerProductTypeDTO
 from app.application.dto.factory_dto import FactoryDTO
 from app.application.dto.product_type_dto import ProductTypeDTO
 from app.application.dto.shift_dto import ShiftDTO
@@ -20,7 +21,7 @@ class VfbdDTO:
     harvest_time: Optional[time] = None
     temperature_output_1st: Optional[float] = None
     temperature_output_2nd: Optional[float] = None
-    product_type: Optional[ProductTypeDTO] = None
+    dryer_product_type: Optional[DryerProductTypeDTO] = None
     dried_larvae_moisture: Optional[float] = None
     quantity_dried_larvae_sold: Optional[float] = None
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeDTO] = None

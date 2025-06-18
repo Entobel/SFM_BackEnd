@@ -76,5 +76,5 @@ class CreateGrindingUC(ICreateGrindingUC):
             packing_type=PackingTypeEntity(id=grinding_dto.packing_type.id),
             created_by=UserEntity(id=grinding_dto.created_by.id),
             notes=grinding_dto.notes,
-            status=FormStatusEnum.PENDING.value
+            status=FormStatusEnum.APPROVED.value
         )

@@ -1,11 +1,21 @@
 from abc import ABC, abstractmethod
 
+from typing import TypedDict
+
 from app.domain.entities.vfbd_entity import VfbdEntity
 
 
-class IVfbdRepository(ABC):
+class ListVfbdReportType(TypedDict):
+    items: tuple[list[VfbdEntity], tuple[int, int]]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
+class IListVfbdReportUC(ABC):
     @abstractmethod
-    def get_list_vfbd_report(
+    def execute(
         self,
         page: int,
         page_size: int,
@@ -15,13 +25,4 @@ class IVfbdRepository(ABC):
         end_date: str | None,
         report_status: int | None,
         is_active: bool | None,
-    ) -> dict[
-        "items": list[VfbdEntity],
-        "total":int,
-        "page":int,
-        "page_size":int,
-        "total_pages":int,
-    ]: ...
-
-    @abstractmethod
-    def create_vfbd_report(self, vfbd_entity: VfbdEntity) -> bool: ...
+    ) -> ListVfbdReportType: ...

@@ -143,6 +143,7 @@ class GrindingRepository(IGrindingRepository):
             antioxidant_type_id,
             antioxidant_type_name,
             notes,
+            status,
             created_by
             )
             VALUES (
@@ -155,6 +156,7 @@ class GrindingRepository(IGrindingRepository):
             (SELECT name FROM packing_types WHERE id = %s),
             %s,
             (SELECT name FROM antioxidant_types WHERE id = %s),
+            %s,
             %s,
             %s)"""
 
@@ -169,6 +171,7 @@ class GrindingRepository(IGrindingRepository):
                 grinding_entity.antioxidant_type.id,
                 grinding_entity.antioxidant_type.id,
                 grinding_entity.notes,
+                grinding_entity.status,
                 grinding_entity.created_by.id,
             )
 

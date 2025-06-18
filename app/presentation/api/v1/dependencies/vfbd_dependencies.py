@@ -2,7 +2,9 @@ from typing import Annotated
 
 from fastapi import Depends
 from app.application.interfaces.use_cases.vfbd.create_vfbd_report_uc import ICreateVfbdReportUC
+from app.application.interfaces.use_cases.vfbd.list_vfbd_report_uc import IListVfbdReportUC
 from app.application.use_cases.vfbd.create_vfbd_report_uc_impl import CreateVfbdReportUC
+from app.application.use_cases.vfbd.list_vfbd_report_uc_impl import ListVfbdReportUC
 from app.domain.interfaces.repositories.vfbd_repository import IVfbdRepository
 from app.infrastructure.database.repositories.vfbd_repository_impl import VfbdRepository
 from app.presentation.api.v1.dependencies.common_dependencies import CommonRepositoryDep, DatabaseDep, QueryHelperDep
@@ -19,5 +21,12 @@ def get_create_vfbd_report_uc(vfbd_repository: VfbdRepositoryDep, common_repo: C
     return CreateVfbdReportUC(vfbd_repository=vfbd_repository, common_repository=common_repo, query_helper=query_helper)
 
 
-CreateVfbdReportUseCase = Annotated[ICreateVfbdReportUC, Depends(
+def get_list_vfbd_report_uc(vfbd_repository: VfbdRepositoryDep) -> IListVfbdReportUC:
+    return ListVfbdReportUC(vfbd_repo=vfbd_repository)
+
+
+CreateVfbdReportUseCaseDep = Annotated[ICreateVfbdReportUC, Depends(
     get_create_vfbd_report_uc)]
+
+ListVfbdReportUseCaseDep = Annotated[IListVfbdReportUC, Depends(
+    get_list_vfbd_report_uc)]

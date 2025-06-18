@@ -3,6 +3,7 @@ from datetime import datetime, time
 from typing import Optional
 
 from app.domain.entities.dried_larvae_discharge_type_entity import DriedLarvaeDischargeTypeEntity
+from app.domain.entities.dryer_product_type_entity import DryerProductTypeEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.product_type_entity import ProductTypeEntity
 from app.domain.entities.shift_entity import ShiftEntity
@@ -20,7 +21,7 @@ class VfbdEntity:
     harvest_time: Optional[time] = None
     temperature_output_1st: Optional[float] = None
     temperature_output_2nd: Optional[float] = None
-    product_type: Optional[ProductTypeEntity] = None
+    dryer_product_type: Optional[DryerProductTypeEntity] = None
     dried_larvae_moisture: Optional[float] = None
     quantity_dried_larvae_sold: Optional[float] = None
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeEntity] = None
@@ -61,8 +62,8 @@ class VfbdEntity:
     def change_temperature_output_2nd(self, new_temperature: float):
         self.temperature_output_2nd = new_temperature
 
-    def change_product_type(self, new_product_type: ProductTypeEntity):
-        self.product_type_id = new_product_type
+    def change_dryer_product_type(self, new_dryer_product_type: DryerProductTypeEntity):
+        self.product_type_id = new_dryer_product_type
 
     def change_dried_larvae_moisture(self, new_moisture: float):
         self.dried_larvae_moisture = new_moisture

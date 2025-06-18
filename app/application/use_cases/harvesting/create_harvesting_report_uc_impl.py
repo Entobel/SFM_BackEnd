@@ -113,7 +113,7 @@ class CreateHarvestingReportUC(ICreateHarvestingReportUC):
             quantity_larvae=harvesting_dto.quantity_larvae,
             created_by=UserEntity(id=harvesting_dto.created_by.id),
             notes=harvesting_dto.notes,
-            status=FormStatusEnum.PENDING.value
+            status=FormStatusEnum.APPROVED.value
         )
 
     def _extract_zone_level_ids(self, zone_level_dtos: list[ZoneLevelDTO]) -> list[int]:

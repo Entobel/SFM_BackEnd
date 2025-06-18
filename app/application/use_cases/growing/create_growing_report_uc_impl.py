@@ -149,7 +149,7 @@ class CreateGrowingReportUC(ICreateGrowingReportUC):
             substrate_moisture=growing_dto.substrate_moisture,
             created_by=UserEntity(id=growing_dto.user.id),
             notes=growing_dto.notes,
-            status=FormStatusEnum.PENDING.value
+            status=FormStatusEnum.APPROVED.value
         )
 
     def _extract_zone_level_ids(self, zone_level_dtos: list[ZoneLevelDTO]) -> list[int]:

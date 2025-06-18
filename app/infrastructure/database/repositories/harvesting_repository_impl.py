@@ -48,7 +48,7 @@ class HarvestingRepository(IHarvestingRepository):
                 harvesting_entity.number_crates_discarded,
                 harvesting_entity.quantity_larvae,
                 harvesting_entity.notes,
-                1,
+                harvesting_entity.status,
                 harvesting_entity.created_by.id
             )
 
@@ -85,16 +85,13 @@ class HarvestingRepository(IHarvestingRepository):
                 argslist=list_tuple_harvesting_zone_levels,
             )
 
-            if cur.rowcount < 0:
-                raise BadRequestError("ETB_tao_khong_duoc_harvesting_report_3")
-
-            if cur.rowcount > 0:
+            if cur.rowcount == 0:
+                self.conn.rollback()
+                return False
+            else:
                 self.conn.commit()
                 logger.success("CREATE HARVESTING SUCCESS")
                 return True
-            else:
-                self.conn.rollback()
-                return False
 
     def get_list_harvesting_report(self, page, page_size, search, factory_id, start_date, end_date, report_status, is_active):
         sql_helper = self.query_helper
@@ -141,7 +138,7 @@ class HarvestingRepository(IHarvestingRepository):
             cur.execute(query=count_sql, vars=all_params)
             total = cur.fetchone()[0]
 
-        # Query page
+        # Query Data
         limit_sql, limit_params = sql_helper.paginate(
             page=page, page_size=page_size)
 
