@@ -34,6 +34,7 @@ class VfbdReponseSchema(BaseModel):
     rejected_at: Optional[datetime] = None
     rejected_reason: Optional[str] = None
     updated_at: Optional[datetime] = None
+    status: Optional[int] = None
     model_config = ConfigDict(from_attributes=True)
 
 

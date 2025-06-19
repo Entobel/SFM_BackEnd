@@ -7,6 +7,7 @@ from typing import Optional
 class DriedLarvaeDischargeTypeEntity:
     id: Optional[int] = None
     name: Optional[str] = None
+    is_active: Optional[bool] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

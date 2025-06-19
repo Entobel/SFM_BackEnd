@@ -16,5 +16,5 @@ class IListShiftUC(ABC):
         "page":int,
         "page_size":int,
         "total_pages":int,
-        "items" : list[ShiftEntity],
+        "items": list[ShiftEntity],
     ]: ...

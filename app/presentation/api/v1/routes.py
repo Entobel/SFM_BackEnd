@@ -16,7 +16,12 @@ from app.presentation.api.v1.endpoints import (
     harvesting_endpoints,
     grinding_endpoints,
     dd_endpoints,
-    vfbd_endpoints
+    vfbd_endpoints,
+    dryer_machine_type_endpoints,
+    dryer_product_type_endpoints,
+    dried_larvae_discharge_type_endpoints,
+    antioxidant_type_endpoints,
+    packing_type_endpoints
 )
 
 routers = APIRouter()
@@ -37,7 +42,12 @@ router_list = [
     harvesting_endpoints.router,
     grinding_endpoints.router,
     dd_endpoints.router,
-    vfbd_endpoints.router
+    vfbd_endpoints.router,
+    dryer_machine_type_endpoints.router,
+    dryer_product_type_endpoints.router,
+    dried_larvae_discharge_type_endpoints.router,
+    antioxidant_type_endpoints.router,
+    packing_type_endpoints.router
 ]
 
 for router in router_list:
