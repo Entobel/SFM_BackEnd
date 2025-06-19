@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from loguru import logger
 
 from app.application.dto.antioxidant_type_dto import AntioxidantTypeDTO
 from app.application.dto.factory_dto import FactoryDTO
@@ -130,6 +131,7 @@ async def list_grinding_reports(
 
 @router.post("/")
 async def create_grinding_report(token_verify_dep: TokenVerifyDep, body: CreateGrindingSchema, use_case: CreateGrindingUseCaseDep):
+    logger.debug(f"Creating grinding report with body: {body.model_dump()}")
     grinding_dto = GrindingDTO(
         date_reported=body.date_reported,
         antioxidant_type=AntioxidantTypeDTO(
