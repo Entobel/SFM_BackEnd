@@ -3,7 +3,7 @@ from fastapi import APIRouter, status
 from app.presentation.api.v1.dependencies.auth_dependencies import (
     LoginOauth2Dep, LoginUseCaseDep)
 from app.presentation.schemas.auth_schema import (LoginInputSchema,
-                                              LoginResponseSchema)
+                                                  LoginResponseSchema)
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.user_schema import UserLoginResponseSchema
 

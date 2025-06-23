@@ -29,7 +29,7 @@ class LoginUC(ILoginUC):
             role_id=user.department_factory_role.role.id,
             department_id=user.department_factory_role.department_factory.department.id,
             department_factory_role_id=user.department_factory_role.id,
-            expires_delta=timedelta(days=7),
+            expires_delta=timedelta(days=30),
         )
 
         token = self.token_service.generate_token(token_payload)

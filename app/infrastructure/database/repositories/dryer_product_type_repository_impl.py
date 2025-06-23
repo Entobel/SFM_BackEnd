@@ -25,7 +25,7 @@ class DryerProductTypeRepository(IDryerProductTypeRepository):
             SELECT
                 COUNT(*)
             FROM
-                dryer_machine_types dmt
+                dryer_product_types dpt
                 {sql_helper.where_sql()}
         """
 
