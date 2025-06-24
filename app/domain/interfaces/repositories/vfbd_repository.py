@@ -5,6 +5,9 @@ from app.domain.entities.vfbd_entity import VfbdEntity
 
 class IVfbdRepository(ABC):
     @abstractmethod
+    def get_vfbd_report_by_id(self, vfbd_entity: VfbdEntity) -> VfbdEntity | None: ...
+
+    @abstractmethod
     def get_list_vfbd_report(
         self,
         page: int,
@@ -16,7 +19,7 @@ class IVfbdRepository(ABC):
         report_status: int | None,
         is_active: bool | None,
     ) -> dict[
-        "items": list[VfbdEntity],
+        "items" : list[VfbdEntity],
         "total":int,
         "page":int,
         "page_size":int,
@@ -25,3 +28,6 @@ class IVfbdRepository(ABC):
 
     @abstractmethod
     def create_vfbd_report(self, vfbd_entity: VfbdEntity) -> bool: ...
+
+    @abstractmethod
+    def update_vfbd_report(self, vfbd_entity: VfbdEntity) -> bool: ...

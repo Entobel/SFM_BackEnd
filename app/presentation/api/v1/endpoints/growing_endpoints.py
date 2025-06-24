@@ -105,8 +105,7 @@ async def get_list_growing_report(
         result["items"]
     )
 
-    growing_zone_level_map: dict[int,
-                                 list[GrowingZoneLevelResponseSchema]] = {}
+    growing_zone_level_map: dict[int, list[GrowingZoneLevelResponseSchema]] = {}
 
     for gzl in growing_zone_levels:
         gzl_schema = GrowingZoneLevelResponseSchema(
@@ -117,7 +116,7 @@ async def get_list_growing_report(
             zone_level=ZoneLevelResponseSchema(
                 id=gzl.zone_level.id,
                 zone=ZoneResponseSchema(id=gzl.zone_level.zone.id),
-                status=gzl.zone_level.status
+                status=gzl.zone_level.status,
             ),
         ).model_dump(exclude_none=True)
 
@@ -238,7 +237,7 @@ async def update_growing_report(
     token_verify: TokenVerifyDep,
     body: UpdateGrowingSchema,
     growing_id: int,
-    use_case: UpdateGrowingReportUseCaseDep
+    use_case: UpdateGrowingReportUseCaseDep,
 ):
     growing_dto = UpdateGrowingDTO(
         id=growing_id,
@@ -255,8 +254,13 @@ async def update_growing_report(
         status=body.status,
     )
 
-    use_case.execute(growing_dto=growing_dto, new_zone_level_ids=body.zone_level_ids,
-                     old_zone_level_ids=body.old_zone_level_ids, old_zone_id=body.old_zone_id, new_zone_id=body.zone_id)
+    use_case.execute(
+        growing_dto=growing_dto,
+        new_zone_level_ids=body.zone_level_ids,
+        old_zone_level_ids=body.old_zone_level_ids,
+        old_zone_id=body.old_zone_id,
+        new_zone_id=body.zone_id,
+    )
 
     return Response.success_response(
         data="Success", code="ETB_cap_nhat_growing_report_thanh_cong"

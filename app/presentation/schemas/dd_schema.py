@@ -30,7 +30,7 @@ class DdResponseSchema(BaseModel):
     dried_larvae_moisture: Optional[float] = None
     end_time: Optional[time] = None
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeResponseSchema] = None
-    drying_results: Optional[bool] = None
+    drying_result: Optional[bool] = None
     notes: Optional[str] = None
     status: Optional[int] = None
     created_by: Optional[UserResponseSchema] = None
@@ -64,7 +64,7 @@ class CreateDDSchema(BaseModel):
     end_time: Optional[time] = None
     dryer_product_type_id: Optional[int] = None
     dried_larvae_discharge_type_id: Optional[int] = None
-    drying_results: Optional[bool] = None
+    drying_result: Optional[bool] = None
     notes: Optional[str] = None
     status: Optional[int] = None
     created_by: Optional[int] = None
@@ -87,7 +87,7 @@ class CreateDDSchema(BaseModel):
             "start_time": "ETB-thieu_truong_start_time",
             "end_time": "ETB-thieu_truong_end_time",
             "dried_larvae_discharge_type_id": "ETB-thieu_truong_dried_larvae_discharge_type_id",
-            "drying_results": "ETB-thieu_truong_drying_results",
+            "drying_result": "ETB-thieu_truong_drying_result",
             "dryer_product_type_id": "ETB-thieu_truong_dryer_product_type_id",
             "created_by": "ETB-thieu_truong_created_by_id",
         }

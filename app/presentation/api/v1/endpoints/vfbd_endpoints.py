@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends
 from loguru import logger
 
-from app.application.dto.dried_larvae_discharge_type_dto import DriedLarvaeDischargeTypeDTO
+from app.application.dto.dried_larvae_discharge_type_dto import (
+    DriedLarvaeDischargeTypeDTO,
+)
 from app.application.dto.dryer_product_type_dto import DryerProductTypeDTO
 from app.application.dto.factory_dto import FactoryDTO
 from app.application.dto.product_type_dto import ProductTypeDTO
@@ -9,25 +11,37 @@ from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
 from app.application.dto.vfbd_dto import VfbdDTO
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
-from app.presentation.api.v1.dependencies.vfbd_dependencies import CreateVfbdReportUseCaseDep, ListVfbdReportUseCaseDep
-from app.presentation.schemas.dried_larvae_discharge_type_schema import DriedLarvaeDischargeTypeResponseSchema
-from app.presentation.schemas.dryer_product_type_schema import DryerProductTypeResponseSchema
+from app.presentation.api.v1.dependencies.vfbd_dependencies import (
+    CreateVfbdReportUseCaseDep,
+    ListVfbdReportUseCaseDep,
+    UpdateVfbdReportUseCaseDep,
+)
+from app.presentation.schemas.dried_larvae_discharge_type_schema import (
+    DriedLarvaeDischargeTypeResponseSchema,
+)
+from app.presentation.schemas.dryer_product_type_schema import (
+    DryerProductTypeResponseSchema,
+)
 from app.presentation.schemas.factory_schema import FactoryResponseSchema
 from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.user_schema import UserResponseSchema
-from app.presentation.schemas.vfbd_schema import CreateVFBDSchema, VfbdReponseSchema
+from app.presentation.schemas.vfbd_schema import (
+    CreateVFBDSchema,
+    UpdateVFBDSchema,
+    VfbdReponseSchema,
+)
 
 
 router = APIRouter(prefix="/vfbds", tags=["Vibratory Fluid Bed Drying"])
 
 
-@router.get('/')
+@router.get("/")
 async def list_vfbd_report(
     token_verify_dep: TokenVerifyDep,
     use_case: ListVfbdReportUseCaseDep,
-    filter_params: FilterSchema = Depends()
+    filter_params: FilterSchema = Depends(),
 ):
     result = use_case.execute(
         page=filter_params.page,
@@ -37,7 +51,7 @@ async def list_vfbd_report(
         start_date=filter_params.start_date,
         end_date=filter_params.end_date,
         report_status=filter_params.report_status,
-        is_active=filter_params.is_active
+        is_active=filter_params.is_active,
     )
     [_vfbd_reports, [vfbd_pending_count, vfbd_rejected_count]] = result["items"]
 
@@ -54,20 +68,24 @@ async def list_vfbd_report(
             temperature_output_1st=vfbd.temperature_output_1st,
             temperature_output_2nd=vfbd.temperature_output_2nd,
             shift=ShiftResponseSchema(
-                id=vfbd.shift.id,
-                name=vfbd.shift.name if vfbd.shift else None
+                id=vfbd.shift.id, name=vfbd.shift.name if vfbd.shift else None
             ),
             factory=FactoryResponseSchema(
                 id=vfbd.factory.id,
                 name=vfbd.factory.name if vfbd.factory else None,
-                abbr_name=vfbd.factory.abbr_name if vfbd.factory else None),
+                abbr_name=vfbd.factory.abbr_name if vfbd.factory else None,
+            ),
             dryer_product_type=DryerProductTypeResponseSchema(
                 id=vfbd.dryer_product_type.id,
                 name=vfbd.dryer_product_type.name if vfbd.dryer_product_type else None,
             ),
             dried_larvae_discharge_type=DriedLarvaeDischargeTypeResponseSchema(
                 id=vfbd.dried_larvae_discharge_type.id,
-                name=vfbd.dried_larvae_discharge_type.name if vfbd.dried_larvae_discharge_type else None
+                name=(
+                    vfbd.dried_larvae_discharge_type.name
+                    if vfbd.dried_larvae_discharge_type
+                    else None
+                ),
             ),
             notes=vfbd.notes,
             is_active=vfbd.is_active,
@@ -122,26 +140,23 @@ async def list_vfbd_report(
     ).get_dict()
 
 
-@router.post('/')
+@router.post("/")
 async def create_vfbd_report(
-        token_verify_def: TokenVerifyDep,
-        body: CreateVFBDSchema,
-        use_case: CreateVfbdReportUseCaseDep):
+    token_verify_def: TokenVerifyDep,
+    body: CreateVFBDSchema,
+    use_case: CreateVfbdReportUseCaseDep,
+):
 
     vfbd_dto = VfbdDTO(
         date_reported=body.date_reported,
         shift=ShiftDTO(id=body.shift_id),
-        factory=FactoryDTO(
-            id=body.factory_id
-        ),
+        factory=FactoryDTO(id=body.factory_id),
         start_time=body.start_time,
         end_time=body.end_time,
         harvest_time=body.harvest_time,
         temperature_output_1st=body.temperature_output_1st,
         temperature_output_2nd=body.temperature_output_2nd,
-        dryer_product_type=DryerProductTypeDTO(
-            id=body.dryer_product_type_id
-        ),
+        dryer_product_type=DryerProductTypeDTO(id=body.dryer_product_type_id),
         dried_larvae_discharge_type=DriedLarvaeDischargeTypeDTO(
             id=body.dried_larvae_discharge_type_id
         ),
@@ -149,11 +164,44 @@ async def create_vfbd_report(
         dried_larvae_moisture=body.dried_larvae_moisture,
         drying_result=body.drying_result,
         notes=body.notes,
-        created_by=UserDTO(id=body.created_by)
+        created_by=UserDTO(id=body.created_by),
     )
 
     use_case.execute(vfbd_dto=vfbd_dto)
 
     return Response.success_response(
         data="Success", code="ETB_tao_vfbd_report_thanh_cong"
+    ).get_dict()
+
+
+@router.put("/{vfbd_id}")
+async def update_vfbd_report(
+    token_verify_def: TokenVerifyDep,
+    vfbd_id: int,
+    body: UpdateVFBDSchema,
+    use_case: UpdateVfbdReportUseCaseDep,
+):
+    vfbd_dto = VfbdDTO(
+        id=vfbd_id,
+        shift=ShiftDTO(id=body.shift_id),
+        factory=FactoryDTO(id=body.factory_id),
+        start_time=body.start_time,
+        end_time=body.end_time,
+        harvest_time=body.harvest_time,
+        temperature_output_1st=body.temperature_output_1st,
+        temperature_output_2nd=body.temperature_output_2nd,
+        dryer_product_type=DryerProductTypeDTO(id=body.dryer_product_type_id),
+        dried_larvae_discharge_type=DriedLarvaeDischargeTypeDTO(
+            id=body.dried_larvae_discharge_type_id
+        ),
+        quantity_dried_larvae_sold=body.quantity_dried_larvae_sold,
+        dried_larvae_moisture=body.dried_larvae_moisture,
+        drying_result=body.drying_result,
+        notes=body.notes,
+    )
+
+    use_case.execute(vfbd_dto=vfbd_dto)
+
+    return Response.success_response(
+        data="Success", code="ETB_cap_nhat_vfbd_report_thanh_cong"
     ).get_dict()

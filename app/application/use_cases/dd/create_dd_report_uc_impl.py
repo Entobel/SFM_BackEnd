@@ -94,7 +94,7 @@ class CreateDDReportUC(ICreateDdReportUC):
             dried_larvae_moisture=dd_dto.dried_larvae_moisture,
             start_time=dd_dto.start_time,
             end_time=dd_dto.end_time,
-            drying_results=dd_dto.drying_results,
+            drying_result=dd_dto.drying_result,
             notes=dd_dto.notes,
             created_by=UserEntity(
                 id=dd_dto.created_by.id) if dd_dto.created_by else None,

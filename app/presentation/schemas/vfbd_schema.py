@@ -3,8 +3,12 @@ from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, model_validator
 
-from app.presentation.schemas.dried_larvae_discharge_type_schema import DriedLarvaeDischargeTypeResponseSchema
-from app.presentation.schemas.dryer_product_type_schema import DryerProductTypeResponseSchema
+from app.presentation.schemas.dried_larvae_discharge_type_schema import (
+    DriedLarvaeDischargeTypeResponseSchema,
+)
+from app.presentation.schemas.dryer_product_type_schema import (
+    DryerProductTypeResponseSchema,
+)
 from app.presentation.schemas.factory_schema import FactoryResponseSchema
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.user_schema import UserResponseSchema
@@ -89,3 +93,19 @@ class CreateVFBDSchema(BaseModel):
             raise RequestValidationError(errors)
 
         return values
+
+
+class UpdateVFBDSchema(BaseModel):
+    shift_id: Optional[int] = None
+    factory_id: Optional[int] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
+    harvest_time: Optional[time] = None
+    temperature_output_1st: Optional[float] = None
+    temperature_output_2nd: Optional[float] = None
+    dryer_product_type_id: Optional[int] = None
+    dried_larvae_moisture: Optional[float] = None
+    quantity_dried_larvae_sold: Optional[float] = None
+    dried_larvae_discharge_type_id: Optional[int] = None
+    drying_result: Optional[bool] = None
+    notes: Optional[str] = None

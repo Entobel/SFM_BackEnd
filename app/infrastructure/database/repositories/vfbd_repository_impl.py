@@ -1,6 +1,8 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from app.domain.entities.dried_larvae_discharge_type_entity import DriedLarvaeDischargeTypeEntity
+from app.domain.entities.dried_larvae_discharge_type_entity import (
+    DriedLarvaeDischargeTypeEntity,
+)
 from app.domain.entities.dryer_product_type_entity import DryerProductTypeEntity
 from app.domain.entities.factory_entity import FactoryEntity
 from app.domain.entities.shift_entity import ShiftEntity
@@ -11,9 +13,140 @@ from app.domain.interfaces.services.query_helper_service import IQueryHelperServ
 
 
 class VfbdRepository(IVfbdRepository):
-    def __init__(self, conn: psycopg2.extensions.connection, query_helper: IQueryHelperService):
+    def __init__(
+        self, conn: psycopg2.extensions.connection, query_helper: IQueryHelperService
+    ):
         self.conn = conn
         self.query_helper = query_helper
+
+    def get_vfbd_report_by_id(self, vfbd_entity: VfbdEntity) -> VfbdEntity | None:
+        with self.conn.cursor() as cur:
+            get_vfbd_report_by_id_sql = """
+            SELECT
+                vfbd.id AS vfbd_id,
+                vfbd.date_reported AS vfbd_date_reported,
+                vfbd.temperature_output_1st AS vfbd_temperature_output_1st,
+                vfbd.temperature_output_2nd AS vfbd_temperature_output_2nd,
+                vfbd.quantity_dried_larvae_sold AS vfbd_quantity_dried_larvae_sold,
+                vfbd.dried_larvae_moisture AS vfbd_dried_larvae_moisture,
+                vfbd.start_time AS vfbd_start_time,
+                vfbd.end_time AS vfbd_end_time,
+                vfbd.harvest_time AS vfbd_harvest_time,
+                vfbd.drying_result AS vfbd_drying_result,
+                vfbd.status AS vfbd_status,
+                vfbd.notes AS vfbd_notes,
+                vfbd.is_active AS vfbd_is_active,
+                vfbd.approved_at AS vfbd_approved_at,
+                vfbd.rejected_at AS vfbd_rejected_at,
+                vfbd.rejected_reason AS vfbd_rejected_reason,
+                vfbd.updated_at AS vfbd_updated_at,
+                --
+                vfbd.dryer_product_type_id AS dpt_id,
+                vfbd.dryer_product_type_name AS dpt_name,
+                --
+                vfbd.dried_larvae_discharge_type_id AS dldt_dried_larvae_discharge_type_id,
+                vfbd.dried_larvae_discharge_type_name AS dldt_dried_larvae_discharge_type_name,
+                --
+                f.id AS f_id,
+                f.abbr_name AS f_abbr_name,
+                f."name" AS f_name,
+                --
+                s.id AS s_id,
+                s."name" AS s_name,
+                --
+                u1.id AS created_by_id,
+                u1.first_name AS created_by_first_name,
+                u1.last_name AS created_by_last_name,
+                u1.phone AS created_by_phone,
+                u1.email AS created_by_email,
+                u2.id AS rejected_by_id,
+                u2.first_name AS rejected_by_first_name,
+                u2.last_name AS rejected_by_last_name,
+                u2.email AS rejected_by_email,
+                u2.phone AS rejected_by_phone,
+                u3.id AS approved_by_id,
+                u3.first_name AS approved_by_first_name,
+                u3.last_name AS approved_by_last_name,
+                u3.email AS approved_by_email,
+                u3.phone AS approved_by_phone
+            FROM
+                vibratory_fluid_bed_dryers vfbd
+            JOIN shifts s ON
+                vfbd.shift_id = s.id
+            JOIN factories f ON
+                vfbd.factory_id = f.id
+            JOIN dryer_product_types dpt ON
+                vfbd.dryer_product_type_id = dpt.id
+            JOIN dried_larvae_discharge_types dldt ON
+                vfbd.dried_larvae_discharge_type_id = dldt.id
+            JOIN users u1 ON
+                vfbd.created_by = u1.id
+            LEFT JOIN users u2 ON
+                vfbd.rejected_by = u2.id
+            LEFT JOIN users u3 ON
+                vfbd.approved_by = u3.id
+            WHERE vfbd.id = %s
+            """
+            get_vfbd_report_by_id_tuple_args = (vfbd_entity.id,)
+            cur.execute(
+                query=get_vfbd_report_by_id_sql, vars=get_vfbd_report_by_id_tuple_args
+            )
+            row = cur.fetchone()
+
+            if row is None:
+                return None
+
+            return VfbdEntity(
+                id=row["vfbd_id"],
+                date_reported=row["vfbd_date_reported"],
+                shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
+                factory=FactoryEntity(
+                    id=row["f_id"], abbr_name=row["f_abbr_name"], name=row["f_name"]
+                ),
+                start_time=row["vfbd_start_time"],
+                end_time=row["vfbd_end_time"],
+                harvest_time=row["vfbd_harvest_time"],
+                temperature_output_1st=row["vfbd_temperature_output_1st"],
+                temperature_output_2nd=row["vfbd_temperature_output_2nd"],
+                dryer_product_type=DryerProductTypeEntity(
+                    id=row["dpt_id"], name=row["dpt_name"]
+                ),
+                dried_larvae_moisture=row["vfbd_dried_larvae_moisture"],
+                quantity_dried_larvae_sold=row["vfbd_quantity_dried_larvae_sold"],
+                dried_larvae_discharge_type=DriedLarvaeDischargeTypeEntity(
+                    id=row["dldt_dried_larvae_discharge_type_id"],
+                    name=row["dldt_dried_larvae_discharge_type_name"],
+                ),
+                drying_result=row["vfbd_drying_result"],
+                notes=row["vfbd_notes"],
+                status=row["vfbd_status"],
+                is_active=row["vfbd_is_active"],
+                approved_at=row["vfbd_approved_at"],
+                rejected_at=row["vfbd_rejected_at"],
+                rejected_reason=row["vfbd_rejected_reason"],
+                updated_at=row["vfbd_updated_at"],
+                created_by=UserEntity(
+                    id=row["created_by_id"],
+                    first_name=row["created_by_first_name"],
+                    last_name=row["created_by_last_name"],
+                    phone=row["created_by_phone"],
+                    email=row["created_by_email"],
+                ),
+                rejected_by=UserEntity(
+                    id=row["rejected_by_id"],
+                    first_name=row["rejected_by_first_name"],
+                    last_name=row["rejected_by_last_name"],
+                    phone=row["rejected_by_phone"],
+                    email=row["rejected_by_email"],
+                ),
+                approved_by=UserEntity(
+                    id=row["approved_by_id"],
+                    first_name=row["approved_by_first_name"],
+                    last_name=row["approved_by_last_name"],
+                    phone=row["approved_by_phone"],
+                    email=row["approved_by_email"],
+                ),
+            )
 
     def create_vfbd_report(self, vfbd_entity):
         with self.conn.cursor() as cur:
@@ -78,7 +211,7 @@ class VfbdRepository(IVfbdRepository):
                 vfbd_entity.drying_result,
                 vfbd_entity.notes,
                 vfbd_entity.status,
-                vfbd_entity.created_by.id
+                vfbd_entity.created_by.id,
             )
 
             cur.execute(query=create_vfbd_sql, vars=create_vfbd_tuple_args)
@@ -90,7 +223,17 @@ class VfbdRepository(IVfbdRepository):
                 self.conn.commit()
                 return True
 
-    def get_list_vfbd_report(self, page, page_size, search, factory_id, start_date, end_date, report_status, is_active):
+    def get_list_vfbd_report(
+        self,
+        page,
+        page_size,
+        search,
+        factory_id,
+        start_date,
+        end_date,
+        report_status,
+        is_active,
+    ):
         sql_helper = self.query_helper
 
         if search:
@@ -140,8 +283,7 @@ class VfbdRepository(IVfbdRepository):
             total = cur.fetchone()[0]
 
         # Query Data
-        limit_sql, limit_params = sql_helper.paginate(
-            page=page, page_size=page_size)
+        limit_sql, limit_params = sql_helper.paginate(page=page, page_size=page_size)
 
         vfbd_data_sql = f"""
         SELECT
@@ -222,14 +364,9 @@ class VfbdRepository(IVfbdRepository):
             VfbdEntity(
                 id=row["vfbd_id"],
                 date_reported=row["vfbd_date_reported"],
-                shift=ShiftEntity(
-                    id=row["s_id"],
-                    name=row["s_name"]
-                ),
+                shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
                 factory=FactoryEntity(
-                    id=row["f_id"],
-                    abbr_name=row["f_abbr_name"],
-                    name=row["f_name"]
+                    id=row["f_id"], abbr_name=row["f_abbr_name"], name=row["f_name"]
                 ),
                 start_time=row["vfbd_start_time"],
                 end_time=row["vfbd_end_time"],
@@ -237,14 +374,13 @@ class VfbdRepository(IVfbdRepository):
                 temperature_output_1st=row["vfbd_temperature_output_1st"],
                 temperature_output_2nd=row["vfbd_temperature_output_2nd"],
                 dryer_product_type=DryerProductTypeEntity(
-                    id=row["dpt_id"],
-                    name=row["dpt_name"]
+                    id=row["dpt_id"], name=row["dpt_name"]
                 ),
                 dried_larvae_moisture=row["vfbd_dried_larvae_moisture"],
                 quantity_dried_larvae_sold=row["vfbd_quantity_dried_larvae_sold"],
                 dried_larvae_discharge_type=DriedLarvaeDischargeTypeEntity(
                     id=row["dldt_dried_larvae_discharge_type_id"],
-                    name=row["dldt_dried_larvae_discharge_type_name"]
+                    name=row["dldt_dried_larvae_discharge_type_name"],
                 ),
                 drying_result=row["vfbd_drying_result"],
                 notes=row["vfbd_notes"],
@@ -275,7 +411,6 @@ class VfbdRepository(IVfbdRepository):
                     phone=row["approved_by_phone"],
                     email=row["approved_by_email"],
                 ),
-
             )
             for row in rows
         ]
@@ -303,3 +438,58 @@ class VfbdRepository(IVfbdRepository):
             "page_size": page_size,
             "total_pages": sql_helper.total_pages(total=total, page_size=page_size),
         }
+
+    def update_vfbd_report(self, vfbd_entity: VfbdEntity) -> bool:
+        with self.conn.cursor() as cur:
+            update_vfbd_sql = """
+            UPDATE vibratory_fluid_bed_dryers
+            SET
+            shift_id = %s,
+            factory_id = %s,
+            dried_larvae_discharge_type_id = %s,
+            dried_larvae_discharge_type_name = (SELECT name FROM dried_larvae_discharge_types WHERE id = %s),
+            start_time = %s,
+            end_time = %s,
+            harvest_time = %s,
+            temperature_output_1st = %s,
+            temperature_output_2nd = %s,
+            dryer_product_type_id = %s,
+            dryer_product_type_name = (SELECT name FROM dryer_product_types WHERE id = %s),
+            dried_larvae_moisture = %s,
+            quantity_dried_larvae_sold = %s,
+            drying_result = %s,
+            notes = %s,
+            status = %s,
+            updated_at = NOW()
+            WHERE id = %s
+            """
+
+            update_vfbd_tuple_args = (
+                vfbd_entity.shift.id,
+                vfbd_entity.factory.id,
+                vfbd_entity.dried_larvae_discharge_type.id,
+                vfbd_entity.dried_larvae_discharge_type.id,
+                vfbd_entity.start_time,
+                vfbd_entity.end_time,
+                vfbd_entity.harvest_time,
+                vfbd_entity.temperature_output_1st,
+                vfbd_entity.temperature_output_2nd,
+                vfbd_entity.dryer_product_type.id,
+                vfbd_entity.dryer_product_type.id,
+                vfbd_entity.dryer_product_type.id,
+                vfbd_entity.dried_larvae_moisture,
+                vfbd_entity.quantity_dried_larvae_sold,
+                vfbd_entity.drying_result,
+                vfbd_entity.notes,
+                vfbd_entity.status,
+                vfbd_entity.id,
+            )
+
+            cur.execute(query=update_vfbd_sql, vars=update_vfbd_tuple_args)
+
+            if cur.rowcount == 0:
+                self.conn.rollback()
+                return False
+            else:
+                self.conn.commit()
+                return True

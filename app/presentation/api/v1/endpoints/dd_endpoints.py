@@ -59,7 +59,7 @@ async def list_dd_report(
             start_time=dd.start_time,
             end_time=dd.end_time,
             dried_larvae_moisture=dd.dried_larvae_moisture,
-            drying_results=dd.drying_results,
+            drying_result=dd.drying_result,
             shift=ShiftResponseSchema(
                 id=dd.shift.id,
                 name=dd.shift.name if dd.shift else None
@@ -151,7 +151,7 @@ async def create_dd_report(token_verify_dep: TokenVerifyDep, body: CreateDDSchem
         dryer_product_type=DryerProductTypeDTO(
             id=body.dryer_product_type_id
         ),
-        drying_results=body.drying_results,
+        drying_result=body.drying_result,
         start_time=body.start_time,
         end_time=body.end_time,
         dried_larvae_moisture=body.dried_larvae_moisture,

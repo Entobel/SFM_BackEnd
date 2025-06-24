@@ -30,6 +30,6 @@ class DdDTO:
     start_time: Optional[time] = None
     end_time: Optional[time] = None
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeDTO] = None
-    drying_results: Optional[bool] = None
+    drying_result: Optional[bool] = None
     notes: Optional[str] = None
     created_by: Optional[UserDTO] = None

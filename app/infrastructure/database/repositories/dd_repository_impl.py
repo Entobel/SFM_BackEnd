@@ -94,7 +94,7 @@ class DDRepository(IDdRepository):
                 dd_entity.temperature_after_4h30,
                 dd_entity.start_time,
                 dd_entity.end_time,
-                dd_entity.drying_results,
+                dd_entity.drying_result,
                 dd_entity.notes,
                 dd_entity.status,
                 dd_entity.created_by.id
@@ -265,7 +265,7 @@ class DDRepository(IDdRepository):
                 start_time=row["dd_start_time"],
                 end_time=row["dd_end_time"],
                 dried_larvae_moisture=row["dd_dried_larvae_moisture"],
-                drying_results=row["dd_drying_result"],
+                drying_result=row["dd_drying_result"],
                 status=row["dd_status"],
                 notes=row["dd_notes"],
                 is_active=row["dd_is_active"],

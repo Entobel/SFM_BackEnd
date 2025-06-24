@@ -30,7 +30,7 @@ class DdEntity:
     end_time: Optional[time] = None
     dried_larvae_discharge_type: Optional[DriedLarvaeDischargeTypeEntity] = None
     dried_larvae_moisture: Optional[float] = None
-    drying_results: Optional[bool] = None
+    drying_result: Optional[bool] = None
     notes: Optional[str] = None
     status: Optional[int] = None
     is_active: Optional[bool] = None
@@ -92,8 +92,8 @@ class DdEntity:
     def change_dried_larvae_discharge_type(self, new_dried_larvae_discharge_type: DriedLarvaeDischargeTypeEntity):
         self.dried_larvae_discharge_type = new_dried_larvae_discharge_type
 
-    def change_drying_results(self, new_drying_results: bool):
-        self.drying_results = new_drying_results
+    def change_drying_result(self, new_drying_result: bool):
+        self.drying_result = new_drying_result
 
     def change_status(self, new_status: int):
         self.status = new_status
