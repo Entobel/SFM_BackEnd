@@ -278,16 +278,20 @@ class GrowingRepository(IGrowingRepository):
 
         if search:
             sql_helper.add_search(
-                cols=["g.notes", "g.diet_name", "g.operation_type_name", "g.product_type_name"], query=search)
-
-        if product_type_id is not None:
-            sql_helper.add_eq(
-                column="g.product_type_id", value=product_type_id
+                cols=[
+                    "g.notes",
+                    "g.diet_name",
+                    "g.operation_type_name",
+                    "g.product_type_name",
+                ],
+                query=search,
             )
 
+        if product_type_id is not None:
+            sql_helper.add_eq(column="g.product_type_id", value=product_type_id)
+
         if operation_type_id is not None:
-            sql_helper.add_eq(column="g.operation_type_id",
-                              value=operation_type_id)
+            sql_helper.add_eq(column="g.operation_type_id", value=operation_type_id)
 
         if diet_id is not None:
             sql_helper.add_eq(column="g.diet_id", value=diet_id)
@@ -348,8 +352,7 @@ class GrowingRepository(IGrowingRepository):
             total = cur.fetchone()[0]
 
         # Query page
-        limit_sql, limit_params = sql_helper.paginate(
-            page=page, page_size=page_size)
+        limit_sql, limit_params = sql_helper.paginate(page=page, page_size=page_size)
 
         growing_data_sql = f"""
         SELECT g.id              AS g_id,
@@ -451,7 +454,9 @@ class GrowingRepository(IGrowingRepository):
                     description=row["ot_description"],
                 ),
                 diet=DietEntity(
-                    id=row["d_id"], name=row["g_diet_name"], description=row["d_description"]
+                    id=row["d_id"],
+                    name=row["g_diet_name"],
+                    description=row["d_description"],
                 ),
                 factory=FactoryEntity(
                     id=row["f_id"],
@@ -479,7 +484,7 @@ class GrowingRepository(IGrowingRepository):
                     phone=row["approved_by_phone"],
                     email=row["approved_by_email"],
                 ),
-                updated_at=row["g_updated_at"]
+                updated_at=row["g_updated_at"],
             )
             for row in rows
         ]
@@ -513,7 +518,9 @@ class GrowingRepository(IGrowingRepository):
                 growing=GrowingEntity(id=row["growing_id"]),
                 status=row["gzl_status"],
                 zone_level=ZoneLevelEntity(
-                    id=row["zone_level_id"], zone=ZoneEntity(id=row["gzl_zone_id"]), status=row["zone_level_status"]
+                    id=row["zone_level_id"],
+                    zone=ZoneEntity(id=row["gzl_zone_id"]),
+                    status=row["zone_level_status"],
                 ),
                 snapshot_level_name=row["gzl_snapshot_level_name"],
                 snapshot_zone_number=row["gzl_snapshot_zone_number"],
@@ -602,179 +609,184 @@ class GrowingRepository(IGrowingRepository):
                 self.conn.rollback()
                 return False
 
-    def update_growing_report(self, growing_entity, new_zone_id, old_zone_id, old_zone_level_ids, new_zone_level_ids):
+    def update_growing_report(
+        self,
+        growing_entity,
+        new_zone_id,
+        old_zone_id,
+        old_zone_level_ids,
+        new_zone_level_ids,
+    ):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            # if old_zone_id != new_zone_id:
-            #     # # Remove growing_zone_level record with old_zone_level_ids
-            #     delete_growing_zone_levels_by_zone_level_ids_sql = """
-            #         DELETE FROM growing_zone_levels WHERE zone_level_id = ANY(%s)
-            #         """
+            # If old_zone_id is not equal to new_zone_id
+            if old_zone_id != new_zone_id:
+                # # Remove growing_zone_level record with old_zone_level_ids
+                delete_growing_zone_levels_by_zone_level_ids_sql = """
+                    DELETE FROM growing_zone_levels WHERE zone_level_id = ANY(%s)
+                    """
 
-            #     cur.execute(query=delete_growing_zone_levels_by_zone_level_ids_sql, vars=(
-            #         old_zone_level_ids,))
+                cur.execute(
+                    query=delete_growing_zone_levels_by_zone_level_ids_sql,
+                    vars=(old_zone_level_ids,),
+                )
 
-            #     if len(old_zone_level_ids):
-            #         #  Make status = 0 with old_zone_level_ids
-            #         update_zone_levels_status_by_old_zone_level_ids_sql = """
-            #             UPDATE zone_levels SET status = 0 WHERE id = ANY(%s)
-            #             """
-            #         cur.execute(query=update_zone_levels_status_by_old_zone_level_ids_sql, vars=(
-            #             old_zone_level_ids,))
+                # find_growing_zone_level_with_new_zone_level_ids
+                select_growing_zone_levels_unassigned_by_zone_level_ids_sql = """
+                    SELECT gzl.id, gzl.zone_level_id FROM growing_zone_levels gzl
+                    WHERE gzl.zone_level_id = ANY(%s) AND status = 0
+                    """
 
-            #     # Make status = 2 with new_zone_level_ids
-            #     update_zone_levels_status_by_new_zone_level_ids_sql = """
-            #         UPDATE zone_levels SET status = 2 WHERE id = ANY(%s)
-            #         """
+                cur.execute(
+                    query=select_growing_zone_levels_unassigned_by_zone_level_ids_sql,
+                    vars=(new_zone_level_ids,),
+                )
+                rows = cur.fetchall()
+                list_gzl_id_and_zone_level_id = [
+                    {"gzl_id": row["id"], "gzl_zone_level_id": row["zone_level_id"]}
+                    for row in rows
+                ]
 
-            #     cur.execute(query=update_zone_levels_status_by_new_zone_level_ids_sql, vars=(
-            #         new_zone_level_ids,))
+                list_gzl_ids_in_db = [
+                    item["gzl_id"] for item in list_gzl_id_and_zone_level_id
+                ]
 
-            #     # find_growing_zone_level_with_new_zone_level_ids
-            #     select_growing_zone_levels_unassigned_by_zone_level_ids_sql = """
-            #         SELECT gzl.id, gzl.zone_level_id FROM growing_zone_levels gzl
-            #         WHERE gzl.zone_level_id = ANY(%s) AND status = 0
-            #         """
+                list_zone_level_ids_in_db = [
+                    item["gzl_zone_level_id"] for item in list_gzl_id_and_zone_level_id
+                ]
 
-            #     cur.execute(query=select_growing_zone_levels_unassigned_by_zone_level_ids_sql, vars=(
-            #         new_zone_level_ids,))
-            #     rows = cur.fetchall()
-            #     list_gzl_id_and_zone_level_id = [
-            #         {"gzl_id": row["id"], "gzl_zone_level_id": row["zone_level_id"]} for row in rows]
+                list_zone_level_ids_diff = [
+                    item
+                    for item in new_zone_level_ids
+                    if item not in list_zone_level_ids_in_db
+                ]
 
-            #     list_gzl_ids_in_db = [item["gzl_id"]
-            #                           for item in list_gzl_id_and_zone_level_id]
+                # set growing_id for current gzl
+                update_growing_id_for_current_zone_level_ids = """
+                        UPDATE growing_zone_levels SET growing_id = %s WHERE id = ANY(%s)
+                        """
 
-            #     list_zone_level_ids_in_db = [item["gzl_zone_level_id"]
-            #                                  for item in list_gzl_id_and_zone_level_id]
+                cur.execute(
+                    query=update_growing_id_for_current_zone_level_ids,
+                    vars=(
+                        growing_entity.id,
+                        list_gzl_ids_in_db,
+                    ),
+                )
 
-            #     list_zone_level_ids_diff = [
-            #         item for item in new_zone_level_ids if item not in list_zone_level_ids_in_db]
+                create_growing_zone_level_with_diff_zone_level_ids = """
+                    WITH cte_growing_zone_level as (
+                        SELECT
+                            zl.id as zone_level_id,
+                            z.zone_number as snapshot_zone_number,
+                            z.id as zone_id,
+                            l."name" as snapshot_level_name
+                        FROM
+                            zone_levels zl
+                        JOIN zones z ON
+                            zl.zone_id = z.id
+                        JOIN levels l ON
+                            zl.level_id = l.id
+                        WHERE
+                            zl.id = any(%(zone_level_ids)s)
+                    )
+                    INSERT INTO growing_zone_levels (
+                        growing_id,
+                        zone_level_id,
+                        zone_id,
+                        snapshot_level_name,
+                        snapshot_zone_number,
+                        status
+                    )
+                    SELECT
+                        %(growing_id)s,
+                        cte_gzl.zone_level_id,
+                        cte_gzl.zone_id,
+                        cte_gzl.snapshot_level_name,
+                        cte_gzl.snapshot_zone_number,
+                        1
+                    FROM
+                        cte_growing_zone_level cte_gzl
+                    """
 
-            #     # set growing_id for current gzl
-            #     update_growing_id_for_current_zone_level_ids = """
-            #             UPDATE growing_zone_levels SET growing_id = %s WHERE id = ANY(%s)
-            #             """
+                cur.execute(
+                    query=create_growing_zone_level_with_diff_zone_level_ids,
+                    vars={
+                        "zone_level_ids": list_zone_level_ids_diff,
+                        "growing_id": growing_entity.id,
+                    },
+                )
+            else:
+                # Find diff between old and new zone level ids
+                set_old_zone_level_ids = set(old_zone_level_ids)
+                set_new_zone_level_ids = set(new_zone_level_ids)
 
-            #     cur.execute(query=update_growing_id_for_current_zone_level_ids, vars=(
-            #         growing_entity.id, list_gzl_ids_in_db,))
+                # Find zone_level_ids to be added
+                diff_level_ids_to_add = list(
+                    set_new_zone_level_ids.difference(set_old_zone_level_ids)
+                )
 
-            #     create_growing_zone_level_with_diff_zone_level_ids = """
-            #         WITH cte_growing_zone_level as (
-            #             SELECT
-            #                 zl.id as zone_level_id,
-            #                 z.zone_number as snapshot_zone_number,
-            #                 z.id as zone_id,
-            #                 l."name" as snapshot_level_name
-            #             FROM
-            #                 zone_levels zl
-            #             JOIN zones z ON
-            #                 zl.zone_id = z.id
-            #             JOIN levels l ON
-            #                 zl.level_id = l.id
-            #             WHERE
-            #                 zl.id = any(%(zone_level_ids)s)
-            #         )
-            #         INSERT INTO growing_zone_levels (
-            #             growing_id,
-            #             zone_level_id,
-            #             zone_id,
-            #             snapshot_level_name,
-            #             snapshot_zone_number,
-            #             status
-            #         )
-            #         SELECT
-            #             %(growing_id)s,
-            #             cte_gzl.zone_level_id,
-            #             cte_gzl.zone_id,
-            #             cte_gzl.snapshot_level_name,
-            #             cte_gzl.snapshot_zone_number,
-            #             1
-            #         FROM
-            #             cte_growing_zone_level cte_gzl
-            #         """
+                # Find zone_level_ids to be removed
+                diff_level_ids_to_remove = list(
+                    set_old_zone_level_ids.difference(set_new_zone_level_ids)
+                )
 
-            #     cur.execute(
-            #         query=create_growing_zone_level_with_diff_zone_level_ids,
-            #         vars={
-            #             "zone_level_ids": list_zone_level_ids_diff,
-            #             "growing_id": growing_entity.id
-            #         }
-            #     )
-            # else:
-            #     set_old_zone_level_ids = set(old_zone_level_ids)
-            #     set_new_zone_level_ids = set(new_zone_level_ids)
+                # Remove old zone_level_ids that are no longer needed
+                if len(diff_level_ids_to_remove) > 0:
+                    delete_growing_zone_levels_sql = """
+                        DELETE FROM growing_zone_levels 
+                        WHERE zone_level_id = ANY(%s) 
+                        AND growing_id = %s
+                    """
+                    cur.execute(
+                        query=delete_growing_zone_levels_sql,
+                        vars=(diff_level_ids_to_remove, growing_entity.id),
+                    )
 
-            #     zone_level_ids = list(set_old_zone_level_ids.union(
-            #         set_new_zone_level_ids))
+                # Add new zone_level_ids
+                if len(diff_level_ids_to_add) > 0:
+                    # Create new growing_zone_level records for the diff
+                    create_growing_zone_level_with_diff_zone_level_ids = """
+                        WITH cte_growing_zone_level as (
+                            SELECT
+                                zl.id as zone_level_id,
+                                z.zone_number as snapshot_zone_number,
+                                z.id as zone_id,
+                                l."name" as snapshot_level_name
+                            FROM
+                                zone_levels zl
+                            JOIN zones z ON
+                                zl.zone_id = z.id
+                            JOIN levels l ON
+                                zl.level_id = l.id
+                            WHERE
+                                zl.id = any(%(zone_level_ids)s)
+                        )
+                        INSERT INTO growing_zone_levels (
+                            growing_id,
+                            zone_level_id,
+                            zone_id,
+                            snapshot_level_name,
+                            snapshot_zone_number,
+                            status
+                        )
+                        SELECT
+                            %(growing_id)s,
+                            cte_gzl.zone_level_id,
+                            cte_gzl.zone_id,
+                            cte_gzl.snapshot_level_name,
+                            cte_gzl.snapshot_zone_number,
+                            1
+                        FROM
+                            cte_growing_zone_level cte_gzl
+                        """
 
-            #     # Update status to 2
-            #     update_zone_levels_status_by_union_zone_level_ids_sql = """
-            #             UPDATE zone_levels SET status = 2 WHERE id = ANY(%s)
-            #             """
-
-            #     cur.execute(query=update_zone_levels_status_by_union_zone_level_ids_sql, vars=(
-            #         zone_level_ids,))
-
-            #     diff_level_ids = list(
-            #         set_new_zone_level_ids.difference(set_old_zone_level_ids))
-
-            #     if len(diff_level_ids) > 0:
-            #         # Find and remove growing_zone_level records with diff_level_ids
-            #         delete_growing_zone_levels_by_diff_zone_level_ids_sql = """DELETE FROM growing_zone_levels  WHERE zone_level_id = ANY(%s) AND status = 0"""
-
-            #         cur.execute(query=delete_growing_zone_levels_by_diff_zone_level_ids_sql, vars=(
-            #             diff_level_ids,))
-
-            #         create_growing_zone_level_with_diff_zone_level_ids = """
-            #             WITH cte_growing_zone_level as (
-            #                 SELECT
-            #                     zl.id as zone_level_id,
-            #                     z.zone_number as snapshot_zone_number,
-            #                     z.id as zone_id,
-            #                     l."name" as snapshot_level_name
-            #                 FROM
-            #                     zone_levels zl
-            #                 JOIN zones z ON
-            #                     zl.zone_id = z.id
-            #                 JOIN levels l ON
-            #                     zl.level_id = l.id
-            #                 WHERE
-            #                     zl.id = any(%(zone_level_ids)s)
-            #             )
-            #             INSERT INTO growing_zone_levels (
-            #                 growing_id,
-            #                 zone_level_id,
-            #                 zone_id,
-            #                 snapshot_level_name,
-            #                 snapshot_zone_number,
-            #                 status
-            #             )
-            #             SELECT
-            #                 %(growing_id)s,
-            #                 cte_gzl.zone_level_id,
-            #                 cte_gzl.zone_id,
-            #                 cte_gzl.snapshot_level_name,
-            #                 cte_gzl.snapshot_zone_number,
-            #                 1
-            #             FROM
-            #                 cte_growing_zone_level cte_gzl
-            #             """
-
-            #         cur.execute(
-            #             query=create_growing_zone_level_with_diff_zone_level_ids,
-            #             vars={
-            #                 "zone_level_ids": diff_level_ids,
-            #                 "growing_id": growing_entity.id
-            #             }
-            #         )
-            #     else:
-            #         # Update growing_zone_level status = 1
-            #         update_growing_zone_level_status_sql = """
-            #         UPDATE growing_zone_levels SET status = 1 WHERE zone_level_id = ANY(%s)
-            #         """
-
-            #         cur.execute(query=update_growing_zone_level_status_sql, vars=(
-            #             zone_level_ids,))
+                    cur.execute(
+                        query=create_growing_zone_level_with_diff_zone_level_ids,
+                        vars={
+                            "zone_level_ids": diff_level_ids_to_add,
+                            "growing_id": growing_entity.id,
+                        },
+                    )
 
             growing_shift_id = growing_entity.shift.id
             growing_diet_id = growing_entity.diet.id
@@ -789,7 +801,9 @@ class GrowingRepository(IGrowingRepository):
             growing_approved_by = growing_entity.approved_by.id
             growing_id = growing_entity.id
             growing_rejected_at = growing_entity.rejected_at
-            growing_rejected_by = growing_entity.rejected_by.id if growing_entity.rejected_by else None
+            growing_rejected_by = (
+                growing_entity.rejected_by.id if growing_entity.rejected_by else None
+            )
             growing_rejected_reason = growing_entity.rejected_reason
 
             tuple_update_growing = (
@@ -807,7 +821,7 @@ class GrowingRepository(IGrowingRepository):
                 growing_rejected_at,
                 growing_rejected_by,
                 growing_rejected_reason,
-                growing_id
+                growing_id,
             )
 
             update_growing = """

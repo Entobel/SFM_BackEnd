@@ -37,6 +37,18 @@ class GrindingResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UpdateGrindingSchema(BaseModel):
+    shift_id: Optional[int] = None
+    start_time: Optional[time] = None
+    end_time: Optional[time] = None
+    batch_grinding_information: Optional[str] = None
+    quantity: Optional[float] = None
+    factory_id: Optional[int] = None
+    packing_type_id: Optional[int] = None
+    antioxidant_type_id: Optional[int] = None
+    notes: Optional[str] = None
+
+
 class CreateGrindingSchema(BaseModel):
     date_reported: Optional[str] = None
     shift_id: Optional[int] = None

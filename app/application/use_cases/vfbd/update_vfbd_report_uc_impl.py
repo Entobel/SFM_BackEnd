@@ -36,6 +36,9 @@ class UpdateVfbdReportUC(IUpdateVfbdReportUC):
             vfbd_entity=query_entity
         )
 
+        if vfbd_entity is None:
+            raise BadRequestError("ETB_vfbd_report_khong_ton_tai")
+
         if query_entity.shift.id:
             self.query_helper.add_table(table_name="shifts", _id=query_entity.shift.id)
 
@@ -56,44 +59,71 @@ class UpdateVfbdReportUC(IUpdateVfbdReportUC):
             )
 
         join_sql = self.query_helper.join_ids_sql()
-        ids_for_check = self.query_helper.all_params()
 
-        logger.debug(f"join_sql: {join_sql}")
+        if join_sql != "":
 
-        result = self.common_repository.check_ids(sql=join_sql, ids=ids_for_check)
+            ids_for_check = self.query_helper.all_params()
 
-        self.query_helper.verify_ids(
-            targets=[row[0] for row in result], sources=self.query_helper.all_tables()
-        )
+            result = self.common_repository.check_ids(sql=join_sql, ids=ids_for_check)
 
-        vfbd_entity.change_dried_larvae_discharge_type(
-            dried_larvae_discharge_type=DriedLarvaeDischargeTypeEntity(
-                id=query_entity.dried_larvae_discharge_type.id
+            self.query_helper.verify_ids(
+                targets=[row[0] for row in result],
+                sources=self.query_helper.all_tables(),
             )
-        )
-        vfbd_entity.change_dryer_product_type(
-            dryer_product_type=DryerProductTypeEntity(
-                id=query_entity.dryer_product_type.id
+
+        if query_entity.dried_larvae_discharge_type.id:
+            vfbd_entity.change_dried_larvae_discharge_type(
+                new_discharge_type=DriedLarvaeDischargeTypeEntity(
+                    id=query_entity.dried_larvae_discharge_type.id
+                )
             )
-        )
-        vfbd_entity.change_shift(shift=ShiftEntity(id=query_entity.shift.id))
-        vfbd_entity.change_factory(factory=FactoryEntity(id=query_entity.factory.id))
-        vfbd_entity.change_harvest_time(harvest_time=query_entity.harvest_time)
-        vfbd_entity.change_temperature_output_1st(
-            temperature_output_1st=query_entity.temperature_output_1st
-        )
-        vfbd_entity.change_temperature_output_2nd(
-            temperature_output_2nd=query_entity.temperature_output_2nd
-        )
-        vfbd_entity.change_dried_larvae_moisture(
-            dried_larvae_moisture=query_entity.dried_larvae_moisture
-        )
-        vfbd_entity.change_quantity_dried_larvae_sold(
-            quantity_dried_larvae_sold=query_entity.quantity_dried_larvae_sold
-        )
-        vfbd_entity.change_drying_result(drying_result=query_entity.drying_result)
-        vfbd_entity.change_notes(notes=query_entity.notes)
-        vfbd_entity.change_status(status=query_entity.status)
+
+        if query_entity.dryer_product_type.id:
+            vfbd_entity.change_dryer_product_type(
+                new_dryer_product_type=DryerProductTypeEntity(
+                    id=query_entity.dryer_product_type.id
+                )
+            )
+
+        if query_entity.shift.id:
+            vfbd_entity.change_shift(new_shift=ShiftEntity(id=query_entity.shift.id))
+
+        if query_entity.factory.id:
+            vfbd_entity.change_factory(
+                new_factory=FactoryEntity(id=query_entity.factory.id)
+            )
+
+        if query_entity.harvest_time:
+            vfbd_entity.change_harvest_time(new_harvest_time=query_entity.harvest_time)
+
+        if query_entity.temperature_output_1st:
+            vfbd_entity.change_temperature_output_1st(
+                new_temperature=query_entity.temperature_output_1st
+            )
+
+        if query_entity.temperature_output_2nd:
+            vfbd_entity.change_temperature_output_2nd(
+                new_temperature=query_entity.temperature_output_2nd
+            )
+
+        if query_entity.dried_larvae_moisture:
+            vfbd_entity.change_dried_larvae_moisture(
+                new_moisture=query_entity.dried_larvae_moisture
+            )
+
+        if query_entity.quantity_dried_larvae_sold:
+            vfbd_entity.change_quantity_dried_larvae_sold(
+                new_quantity=query_entity.quantity_dried_larvae_sold
+            )
+
+        if query_entity.drying_result:
+            vfbd_entity.change_drying_result(new_result=query_entity.drying_result)
+
+        if query_entity.notes:
+            vfbd_entity.change_notes(new_notes=query_entity.notes)
+
+        if query_entity.status:
+            vfbd_entity.change_status(new_status=query_entity.status)
 
         is_success = self.vfbd_repository.update_vfbd_report(vfbd_entity=vfbd_entity)
 
@@ -103,6 +133,7 @@ class UpdateVfbdReportUC(IUpdateVfbdReportUC):
 
     def _create_vfbd_entity(self, vfbd_dto: VfbdDTO) -> VfbdEntity:
         return VfbdEntity(
+            id=vfbd_dto.id,
             date_reported=vfbd_dto.date_reported,
             shift=ShiftEntity(id=vfbd_dto.shift.id),
             factory=FactoryEntity(id=vfbd_dto.factory.id),
@@ -121,5 +152,5 @@ class UpdateVfbdReportUC(IUpdateVfbdReportUC):
             quantity_dried_larvae_sold=vfbd_dto.quantity_dried_larvae_sold,
             drying_result=vfbd_dto.drying_result,
             notes=vfbd_dto.notes,
-            status=FormStatusEnum.PENDING.value,
+            status=FormStatusEnum.APPROVED.value,
         )

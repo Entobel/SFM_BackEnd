@@ -7,12 +7,20 @@ from app.application.dto.grinding_dto import GrindingDTO
 from app.application.dto.packing_type_dto import PackingTypeDTO
 from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
-from app.presentation.api.v1.dependencies.grinding_dependencies import CreateGrindingUseCaseDep, ListGrindingReportUseCaseDep
+from app.presentation.api.v1.dependencies.grinding_dependencies import (
+    CreateGrindingUseCaseDep,
+    ListGrindingReportUseCaseDep,
+    UpdateGrindingReportUseCaseDep,
+)
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from app.presentation.schemas.antioxidant_schema import AntioxidantTypeResponseSchema
 from app.presentation.schemas.factory_schema import FactoryResponseSchema
 from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
-from app.presentation.schemas.grinding_schema import CreateGrindingSchema, GrindingResponseSchema
+from app.presentation.schemas.grinding_schema import (
+    CreateGrindingSchema,
+    GrindingResponseSchema,
+    UpdateGrindingSchema,
+)
 from app.presentation.schemas.packing_type_schema import PackingTypeResponseSchema
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
@@ -26,9 +34,10 @@ router = APIRouter(prefix="/grindings", tags=["Grinding"])
 
 @router.get("/")
 async def list_grinding_reports(
-        token_verify_dep: TokenVerifyDep,
-        use_case: ListGrindingReportUseCaseDep,
-        filter_params: FilterSchema = Depends()):
+    token_verify_dep: TokenVerifyDep,
+    use_case: ListGrindingReportUseCaseDep,
+    filter_params: FilterSchema = Depends(),
+):
 
     result = use_case.execute(
         page=filter_params.page,
@@ -38,12 +47,12 @@ async def list_grinding_reports(
         start_date=filter_params.start_date,
         end_date=filter_params.end_date,
         report_status=filter_params.report_status,
-        is_active=filter_params.is_active
+        is_active=filter_params.is_active,
     )
 
-    [_grinding_reports, [grinding_pending_count, grinding_rejected_count]] = (
-        result["items"]
-    )
+    [_grinding_reports, [grinding_pending_count, grinding_rejected_count]] = result[
+        "items"
+    ]
 
     grinding_reports = [
         GrindingResponseSchema(
@@ -55,27 +64,43 @@ async def list_grinding_reports(
             start_time=g.start_time,
             end_time=g.end_time,
             status=g.status,
-            shift=ShiftResponseSchema(
-                id=g.shift.id,
-                name=g.shift.name,
-            ) if g.shift else None,
-            factory=FactoryResponseSchema(
-                id=g.factory.id,
-                name=g.factory.name,
-            ) if g.factory else None,
-            antioxidant_type=AntioxidantTypeResponseSchema(
-                id=g.antioxidant_type.id,
-                name=g.antioxidant_type.name,
-            ) if g.antioxidant_type else None,
-            packing_type=PackingTypeResponseSchema(
-                id=g.packing_type.id,
-                name=g.packing_type.name,
-                quantity=g.packing_type.quantity,
-                unit=UnitResponseSchema(
-                    id=g.packing_type.unit.id,
-                    symbol=g.packing_type.unit.symbol,
-                ),
-            ) if g.packing_type else None,
+            shift=(
+                ShiftResponseSchema(
+                    id=g.shift.id,
+                    name=g.shift.name,
+                )
+                if g.shift
+                else None
+            ),
+            factory=(
+                FactoryResponseSchema(
+                    id=g.factory.id,
+                    name=g.factory.name,
+                )
+                if g.factory
+                else None
+            ),
+            antioxidant_type=(
+                AntioxidantTypeResponseSchema(
+                    id=g.antioxidant_type.id,
+                    name=g.antioxidant_type.name,
+                )
+                if g.antioxidant_type
+                else None
+            ),
+            packing_type=(
+                PackingTypeResponseSchema(
+                    id=g.packing_type.id,
+                    name=g.packing_type.name,
+                    quantity=g.packing_type.quantity,
+                    unit=UnitResponseSchema(
+                        id=g.packing_type.unit.id,
+                        symbol=g.packing_type.unit.symbol,
+                    ),
+                )
+                if g.packing_type
+                else None
+            ),
             created_by=UserResponseSchema(
                 id=g.created_by.id,
                 first_name=g.created_by.first_name,
@@ -130,32 +155,55 @@ async def list_grinding_reports(
 
 
 @router.post("/")
-async def create_grinding_report(token_verify_dep: TokenVerifyDep, body: CreateGrindingSchema, use_case: CreateGrindingUseCaseDep):
+async def create_grinding_report(
+    token_verify_dep: TokenVerifyDep,
+    body: CreateGrindingSchema,
+    use_case: CreateGrindingUseCaseDep,
+):
     logger.debug(f"Creating grinding report with body: {body.model_dump()}")
     grinding_dto = GrindingDTO(
         date_reported=body.date_reported,
-        antioxidant_type=AntioxidantTypeDTO(
-            id=body.antioxidant_type_id
-        ),
+        antioxidant_type=AntioxidantTypeDTO(id=body.antioxidant_type_id),
         start_time=body.start_time,
         end_time=body.end_time,
         packing_type=PackingTypeDTO(id=body.packing_type_id),
         quantity=body.quantity,
         batch_grinding_information=body.batch_grinding_information,
-        factory=FactoryDTO(
-            id=body.factory_id
-        ),
+        factory=FactoryDTO(id=body.factory_id),
         notes=body.notes,
-        shift=ShiftDTO(
-            id=body.shift_id
-        ),
-        created_by=UserDTO(
-            id=body.created_by
-        )
+        shift=ShiftDTO(id=body.shift_id),
+        created_by=UserDTO(id=body.created_by),
     )
 
     use_case.execute(grinding_dto=grinding_dto)
 
     return Response.success_response(
         data="Success", code="ETB_tao_growing_report_thanh_cong"
+    ).get_dict()
+
+
+@router.put("/{grinding_id}")
+async def update_grinding_report(
+    token_verify_dep: TokenVerifyDep,
+    grinding_id: int,
+    body: UpdateGrindingSchema,
+    use_case: UpdateGrindingReportUseCaseDep,
+):
+    grinding_dto = GrindingDTO(
+        id=grinding_id,
+        antioxidant_type=AntioxidantTypeDTO(id=body.antioxidant_type_id),
+        start_time=body.start_time,
+        end_time=body.end_time,
+        packing_type=PackingTypeDTO(id=body.packing_type_id),
+        quantity=body.quantity,
+        batch_grinding_information=body.batch_grinding_information,
+        factory=FactoryDTO(id=body.factory_id),
+        shift=ShiftDTO(id=body.shift_id),
+        notes=body.notes,
+    )
+
+    use_case.execute(grinding_dto=grinding_dto)
+
+    return Response.success_response(
+        data="Success", code="ETB_cap_nhat_grinding_report_thanh_cong"
     ).get_dict()

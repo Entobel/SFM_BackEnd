@@ -12,60 +12,79 @@ from app.domain.interfaces.services.query_helper_service import IQueryHelperServ
 
 
 class GrindingRepository(IGrindingRepository):
-    def __init__(self, conn: psycopg2.extensions.connection, query_helper: IQueryHelperService):
+    def __init__(
+        self, conn: psycopg2.extensions.connection, query_helper: IQueryHelperService
+    ):
         self.conn = conn
         self.query_helper = query_helper
 
     def get_grinding_by_id(self, grinding_entity):
         get_grinding_sql = """
         SELECT
-        g.id AS g_id,
-        g.date_reported AS g_date_reported,
-        g.quantity AS g_quantity,
-        g.batch_grinding_information AS g_batch_grinding_information,
-        g.notes AS g_notes,
-        s.id AS s_id,
-        s."name" AS s_name,
-        pt.id AS pt_id,
-        pt."name" AS pt_name,
-        at.id AS at_id,
-        at."name" AS at_name,
-        f.id AS f_id,
-        f.abbr_name AS f_abbr_name,
-        f."name" AS f_name,
-        u1.id AS created_by_id,
-        u1.first_name AS created_by_first_name,
-        u1.last_name AS created_by_last_name,
-        u1.phone AS created_by_phone,
-        u1.email AS created_by_email,
-        u2.id AS rejected_by_id,
-        u2.first_name AS rejected_by_first_name,
-        u2.last_name AS rejected_by_last_name,
-        u2.email AS rejected_by_email,
-        u2.phone AS rejected_by_phone,
-        u3.id AS approved_by_id,
-        u3.first_name AS approved_by_first_name,
-        u3.last_name AS approved_by_last_name,
-        u3.email AS approved_by_email,
-        u3.phone AS approved_by_phone
-    FROM
-        grindings g
-    JOIN shifts s ON
-        g.shift_id = s.id
-    JOIN factories f ON
-        g.factory_id = f.id
-    JOIN packing_types pt ON
-        g.packing_type_id = pt.id
-    JOIN antioxidant_types at ON
-        g.antioxidant_type_id = at.id
-    LEFT JOIN users u1 ON
-        g.created_by = u1.id
-    LEFT JOIN users u2 ON
-        g.rejected_by = u2.id
-    LEFT JOIN users u3 ON
-        g.approved_by = u3.id
-    WHERE
-        g.id = %s
+            g.id AS g_id,
+            g.date_reported AS g_date_reported,
+            g.quantity AS g_quantity,
+            g.batch_grinding_information AS g_batch_grinding_information,
+            g.notes AS g_notes,
+            g.start_time AS g_start_time,
+            g.end_time AS g_end_time,
+            g.status AS g_status,
+            g.is_active AS g_is_active,
+            g.approved_at AS g_approved_at,
+            g.rejected_at AS g_rejected_at,
+            g.rejected_reason AS g_rejected_reason,
+            g.updated_at AS g_updated_at,
+            --
+            s.id AS s_id,
+            s."name" AS s_name,
+            --
+            pt.id AS pt_id,
+            g.packing_type_name AS pt_name,
+            pt.quantity AS pt_quantity,
+            u.id AS pt_unit_id,
+            u.symbol AS pt_unit_symbol,
+            --
+            at.id AS at_id,
+            g.antioxidant_type_name AS at_name,
+            --
+            f.id AS f_id,
+            f.abbr_name AS f_abbr_name,
+            f."name" AS f_name,
+            ---
+            u1.id AS created_by_id,
+            u1.first_name AS created_by_first_name,
+            u1.last_name AS created_by_last_name,
+            u1.phone AS created_by_phone,
+            u1.email AS created_by_email,
+            u2.id AS rejected_by_id,
+            u2.first_name AS rejected_by_first_name,
+            u2.last_name AS rejected_by_last_name,
+            u2.email AS rejected_by_email,
+            u2.phone AS rejected_by_phone,
+            u3.id AS approved_by_id,
+            u3.first_name AS approved_by_first_name,
+            u3.last_name AS approved_by_last_name,
+            u3.email AS approved_by_email,
+            u3.phone AS approved_by_phone
+        FROM
+            grindings g
+        JOIN shifts s ON
+            g.shift_id = s.id
+        JOIN factories f ON
+            g.factory_id = f.id
+        JOIN packing_types pt ON
+            g.packing_type_id = pt.id
+        JOIN antioxidant_types at ON
+            g.antioxidant_type_id = at.id
+        JOIN units u ON
+            pt.unit_id = u.id
+        LEFT JOIN users u1 ON
+            g.created_by = u1.id
+        LEFT JOIN users u2 ON
+            g.rejected_by = u2.id
+        LEFT JOIN users u3 ON
+            g.approved_by = u3.id
+        WHERE g.id = %s
         """
 
         grinding_id = grinding_entity.id
@@ -77,29 +96,32 @@ class GrindingRepository(IGrindingRepository):
             if row is None:
                 return None
 
-            grinding_entity = GrindingEntity(
+            return GrindingEntity(
                 id=row["g_id"],
                 date_reported=row["g_date_reported"],
                 quantity=row["g_quantity"],
                 batch_grinding_information=row["g_batch_grinding_information"],
-                antioxidant_type=AntioxidantTypeEntity(
-                    id=row["at_id"], name=row["at_name"]
-                ),
+                notes=row["g_notes"],
+                start_time=row["g_start_time"],
+                end_time=row["g_end_time"],
+                status=row["g_status"],
+                is_active=row["g_is_active"],
+                approved_at=row["g_approved_at"],
+                rejected_at=row["g_rejected_at"],
+                rejected_reason=row["g_rejected_reason"],
+                updated_at=row["g_updated_at"],
+                shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
                 packing_type=PackingTypeEntity(
                     id=row["pt_id"],
                     name=row["pt_name"],
+                    quantity=row["pt_quantity"],
+                    unit=UnitEntity(id=row["pt_unit_id"], symbol=row["pt_unit_symbol"]),
                 ),
-                status=row["g_status"],
-                notes=row["g_notes"],
-                is_active=row["g_is_active"],
-                approved_at=row["g_approved_at"],
-                shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
-                rejected_at=row["g_rejected_at"],
-                rejected_reason=row["g_rejected_reason"],
+                antioxidant_type=AntioxidantTypeEntity(
+                    id=row["at_id"], name=row["at_name"]
+                ),
                 factory=FactoryEntity(
-                    id=row["f_id"],
-                    abbr_name=row["f_abbr_name"],
-                    name=row["f_name"],
+                    id=row["f_id"], abbr_name=row["f_abbr_name"], name=row["f_name"]
                 ),
                 created_by=UserEntity(
                     id=row["created_by_id"],
@@ -123,8 +145,6 @@ class GrindingRepository(IGrindingRepository):
                     email=row["approved_by_email"],
                 ),
             )
-
-            return grinding_entity
 
     def get_grinding_by_name(self, grinding_entity):
         return super().get_grinding_by_name(grinding_entity)
@@ -182,8 +202,7 @@ class GrindingRepository(IGrindingRepository):
                 grinding_entity.created_by.id,
             )
 
-            cur.execute(query=insert_grinding_query,
-                        vars=tuple_grinding_values)
+            cur.execute(query=insert_grinding_query, vars=tuple_grinding_values)
 
             if cur.rowcount == 0:
                 self.conn.rollback()
@@ -193,12 +212,64 @@ class GrindingRepository(IGrindingRepository):
                 return True
 
     def update_grinding(self, grinding_entity):
-        return super().update_grinding(grinding_entity)
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+            update_grinding_query = """
+            UPDATE grindings
+            SET
+            shift_id = %s,
+            start_time = %s,
+            end_time = %s,
+            batch_grinding_information = %s,
+            quantity = %s,
+            factory_id = %s,
+            packing_type_id = %s,
+            packing_type_name = (SELECT name FROM packing_types WHERE id = %s),
+            antioxidant_type_id = %s,
+            antioxidant_type_name = (SELECT name FROM antioxidant_types WHERE id = %s),
+            notes = %s,
+            status = %s     
+            WHERE id = %s
+            """
+
+            tuple_grinding_values = (
+                grinding_entity.shift.id,
+                grinding_entity.start_time,
+                grinding_entity.end_time,
+                grinding_entity.batch_grinding_information,
+                grinding_entity.quantity,
+                grinding_entity.factory.id,
+                grinding_entity.packing_type.id,
+                grinding_entity.packing_type.id,
+                grinding_entity.antioxidant_type.id,
+                grinding_entity.antioxidant_type.id,
+                grinding_entity.notes,
+                grinding_entity.status,
+                grinding_entity.id,
+            )
+
+            cur.execute(query=update_grinding_query, vars=tuple_grinding_values)
+
+            if cur.rowcount == 0:
+                self.conn.rollback()
+                return False
+            else:
+                self.conn.commit()
+                return True
 
     def update_status_grinding(self, grinding_entity):
         return super().update_status_grinding(grinding_entity)
 
-    def get_list_grinding_report(self, page, page_size, search, factory_id, start_date, end_date, report_status, is_active):
+    def get_list_grinding_report(
+        self,
+        page,
+        page_size,
+        search,
+        factory_id,
+        start_date,
+        end_date,
+        report_status,
+        is_active,
+    ):
         sql_helper = self.query_helper
 
         if search:
@@ -248,8 +319,7 @@ class GrindingRepository(IGrindingRepository):
             total = cur.fetchone()[0]
 
         # Query Data
-        limit_sql, limit_params = sql_helper.paginate(
-            page=page, page_size=page_size)
+        limit_sql, limit_params = sql_helper.paginate(page=page, page_size=page_size)
 
         grinding_data_sql = f"""
         SELECT
@@ -342,27 +412,18 @@ class GrindingRepository(IGrindingRepository):
                 rejected_at=row["g_rejected_at"],
                 rejected_reason=row["g_rejected_reason"],
                 updated_at=row["g_updated_at"],
-                shift=ShiftEntity(
-                    id=row["s_id"],
-                    name=row["s_name"]
-                ),
+                shift=ShiftEntity(id=row["s_id"], name=row["s_name"]),
                 packing_type=PackingTypeEntity(
                     id=row["pt_id"],
                     name=row["pt_name"],
                     quantity=row["pt_quantity"],
-                    unit=UnitEntity(
-                        id=row["pt_unit_id"],
-                        symbol=row["pt_unit_symbol"]
-                    )
+                    unit=UnitEntity(id=row["pt_unit_id"], symbol=row["pt_unit_symbol"]),
                 ),
                 antioxidant_type=AntioxidantTypeEntity(
-                    id=row["at_id"],
-                    name=row["at_name"]
+                    id=row["at_id"], name=row["at_name"]
                 ),
                 factory=FactoryEntity(
-                    id=row["f_id"],
-                    abbr_name=row["f_abbr_name"],
-                    name=row["f_name"]
+                    id=row["f_id"], abbr_name=row["f_abbr_name"], name=row["f_name"]
                 ),
                 created_by=UserEntity(
                     id=row["created_by_id"],

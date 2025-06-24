@@ -4,6 +4,13 @@ from app.domain.entities.dd_entity import DdEntity
 
 
 class IDdRepository(ABC):
+
+    @abstractmethod
+    def get_dd_report_by_id(self, dd_entity: DdEntity) -> DdEntity | None: ...
+
+    @abstractmethod
+    def update_dd_report(self, dd_entity: DdEntity) -> bool: ...
+
     @abstractmethod
     def get_list_dd_report(
         self,
@@ -16,7 +23,7 @@ class IDdRepository(ABC):
         report_status: int | None,
         is_active: bool | None,
     ) -> dict[
-        "items": list[DdEntity],
+        "items" : list[DdEntity],
         "total":int,
         "page":int,
         "page_size":int,

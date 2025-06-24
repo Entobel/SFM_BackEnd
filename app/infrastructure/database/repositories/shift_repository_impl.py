@@ -38,7 +38,7 @@ class ShiftRepository(IShiftRepository):
 
     def update_status_shift(self, shift_entity: ShiftEntity) -> bool:
         query = """
-            UPDATE shift SET is_active = %s WHERE id = %s
+            UPDATE shifts SET is_active = %s WHERE id = %s
         """
         shift_id = shift_entity.id
         shift_is_active = shift_entity.is_active

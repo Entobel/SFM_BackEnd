@@ -1,3 +1,4 @@
+from loguru import logger
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.domain.entities.dried_larvae_discharge_type_entity import (
@@ -20,7 +21,7 @@ class VfbdRepository(IVfbdRepository):
         self.query_helper = query_helper
 
     def get_vfbd_report_by_id(self, vfbd_entity: VfbdEntity) -> VfbdEntity | None:
-        with self.conn.cursor() as cur:
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             get_vfbd_report_by_id_sql = """
             SELECT
                 vfbd.id AS vfbd_id,
@@ -87,11 +88,15 @@ class VfbdRepository(IVfbdRepository):
                 vfbd.approved_by = u3.id
             WHERE vfbd.id = %s
             """
+
             get_vfbd_report_by_id_tuple_args = (vfbd_entity.id,)
+
             cur.execute(
                 query=get_vfbd_report_by_id_sql, vars=get_vfbd_report_by_id_tuple_args
             )
             row = cur.fetchone()
+
+            logger.debug(row)
 
             if row is None:
                 return None
@@ -459,8 +464,7 @@ class VfbdRepository(IVfbdRepository):
             quantity_dried_larvae_sold = %s,
             drying_result = %s,
             notes = %s,
-            status = %s,
-            updated_at = NOW()
+            status = %s
             WHERE id = %s
             """
 
@@ -476,7 +480,6 @@ class VfbdRepository(IVfbdRepository):
                 vfbd_entity.temperature_output_2nd,
                 vfbd_entity.dryer_product_type.id,
                 vfbd_entity.dryer_product_type.id,
-                vfbd_entity.dryer_product_type.id,
                 vfbd_entity.dried_larvae_moisture,
                 vfbd_entity.quantity_dried_larvae_sold,
                 vfbd_entity.drying_result,
@@ -485,7 +488,7 @@ class VfbdRepository(IVfbdRepository):
                 vfbd_entity.id,
             )
 
-            cur.execute(query=update_vfbd_sql, vars=update_vfbd_tuple_args)
+            cur.execute(update_vfbd_sql, update_vfbd_tuple_args)
 
             if cur.rowcount == 0:
                 self.conn.rollback()
