@@ -6,7 +6,9 @@ from app.domain.entities.grinding_entity import GrindingEntity
 
 class IGrindingRepository(ABC):
     @abstractmethod
-    def get_grinding_by_id(self, grinding_entity: GrindingEntity) -> Optional[GrindingEntity]:
+    def get_grinding_by_id(
+        self, grinding_entity: GrindingEntity
+    ) -> Optional[GrindingEntity]:
         pass
 
     @abstractmethod
@@ -21,7 +23,7 @@ class IGrindingRepository(ABC):
         report_status: int | None,
         is_active: bool | None,
     ) -> dict[
-        "items": list[GrindingEntity],
+        "items" : list[GrindingEntity],
         "total":int,
         "page":int,
         "page_size":int,
@@ -29,7 +31,9 @@ class IGrindingRepository(ABC):
     ]: ...
 
     @abstractmethod
-    def get_grinding_by_name(self, grinding_entity: GrindingEntity) -> Optional[GrindingEntity]:
+    def get_grinding_by_name(
+        self, grinding_entity: GrindingEntity
+    ) -> Optional[GrindingEntity]:
         pass
 
     @abstractmethod
@@ -41,5 +45,5 @@ class IGrindingRepository(ABC):
         pass
 
     @abstractmethod
-    def update_status_grinding(self, grinding_entity: GrindingEntity) -> GrindingEntity:
+    def delete_grinding_report(self, grinding_entity: GrindingEntity) -> GrindingEntity:
         pass

@@ -496,3 +496,25 @@ class VfbdRepository(IVfbdRepository):
             else:
                 self.conn.commit()
                 return True
+
+    def delete_vfbd_report(self, vfbd_entity: VfbdEntity) -> bool:
+        with self.conn.cursor() as cur:
+            delete_vfbd_sql = """
+            UPDATE vibratory_fluid_bed_dryers
+            SET is_active = %s
+            WHERE id = %s
+            """
+
+            delete_vfbd_args = (
+                vfbd_entity.is_active,
+                vfbd_entity.id,
+            )
+
+            cur.execute(query=delete_vfbd_sql, vars=delete_vfbd_args)
+
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False

@@ -5,7 +5,9 @@ from typing import Optional
 from fastapi.exceptions import RequestValidationError
 
 from app.presentation.schemas.factory_schema import FactoryResponseSchema
-from app.presentation.schemas.harvesting_zone_level_schema import HarvestingZoneLevelResponseSchema
+from app.presentation.schemas.harvesting_zone_level_schema import (
+    HarvestingZoneLevelResponseSchema,
+)
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.user_schema import UserResponseSchema
 from app.presentation.schemas.zone_schema import ZoneResponseSchema
@@ -36,6 +38,19 @@ class HarvestingResponseSchema(BaseModel):
 
     updated_at: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+class UpdateHarvestingSchema(BaseModel):
+    shift_id: Optional[int] = None
+    factory_id: Optional[int] = None
+    number_crates_discarded: Optional[int] = None
+    quantity_larvae: Optional[float] = None
+    number_crates: Optional[int] = None
+    zone_id: Optional[int] = None
+    old_zone_id: Optional[int] = None
+    old_zone_level_ids: Optional[list[int]] = None
+    zone_level_ids: Optional[list[int]] = None
+    notes: Optional[str] = None
 
 
 class CreateHarvestingSchema(BaseModel):

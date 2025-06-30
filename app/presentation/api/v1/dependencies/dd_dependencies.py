@@ -4,11 +4,15 @@ from fastapi import Depends
 from app.application.interfaces.use_cases.dd.create_dd_report_uc import (
     ICreateDdReportUC,
 )
+from app.application.interfaces.use_cases.dd.delete_dd_report_uc import (
+    IDeleteDdReportUC,
+)
 from app.application.interfaces.use_cases.dd.list_dd_report_uc import IListDdReportUC
 from app.application.interfaces.use_cases.dd.update_dd_report_uc import (
     IUpdateDdReportUC,
 )
 from app.application.use_cases.dd.create_dd_report_uc_impl import CreateDDReportUC
+from app.application.use_cases.dd.delete_dd_report_uc_impl import DeleteDdReportUC
 from app.application.use_cases.dd.list_dd_report_uc_impl import ListDdReportUC
 from app.application.use_cases.dd.update_dd_report_uc_impl import UpdateDdReportUC
 from app.domain.interfaces.repositories.dd_repository import IDdRepository
@@ -55,6 +59,10 @@ def get_update_dd_report_uc(
     )
 
 
+def get_delete_dd_report_uc(dd_repository: GetDDRepositoryDep) -> IDeleteDdReportUC:
+    return DeleteDdReportUC(dd_repo=dd_repository)
+
+
 CreateDdReportUseCaseDep = Annotated[
     ICreateDdReportUC, Depends(get_create_dd_report_uc)
 ]
@@ -63,4 +71,8 @@ ListDdReportUseCaseDep = Annotated[IListDdReportUC, Depends(get_list_dd_report_u
 
 UpdateDdReportUseCaseDep = Annotated[
     IUpdateDdReportUC, Depends(get_update_dd_report_uc)
+]
+
+DeleteDdReportUseCaseDep = Annotated[
+    IDeleteDdReportUC, Depends(get_delete_dd_report_uc)
 ]

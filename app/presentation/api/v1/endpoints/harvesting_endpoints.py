@@ -8,12 +8,22 @@ from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
 from app.application.dto.zone_dto import ZoneDTO
 from app.application.dto.zone_level_dto import ZoneLevelDTO
-from app.presentation.api.v1.dependencies.harvesting_dependencies import CreateHarvestingReportUseCaseDep, GetListHarvestingReportUseCaseDep
+from app.presentation.api.v1.dependencies.harvesting_dependencies import (
+    CreateHarvestingReportUseCaseDep,
+    GetListHarvestingReportUseCaseDep,
+    UpdateHarvestingReportUseCaseDep,
+)
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from app.presentation.schemas.factory_schema import FactoryResponseSchema
 from app.presentation.schemas.filter_schema import FilterSchema, PaginateDTO
-from app.presentation.schemas.harvesting_schema import CreateHarvestingSchema, HarvestingResponseSchema
-from app.presentation.schemas.harvesting_zone_level_schema import HarvestingZoneLevelResponseSchema
+from app.presentation.schemas.harvesting_schema import (
+    CreateHarvestingSchema,
+    HarvestingResponseSchema,
+    UpdateHarvestingSchema,
+)
+from app.presentation.schemas.harvesting_zone_level_schema import (
+    HarvestingZoneLevelResponseSchema,
+)
 from app.presentation.schemas.response import Response
 from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.user_schema import UserResponseSchema
@@ -27,7 +37,7 @@ router = APIRouter(prefix="/harvestings", tags=["Harvestings"])
 async def create_harvesting_report(
     token: TokenVerifyDep,
     body: CreateHarvestingSchema,
-    use_case: CreateHarvestingReportUseCaseDep
+    use_case: CreateHarvestingReportUseCaseDep,
 ):
     harvesting_dto = HarvestingDTO(
         date_harvested=body.date_harvested,
@@ -37,7 +47,7 @@ async def create_harvesting_report(
         number_crates=body.number_crates,
         number_crates_discarded=body.number_crates_discarded,
         quantity_larvae=body.quantity_larvae,
-        created_by=UserDTO(id=body.created_by)
+        created_by=UserDTO(id=body.created_by),
     )
 
     list_zone_level_dtos: list[ZoneLevelDTO] = []
@@ -47,8 +57,11 @@ async def create_harvesting_report(
 
         list_zone_level_dtos.append(zone_level_dto)
 
-    use_case.execute(harvesting_dto=harvesting_dto,
-                     zone_id=body.zone_id, zone_level_dtos=list_zone_level_dtos)
+    use_case.execute(
+        harvesting_dto=harvesting_dto,
+        zone_id=body.zone_id,
+        zone_level_dtos=list_zone_level_dtos,
+    )
 
     return Response.success_response(
         data="Success", code="ETB_tao_harvesting_report_thanh_cong"
@@ -73,12 +86,13 @@ async def get_list_harvesting_report(
         search=filter_params.search,
     )
 
-    [harvestings, harvesting_zone_levels, [harvesting_pending_count, harvesting_rejected_count]] = (
-        result["items"]
-    )
+    [
+        harvestings,
+        harvesting_zone_levels,
+        [harvesting_pending_count, harvesting_rejected_count],
+    ] = result["items"]
 
-    harvesting_zone_level_map: dict[int,
-                                    list[HarvestingZoneLevelResponseSchema]] = {}
+    harvesting_zone_level_map: dict[int, list[HarvestingZoneLevelResponseSchema]] = {}
 
     for hzl in harvesting_zone_levels:
         hzl_schema = HarvestingZoneLevelResponseSchema(
@@ -89,13 +103,12 @@ async def get_list_harvesting_report(
             zone_level=ZoneLevelResponseSchema(
                 id=hzl.zone_level.id,
                 zone=ZoneResponseSchema(id=hzl.zone_level.zone.id),
-                status=hzl.zone_level.status
+                status=hzl.zone_level.status,
             ),
         ).model_dump(exclude_none=True)
 
         harvesting_id = hzl.harvesting.id
-        harvesting_zone_level_map.setdefault(
-            harvesting_id, []).append(hzl_schema)
+        harvesting_zone_level_map.setdefault(harvesting_id, []).append(hzl_schema)
 
     list_harvesting_response = [
         HarvestingResponseSchema(
@@ -110,8 +123,7 @@ async def get_list_harvesting_report(
                 name=h.factory.name,
                 abbr_name=h.factory.abbr_name,
             ),
-            assigned_zone_levels=harvesting_zone_level_map.get(
-                h.id, []),
+            assigned_zone_levels=harvesting_zone_level_map.get(h.id, []),
             number_crates=h.number_crates,
             number_crates_discarded=h.number_crates_discarded,
             quantity_larvae=h.quantity_larvae,
@@ -165,4 +177,34 @@ async def get_list_harvesting_report(
                 "rejected": harvesting_rejected_count,
             },
         },
+    ).get_dict()
+
+
+@router.put("/{harvesting_id}")
+async def update_harvesting_report(
+    token_verify: TokenVerifyDep,
+    body: UpdateHarvestingSchema,
+    harvesting_id: int,
+    use_case: UpdateHarvestingReportUseCaseDep,
+):
+    harvesting_dto = HarvestingDTO(
+        id=harvesting_id,
+        notes=body.notes,
+        number_crates=body.number_crates,
+        number_crates_discarded=body.number_crates_discarded,
+        quantity_larvae=body.quantity_larvae,
+        shift=ShiftDTO(id=body.shift_id),
+        factory=FactoryDTO(id=body.factory_id),
+    )
+
+    use_case.execute(
+        harvesting_dto=harvesting_dto,
+        new_zone_level_ids=body.zone_level_ids,
+        old_zone_level_ids=body.old_zone_level_ids,
+        old_zone_id=body.old_zone_id,
+        new_zone_id=body.zone_id,
+    )
+
+    return Response.success_response(
+        data="Success", code="ETB_cap_nhat_harvesting_report_thanh_cong"
     ).get_dict()

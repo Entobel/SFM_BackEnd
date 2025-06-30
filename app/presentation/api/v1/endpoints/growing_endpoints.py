@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from loguru import logger
 
 from app.application.dto.diet_dto import DietDTO
 from app.application.dto.factory_dto import FactoryDTO
@@ -11,6 +12,7 @@ from app.application.dto.zone_dto import ZoneDTO
 from app.application.dto.zone_level_dto import ZoneLevelDTO
 from app.presentation.api.v1.dependencies.growing_dependencies import (
     CreateGrowingReportUseCaseDep,
+    DeleteGrowingReportUseCaseDep,
     GetListGrowingReportUseCaseDep,
     UpdateGrowingReportUseCaseDep,
     UpdateStatusGrowingReportUseCaseDep,
@@ -41,6 +43,7 @@ from app.presentation.schemas.zone_schema import ZoneResponseSchema
 router = APIRouter(prefix="/growings", tags=["Growings"])
 
 
+# create
 @router.post("/")
 async def create_growing_report(
     token: TokenVerifyDep,
@@ -78,6 +81,7 @@ async def create_growing_report(
     ).get_dict()
 
 
+# get list
 @router.get("/")
 async def get_list_growing_report(
     token: TokenVerifyDep,
@@ -209,6 +213,7 @@ async def get_list_growing_report(
     ).get_dict()
 
 
+# get list
 @router.patch("/{growing_id}/status")
 async def update_status_growing(
     token_verify: TokenVerifyDep,
@@ -254,6 +259,8 @@ async def update_growing_report(
         status=body.status,
     )
 
+    logger.debug(f"growing_dto: {growing_dto}")
+
     use_case.execute(
         growing_dto=growing_dto,
         new_zone_level_ids=body.zone_level_ids,
@@ -264,4 +271,19 @@ async def update_growing_report(
 
     return Response.success_response(
         data="Success", code="ETB_cap_nhat_growing_report_thanh_cong"
+    ).get_dict()
+
+
+@router.delete("/{growing_id}")
+async def delete_growing_report_uc(
+    token_verify: TokenVerifyDep,
+    growing_id: int,
+    use_case: DeleteGrowingReportUseCaseDep,
+):
+    growing_dto = GrowingDTO(id=growing_id)
+
+    use_case.execute(growing_dto=growing_dto)
+
+    return Response.success_response(
+        data="Success", code="ETB_xoa_growing_report_thanh_cong"
     ).get_dict()

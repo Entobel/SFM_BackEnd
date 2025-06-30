@@ -13,8 +13,12 @@ class IGrowingRepository(ABC):
     ): ...
 
     @abstractmethod
+    def delete_growing(self, growing_entity: GrowingEntity) -> bool: ...
+
+    @abstractmethod
     def get_growing_report_by_id(
-        self, growing_entity: GrowingEntity) -> GrowingEntity | None: ...
+        self, growing_entity: GrowingEntity
+    ) -> GrowingEntity | None: ...
 
     @abstractmethod
     def get_list_growing_report(
@@ -33,7 +37,7 @@ class IGrowingRepository(ABC):
         report_status: int | None,
         is_active: bool | None,
     ) -> dict[
-        "items": list[list[GrowingEntity], list[GrowingZoneLevelEntity]],
+        "items" : list[list[GrowingEntity], list[GrowingZoneLevelEntity]],
         "total":int,
         "page":int,
         "page_size":int,
@@ -53,5 +57,11 @@ class IGrowingRepository(ABC):
     ) -> bool: ...
 
     @abstractmethod
-    def update_growing_report(self, growing_entity: GrowingEntity, new_zone_id: int,
-                              old_zone_id: int, old_zone_level_ids: list[int], new_zone_level_ids: list[int]): ...
+    def update_growing_report(
+        self,
+        growing_entity: GrowingEntity,
+        new_zone_id: int,
+        old_zone_id: int,
+        old_zone_level_ids: list[int],
+        new_zone_level_ids: list[int],
+    ): ...

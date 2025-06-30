@@ -34,3 +34,6 @@ class IDdRepository(ABC):
     def create_dd_report(self, dd_entity: DdEntity) -> bool:
         """Create a new DD report."""
         pass
+
+    @abstractmethod
+    def delete_dd_report(self, dd_entity: DdEntity) -> bool: ...

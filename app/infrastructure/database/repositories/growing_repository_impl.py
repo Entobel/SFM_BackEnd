@@ -489,6 +489,8 @@ class GrowingRepository(IGrowingRepository):
             for row in rows
         ]
 
+        logger.debug(f"growings: {growings}")
+
         growing_ids = [int(row["g_id"]) for row in rows]
 
         growing_zone_level_data_sql = """
@@ -620,14 +622,16 @@ class GrowingRepository(IGrowingRepository):
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             # If old_zone_id is not equal to new_zone_id
             if old_zone_id != new_zone_id:
-                # # Remove growing_zone_level record with old_zone_level_ids
-                delete_growing_zone_levels_by_zone_level_ids_sql = """
-                    DELETE FROM growing_zone_levels WHERE zone_level_id = ANY(%s)
-                    """
-
+                # Remove all growing_zone_level records of this growing_id first
+                delete_all_growing_zone_levels_sql = """
+                    DELETE FROM growing_zone_levels WHERE growing_id = %s
+                """
                 cur.execute(
-                    query=delete_growing_zone_levels_by_zone_level_ids_sql,
-                    vars=(old_zone_level_ids,),
+                    query=delete_all_growing_zone_levels_sql, vars=(growing_entity.id,)
+                )
+
+                logger.debug(
+                    f"Delete all growing_zone_levels of growing_id {growing_entity.id}: {'Xoa thanh cong' if cur.rowcount > 0 else 'Xoa that bai'}"
                 )
 
                 # find_growing_zone_level_with_new_zone_level_ids
@@ -806,10 +810,35 @@ class GrowingRepository(IGrowingRepository):
             )
             growing_rejected_reason = growing_entity.rejected_reason
 
+            update_growing = """
+            UPDATE growings SET 
+            shift_id = %s,
+            diet_id = %s,
+            diet_name = (SELECT name FROM diets WHERE id = %s),
+            product_type_id = %s,
+            product_type_name = (SELECT name FROM product_types WHERE id = %s),
+            operation_type_id = %s,
+            operation_type_name = (SELECT name FROM operation_types WHERE id = %s),
+            factory_id = %s,
+            number_crates = %s,
+            substrate_moisture = %s,
+            notes = %s,
+            status = %s,
+            approved_at = %s,
+            approved_by = %s,
+            rejected_at = %s,
+            rejected_by = %s,
+            rejected_reason = %s
+            WHERE id = %s
+            """
+
             tuple_update_growing = (
                 growing_shift_id,
                 growing_diet_id,
+                growing_diet_id,
                 growing_product_type_id,
+                growing_product_type_id,
+                growing_operation_type_id,
                 growing_operation_type_id,
                 growing_factory_id,
                 growing_number_crates,
@@ -824,25 +853,6 @@ class GrowingRepository(IGrowingRepository):
                 growing_id,
             )
 
-            update_growing = """
-            UPDATE growings SET 
-            shift_id = %s,
-            diet_id = %s,
-            product_type_id = %s,
-            operation_type_id = %s,
-            factory_id = %s,
-            number_crates = %s,
-            substrate_moisture = %s,
-            notes = %s,
-            status = %s,
-            approved_at = %s,
-            approved_by = %s,
-            rejected_at = %s,
-            rejected_by = %s,
-            rejected_reason = %s
-            WHERE id = %s
-            """
-
             cur.execute(query=update_growing, vars=tuple_update_growing)
             if cur.rowcount > 0:
                 self.conn.commit()
@@ -850,3 +860,42 @@ class GrowingRepository(IGrowingRepository):
             else:
                 self.conn.rollback()
                 raise BadRequestError("ETB_cap_nhat_growing_khong_thanh_cong")
+
+    def delete_growing(self, growing_entity: GrowingEntity) -> bool:
+        with self.conn.cursor() as cur:
+            growing_id = growing_entity.id
+            growing_is_active = growing_entity.is_active
+
+            # Update growings is_active to false
+            delete_growing_sql = """
+            UPDATE growings SET is_active = %s where id = %s
+            """
+
+            delete_growing_args = (
+                growing_is_active,
+                growing_id,
+            )
+
+            cur.execute(query=delete_growing_sql, vars=delete_growing_args)
+
+            # Update growing_zone_levels is_active to false
+            delete_growing_zone_levels_sql = """
+            UPDATE growing_zone_levels SET is_active = %s where growing_id = %s
+            """
+
+            delete_growing_zone_levels_args = (
+                growing_is_active,
+                growing_id,
+            )
+
+            cur.execute(
+                query=delete_growing_zone_levels_sql,
+                vars=delete_growing_zone_levels_args,
+            )
+
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False

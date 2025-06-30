@@ -4,20 +4,30 @@ from typing import Annotated
 from app.application.interfaces.use_cases.growing.create_growing_report_uc import (
     ICreateGrowingReportUC,
 )
+from app.application.interfaces.use_cases.growing.delete_growing_report_uc import (
+    IDeleteGrowingReportUC,
+)
 from app.application.interfaces.use_cases.growing.list_growing_report_uc import (
     IListGrowingReportUC,
 )
-from app.application.interfaces.use_cases.growing.update_growing_report_uc import IUpdateGrowingReportUC
+from app.application.interfaces.use_cases.growing.update_growing_report_uc import (
+    IUpdateGrowingReportUC,
+)
 from app.application.interfaces.use_cases.growing.update_status_growing_report_uc import (
     IUpdateStatusGrowingReportUC,
 )
 from app.application.use_cases.growing.create_growing_report_uc_impl import (
     CreateGrowingReportUC,
 )
+from app.application.use_cases.growing.delete_growing_report_uc_impl import (
+    DeleteGrowingReportUC,
+)
 from app.application.use_cases.growing.list_growing_report_uc_impl import (
     ListGrowingReportUC,
 )
-from app.application.use_cases.growing.update_growing_report_uc_impl import UpdateGrowingReport
+from app.application.use_cases.growing.update_growing_report_uc_impl import (
+    UpdateGrowingReport,
+)
 from app.application.use_cases.growing.update_status_growing_report_uc_imply import (
     UpdateStatusGrowingReportUC,
 )
@@ -62,6 +72,7 @@ def get_list_growing_report_uc(
 ) -> IListGrowingReportUC:
     return ListGrowingReportUC(growing_repo=growing_repo)
 
+
 def get_update_status_growing_report_uc(
     growing_repo: GrowingRepositoryDep,
     common_repo: CommonRepositoryDep,
@@ -71,10 +82,21 @@ def get_update_status_growing_report_uc(
         growing_repo=growing_repo, common_repo=common_repo, query_helper=query_helper
     )
 
-def get_update_growing_report_uc(growing_repo: GrowingRepositoryDep,
+
+def get_update_growing_report_uc(
+    growing_repo: GrowingRepositoryDep,
     common_repo: CommonRepositoryDep,
-    query_helper: QueryHelperDep) -> IUpdateGrowingReportUC:
-    return UpdateGrowingReport(growing_repo=growing_repo, common_repo=common_repo, query_helper=query_helper)
+    query_helper: QueryHelperDep,
+) -> IUpdateGrowingReportUC:
+    return UpdateGrowingReport(
+        growing_repo=growing_repo, common_repo=common_repo, query_helper=query_helper
+    )
+
+
+def get_delete_growing_report_uc(
+    growing_repo: GrowingRepositoryDep,
+) -> IDeleteGrowingReportUC:
+    return DeleteGrowingReportUC(growing_repo=growing_repo)
 
 
 CreateGrowingReportUseCaseDep = Annotated[
@@ -86,4 +108,9 @@ GetListGrowingReportUseCaseDep = Annotated[
 UpdateStatusGrowingReportUseCaseDep = Annotated[
     IUpdateStatusGrowingReportUC, Depends(get_update_status_growing_report_uc)
 ]
-UpdateGrowingReportUseCaseDep = Annotated[IUpdateGrowingReportUC, Depends(get_update_growing_report_uc)]
+UpdateGrowingReportUseCaseDep = Annotated[
+    IUpdateGrowingReportUC, Depends(get_update_growing_report_uc)
+]
+DeleteGrowingReportUseCaseDep = Annotated[
+    IDeleteGrowingReportUC, Depends(get_delete_growing_report_uc)
+]

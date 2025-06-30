@@ -562,3 +562,25 @@ class DDRepository(IDdRepository):
             else:
                 self.conn.commit()
                 return True
+
+    def delete_dd_report(self, dd_entity: DdEntity) -> bool:
+        with self.conn.cursor() as cur:
+            delete_dd_sql = """
+            UPDATE drum_dryers
+            SET is_active = %s
+            WHERE id = %s
+            """
+
+            delete_dd_args = (
+                dd_entity.is_active,
+                dd_entity.id,
+            )
+
+            cur.execute(query=delete_dd_sql, vars=delete_dd_args)
+
+            if cur.rowcount > 0:
+                self.conn.commit()
+                return True
+            else:
+                self.conn.rollback()
+                return False

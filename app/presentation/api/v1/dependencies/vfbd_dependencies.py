@@ -4,6 +4,9 @@ from fastapi import Depends
 from app.application.interfaces.use_cases.vfbd.create_vfbd_report_uc import (
     ICreateVfbdReportUC,
 )
+from app.application.interfaces.use_cases.vfbd.delete_vfbd_report_uc import (
+    IDeleteVfbdReportUC,
+)
 from app.application.interfaces.use_cases.vfbd.list_vfbd_report_uc import (
     IListVfbdReportUC,
 )
@@ -11,6 +14,7 @@ from app.application.interfaces.use_cases.vfbd.update_vfbd_report_uc import (
     IUpdateVfbdReportUC,
 )
 from app.application.use_cases.vfbd.create_vfbd_report_uc_impl import CreateVfbdReportUC
+from app.application.use_cases.vfbd.delete_vfbd_report_uc_impl import DeleteVfbdReportUC
 from app.application.use_cases.vfbd.list_vfbd_report_uc_impl import ListVfbdReportUC
 from app.application.use_cases.vfbd.update_vfbd_report_uc_impl import UpdateVfbdReportUC
 from app.domain.interfaces.repositories.vfbd_repository import IVfbdRepository
@@ -59,6 +63,12 @@ def get_update_vfbd_report_uc(
     )
 
 
+def get_delete_vfbd_report_uc(
+    vfbd_repository: VfbdRepositoryDep,
+) -> IDeleteVfbdReportUC:
+    return DeleteVfbdReportUC(vfbd_repo=vfbd_repository)
+
+
 CreateVfbdReportUseCaseDep = Annotated[
     ICreateVfbdReportUC, Depends(get_create_vfbd_report_uc)
 ]
@@ -69,4 +79,8 @@ ListVfbdReportUseCaseDep = Annotated[
 
 UpdateVfbdReportUseCaseDep = Annotated[
     IUpdateVfbdReportUC, Depends(get_update_vfbd_report_uc)
+]
+
+DeleteVfbdReportUseCaseDep = Annotated[
+    IDeleteVfbdReportUC, Depends(get_delete_vfbd_report_uc)
 ]

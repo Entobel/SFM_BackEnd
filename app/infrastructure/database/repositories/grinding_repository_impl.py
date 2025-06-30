@@ -256,8 +256,29 @@ class GrindingRepository(IGrindingRepository):
                 self.conn.commit()
                 return True
 
-    def update_status_grinding(self, grinding_entity):
-        return super().update_status_grinding(grinding_entity)
+    def delete_grinding_report(self, grinding_entity):
+        with self.conn.cursor() as cur:
+            grinding_id = grinding_entity.id
+            grinding_is_active = grinding_entity.is_active
+
+            # Update grindings is_active to false
+            delete_grinding_sql = """
+            UPDATE grindings SET is_active %s where id = %s
+            """
+
+            delete_grinding_args = (
+                grinding_is_active,
+                grinding_id,
+            )
+
+            cur.execute(query=delete_grinding_sql, vars=delete_grinding_args)
+
+            if cur.rowcount < 0:
+                self.conn.rollback()
+                return False
+            else:
+                self.conn.commit()
+                return True
 
     def get_list_grinding_report(
         self,
