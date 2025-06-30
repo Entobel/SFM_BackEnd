@@ -12,6 +12,7 @@ from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
 from app.presentation.api.v1.dependencies.dd_dependencies import (
     CreateDdReportUseCaseDep,
+    DeleteDdReportUseCaseDep,
     ListDdReportUseCaseDep,
     UpdateDdReportUseCaseDep,
 )
@@ -226,4 +227,19 @@ async def update_dd_report(
 
     return Response.success_response(
         data="Success", code="ETB_cap_nhat_dd_report_thanh_cong"
+    ).get_dict()
+
+
+@router.delete("/{dd_id}")
+async def delete_dd_report(
+    token_verify_dep: TokenVerifyDep,
+    dd_id: int,
+    use_case: DeleteDdReportUseCaseDep,
+):
+    dd_dto = DdDTO(id=dd_id)
+
+    use_case.execute(dd_dto=dd_dto)
+
+    return Response.success_response(
+        data="Success", code="ETB_xoa_dd_report_thanh_cong"
     ).get_dict()

@@ -10,6 +10,7 @@ from app.application.dto.zone_dto import ZoneDTO
 from app.application.dto.zone_level_dto import ZoneLevelDTO
 from app.presentation.api.v1.dependencies.harvesting_dependencies import (
     CreateHarvestingReportUseCaseDep,
+    DeleteHarvestingReportUseCaseDep,
     GetListHarvestingReportUseCaseDep,
     UpdateHarvestingReportUseCaseDep,
 )
@@ -207,4 +208,19 @@ async def update_harvesting_report(
 
     return Response.success_response(
         data="Success", code="ETB_cap_nhat_harvesting_report_thanh_cong"
+    ).get_dict()
+
+
+@router.delete("/{harvesting_id}")
+async def delete_harvesting_report(
+    token_verify_dep: TokenVerifyDep,
+    harvesting_id: int,
+    use_case: DeleteHarvestingReportUseCaseDep,
+):
+    harvesting_dto = HarvestingDTO(id=harvesting_id)
+
+    use_case.execute(harvesting_dto=harvesting_dto)
+
+    return Response.success_response(
+        data="Success", code="ETB_xoa_harvesting_report_thanh_cong"
     ).get_dict()

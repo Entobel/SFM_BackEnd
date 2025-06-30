@@ -364,7 +364,7 @@ class HarvestingRepository(IHarvestingRepository):
             hzl.updated_at as hzl_updated_at
         FROM harvesting_zone_levels hzl JOIN 
             zone_levels zl ON hzl.zone_level_id = zl.id
-        WHERE hzl.harvesting_id = ANY(%s);         
+        WHERE hzl.harvesting_id = ANY(%s) AND hzl.is_active = true;         
         """
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:

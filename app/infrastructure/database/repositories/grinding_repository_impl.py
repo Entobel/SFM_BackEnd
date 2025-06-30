@@ -263,7 +263,7 @@ class GrindingRepository(IGrindingRepository):
 
             # Update grindings is_active to false
             delete_grinding_sql = """
-            UPDATE grindings SET is_active %s where id = %s
+            UPDATE grindings SET is_active = %s where id = %s
             """
 
             delete_grinding_args = (

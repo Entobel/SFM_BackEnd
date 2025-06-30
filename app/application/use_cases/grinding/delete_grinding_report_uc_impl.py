@@ -23,7 +23,9 @@ class DeleteGrindingReportUC(IDeleteGrindingReportUC):
 
         grinding_entity.change_is_active(new_is_active=False)
 
-        is_success = self.grinding_repo.delete_grinding(grinding_entity=grinding_entity)
+        is_success = self.grinding_repo.delete_grinding_report(
+            grinding_entity=grinding_entity
+        )
 
         if not is_success:
             return BadRequestError("Co_loi_khi_xoa_grinding")

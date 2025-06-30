@@ -13,6 +13,7 @@ from app.application.dto.vfbd_dto import VfbdDTO
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
 from app.presentation.api.v1.dependencies.vfbd_dependencies import (
     CreateVfbdReportUseCaseDep,
+    DeleteVfbdReportUseCaseDep,
     ListVfbdReportUseCaseDep,
     UpdateVfbdReportUseCaseDep,
 )
@@ -204,4 +205,17 @@ async def update_vfbd_report(
 
     return Response.success_response(
         data="Success", code="ETB_cap_nhat_vfbd_report_thanh_cong"
+    ).get_dict()
+
+
+@router.delete("/{vfbd_id}")
+async def delete_vfbd_report(
+    token_verify_dep: TokenVerifyDep,
+    vfbd_id: int,
+    use_case: DeleteVfbdReportUseCaseDep,
+):
+    vfbd_dto = VfbdDTO(id=vfbd_id)
+    use_case.execute(vfbd_dto=vfbd_dto)
+    return Response.success_response(
+        data="Success", code="ETB_xoa_vfbd_report_thanh_cong"
     ).get_dict()

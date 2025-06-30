@@ -1,0 +1,24 @@
+1. Basic Information
+ - Shift_id
+ - Date_Reported
+2. Production Metrics
+ - Crate Mixed (Larvae): Target | Value | Comments | Action
+ - Crate Mixed (PP): Target | Value | Comments | Action
+ - Crate Harvested (Larvae): Target | Value | Comments | Action 
+ - Crate Harvested (PP): Target | Value | Comments | Action 
+ - Quantity Grinded (IM): Target | Value | Comments | Action
+3. Major Downtime & Issues
+ - Duration | Root Case | Action taken | Preventive Measures
+4. Cleaning Activity Checklist
+ - Cleaning Belt Scale: Done | Comments
+ - Cleaning VFBD Filter: Done | Comments
+ - Sensor Calibration: Done | Comments
+ - Lubrication & Safety Check: Done | Comments
+5. Handover & Special Notes
+ - Pending Tasks: Description list[string] | Comments
+ - SOP Deviation: Description | Comments
+ - Machine Behavior: Description: Normal / Abnormal | Comments
+6. Shift Perfomance Feedback
+ - Team Collaboration: Rating | Comments
+ - Machine Efficiency: Rating | Comments
+ - Product Quality: Rating | Comments

@@ -9,6 +9,7 @@ from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.user_dto import UserDTO
 from app.presentation.api.v1.dependencies.grinding_dependencies import (
     CreateGrindingUseCaseDep,
+    DeleteGrindingReportUseCaseDep,
     ListGrindingReportUseCaseDep,
     UpdateGrindingReportUseCaseDep,
 )
@@ -206,4 +207,17 @@ async def update_grinding_report(
 
     return Response.success_response(
         data="Success", code="ETB_cap_nhat_grinding_report_thanh_cong"
+    ).get_dict()
+
+
+@router.delete("/{grinding_id}")
+async def delete_grinding_report(
+    token_verify_dep: TokenVerifyDep,
+    grinding_id: int,
+    use_case: DeleteGrindingReportUseCaseDep,
+):
+    grinding_dto = GrindingDTO(id=grinding_id)
+    use_case.execute(grinding_dto=grinding_dto)
+    return Response.success_response(
+        data="Success", code="ETB_xoa_grinding_report_thanh_cong"
     ).get_dict()

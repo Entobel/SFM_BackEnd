@@ -507,7 +507,7 @@ class GrowingRepository(IGrowingRepository):
             gzl.updated_at as gzl_updated_at
         FROM growing_zone_levels gzl JOIN 
             zone_levels zl ON gzl.zone_level_id = zl.id
-        WHERE gzl.growing_id = ANY(%s);         
+        WHERE gzl.growing_id = ANY(%s) AND gzl.is_active = true;         
         """
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
