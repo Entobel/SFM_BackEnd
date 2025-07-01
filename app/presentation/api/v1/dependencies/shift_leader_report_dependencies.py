@@ -4,14 +4,22 @@ from fastapi import Depends
 from app.application.interfaces.use_cases.shift_leader_report.create_shift_leader_report_uc import (
     ICreateShiftLeaderReportUC,
 )
+from app.application.interfaces.use_cases.shift_leader_report.list_shift_leader_report_uc import (
+    IListShiftLeaderReportUC,
+)
 from app.application.use_cases.shift_leader_report.create_shift_leader_report_uc_impl import (
     CreateShiftLeaderReportUC,
+)
+
+
+from app.application.use_cases.shift_leader_report.list_shift_leader_report_uc_impl import (
+    ListShiftLeaderReportUC,
 )
 from app.domain.interfaces.repositories.shift_leader_report_repository import (
     IShiftLeaderReportRepository,
 )
 from app.infrastructure.database.repositories.shift_leader_report_repository_impl import (
-    ShiftLeaderReportRepositoryImpl,
+    ShiftLeaderReportRepository,
 )
 from app.presentation.api.v1.dependencies.common_dependencies import (
     CommonRepositoryDep,
@@ -23,7 +31,7 @@ from app.presentation.api.v1.dependencies.common_dependencies import (
 def get_shift_leader_repository(
     conn: DatabaseDep, query_helper: QueryHelperDep
 ) -> IShiftLeaderReportRepository:
-    return ShiftLeaderReportRepositoryImpl(conn=conn, query_helper=query_helper)
+    return ShiftLeaderReportRepository(conn=conn, query_helper=query_helper)
 
 
 ShiftLeaderRepositoryDep = Annotated[
@@ -43,6 +51,18 @@ def get_create_shift_leader_report_uc(
     )
 
 
+def get_list_shift_leader_report_uc(
+    shift_leader_report_repository: ShiftLeaderRepositoryDep,
+) -> IListShiftLeaderReportUC:
+    return ListShiftLeaderReportUC(
+        shift_leader_report_repository=shift_leader_report_repository,
+    )
+
+
 CreateShiftLeaderReportUCDep = Annotated[
     ICreateShiftLeaderReportUC, Depends(get_create_shift_leader_report_uc)
+]
+
+ListShiftLeaderReportUCDep = Annotated[
+    IListShiftLeaderReportUC, Depends(get_list_shift_leader_report_uc)
 ]

@@ -22,8 +22,8 @@ class ShiftLeaderReportDTO:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
     shift_id: Optional[int] = None
-    created_by: Optional[int] = None
-    handover_to: Optional[int] = None
+    created_by: Optional[UserDTO] = None
+    handover_to: Optional[UserDTO] = None
     slr_production_metrics: Optional[list[SLRProductionMetricDTO]] = None
     slr_downtime_issues: Optional[list[SLRDowntimeIssueDTO]] = None
     slr_cleaning_activities: Optional[list[SLRCleaningActivityDTO]] = None

@@ -179,3 +179,6 @@ class UpdateDdReportUC(IUpdateDdReportUC):
             notes=dd_dto.notes,
             status=FormStatusEnum.APPROVED.value,
         )
+
+
+# //  fat, ash, protein, fiber, moisture

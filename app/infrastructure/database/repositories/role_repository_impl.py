@@ -1,3 +1,4 @@
+from loguru import logger
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -65,7 +66,7 @@ class RoleRepository(IRoleRepository):
                 r.created_at as created_at,
                 r.updated_at as updated_at
                 FROM roles r
-                WHERE r.name = % s"""
+                WHERE r.name = %s"""
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, (name,))
@@ -92,8 +93,16 @@ class RoleRepository(IRoleRepository):
     def create_role(self, role: RoleEntity) -> bool:
         query = """INSERT INTO roles (name, description) VALUES (%s, %s)"""
 
+        logger.debug(f"Query: {role.name} {role.description}")
+
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(query, (role.name, role.description))
+            cur.execute(
+                query=query,
+                vars=(
+                    role.name,
+                    role.description,
+                ),
+            )
 
             return cur.rowcount > 0
 

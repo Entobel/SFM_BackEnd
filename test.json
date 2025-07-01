@@ -30,9 +30,29 @@
 	],
 	"production_qualities": [
 		{
-			"quality_key": "quality_1",
+			"quality_key": "protein",
 			"value": 100,
 			"comments": "comments_1"
+		},
+		{
+			"quality_key": "fat",
+			"value": 100,
+			"comments": "comments_2"
+		},
+		{
+			"quality_key": "fiber",
+			"value": 100,
+			"comments": "comments_2"
+		},
+		{
+			"quality_key": "ash",
+			"value": 100,
+			"comments": "comments_2"
+		},
+		{
+			"quality_key": "moisture",
+			"value": 100,
+			"comments": "comments_2"
 		}
 	],
 	"cleaning_activities": [
@@ -61,7 +81,16 @@
 	],
 	"handover_sop_deviations": [
 		{
-			"comments": "comments_1"
+			"comments": "viec a chua lam"
+		},
+		{
+			"comments": "viec b da lam"
+		},
+		{
+			"comments": "con viec c"
+		},
+		{
+			"comments": "viec h"
 		}
 	],
 	"performance_feedbacks": [
@@ -70,5 +99,6 @@
 			"rating": 5,
 			"comments": "comments_1"
 		}
-	]
+	],
+	"created_by": 3
 }
