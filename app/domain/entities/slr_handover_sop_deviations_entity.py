@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 
-@dataclass(frozen=True)
-class SLRHandoverPendingTaskDTO:
+@dataclass
+class SLRHandoverSopDeviationsEntity:
     id: Optional[int] = None
-    title: Optional[str] = None
     comments: Optional[str] = None

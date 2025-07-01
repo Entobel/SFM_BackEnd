@@ -1,10 +1,8 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 from typing import Optional
 
 
-@dataclass(frozen=True)
-class SLRCleaningActivityDTO:
-    id: Optional[int] = None
+class CreateSLRCleaningActivitySchema(BaseModel):
     activity_key: Optional[str] = None
     is_done: Optional[bool] = None
     comments: Optional[str] = None

@@ -21,7 +21,8 @@ from app.presentation.api.v1.endpoints import (
     dryer_product_type_endpoints,
     dried_larvae_discharge_type_endpoints,
     antioxidant_type_endpoints,
-    packing_type_endpoints
+    packing_type_endpoints,
+    shift_leader_report_endpoints,
 )
 
 routers = APIRouter()
@@ -47,7 +48,8 @@ router_list = [
     dryer_product_type_endpoints.router,
     dried_larvae_discharge_type_endpoints.router,
     antioxidant_type_endpoints.router,
-    packing_type_endpoints.router
+    packing_type_endpoints.router,
+    shift_leader_report_endpoints.router,
 ]
 
 for router in router_list:

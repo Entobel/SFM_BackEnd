@@ -1,0 +1,74 @@
+{
+	"date_reported": "2025-06-09T05:42:27.689Z",
+	"shift_id": 2,
+	"handover_to": 3,
+	"production_metrics": [
+		{
+			"metric_key": "production_metric_1",
+			"target": 100,
+			"value": 100
+		},
+		{
+			"metric_key": "production_metric_2",
+			"target": 300,
+			"value": 200
+		}
+	],
+	"downtime_issues": [
+		{
+			"duration": "08:00:33",
+			"root_case": "root_case_1",
+			"action_taken": "action_taken_1",
+			"preventive_measures": "preventive_measures_1"
+		},
+		{
+			"duration": "00:30:33",
+			"root_case": "root_case_2",
+			"action_taken": "action_taken_2",
+			"preventive_measures": "preventive_measures_2"
+		}
+	],
+	"production_qualities": [
+		{
+			"quality_key": "quality_1",
+			"value": 100,
+			"comments": "comments_1"
+		}
+	],
+	"cleaning_activities": [
+		{
+			"activity_key": "cleaning_activity_1",
+			"is_done": true,
+			"comments": "comments_1"
+		},
+		{
+			"activity_key": "cleaning_activity_2",
+			"is_done": true,
+			"comments": "comments_2"
+		}
+	],
+	"handover_pending_tasks": [
+		{
+			"title": "handover_pending_task_1",
+			"comments": "comments_1"
+		}
+	],
+	"handover_machine_behaviors": [
+		{
+			"machine_name": "machine_name_1",
+			"comments": "comments_1"
+		}
+	],
+	"handover_sop_deviations": [
+		{
+			"comments": "comments_1"
+		}
+	],
+	"performance_feedbacks": [
+		{
+			"performance_key": "performance_feedback_1",
+			"rating": 5,
+			"comments": "comments_1"
+		}
+	]
+}

@@ -40,7 +40,7 @@ from app.presentation.schemas.zone_level_schema import ZoneLevelResponseSchema
 from app.presentation.schemas.zone_schema import ZoneResponseSchema
 
 
-router = APIRouter(prefix="/growings", tags=["Growings"])
+router = APIRouter(prefix="/growings", tags=["Growing"])
 
 
 # create

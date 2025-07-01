@@ -3,7 +3,7 @@ from typing import Optional
 
 
 @dataclass(frozen=True)
-class SLRHandoverPendingTaskDTO:
+class SLRHandoverMachineBehaviorDTO:
     id: Optional[int] = None
-    title: Optional[str] = None
+    machine_name: Optional[str] = None
     comments: Optional[str] = None

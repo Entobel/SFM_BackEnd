@@ -4,9 +4,14 @@ from typing import List, Optional
 
 from app.domain.entities.slr_cleaning_activity_entity import SLRCleaningActivityEntity
 from app.domain.entities.slr_downtime_issue_entity import SLRDowntimeIssueEntity
-from app.domain.entities.slr_handover_notes_entity import SLRHandoverNotesEntity
+from app.domain.entities.slr_handover_machine_behavior import (
+    SLRHandoverMachineBehaviorEntity,
+)
 from app.domain.entities.slr_handover_pending_task_entity import (
     SLRHandoverPendingTaskEntity,
+)
+from app.domain.entities.slr_handover_sop_deviations_entity import (
+    SLRHandoverSopDeviationsEntity,
 )
 from app.domain.entities.slr_performance_feedback_entity import (
     SLRPerformanceFeedbackEntity,
@@ -21,12 +26,16 @@ class ShiftLeaderReportEntity:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
     shift_id: Optional[int] = None
-    slr_production_metric: Optional[List[SLRProductionMetricEntity]] = None
-    slr_downtime_issue: Optional[List[SLRDowntimeIssueEntity]] = None
-    slr_cleaning_activity: Optional[List[SLRCleaningActivityEntity]] = None
-    slr_handover_notes: Optional[SLRHandoverNotesEntity] = None
-    slr_performance_feedback: Optional[List[SLRPerformanceFeedbackEntity]] = None
-    slr_production_quality: Optional[List[SLRProductionQualityEntity]] = None
+    slr_production_metrics: Optional[List[SLRProductionMetricEntity]] = None
+    slr_downtime_issues: Optional[List[SLRDowntimeIssueEntity]] = None
+    slr_cleaning_activities: Optional[List[SLRCleaningActivityEntity]] = None
+    slr_performance_feedbacks: Optional[List[SLRPerformanceFeedbackEntity]] = None
+    slr_production_qualities: Optional[List[SLRProductionQualityEntity]] = None
+    slr_handover_pending_tasks: Optional[List[SLRHandoverPendingTaskEntity]] = None
+    slr_handover_machine_behaviors: Optional[List[SLRHandoverMachineBehaviorEntity]] = (
+        None
+    )
+    slr_handover_sop_deviations: Optional[List[SLRHandoverSopDeviationsEntity]] = None
     status: Optional[int] = None
     is_active: Optional[bool] = None
     created_by: Optional[UserEntity] = None
@@ -40,9 +49,9 @@ class ShiftLeaderReportEntity:
     handover_to: Optional[UserEntity] = None
 
     def change_slr_production_metric(
-        self, slr_production_metric: List[SLRProductionMetricEntity]
+        self, slr_production_metrics: List[SLRProductionMetricEntity]
     ):
-        self.slr_production_metric = slr_production_metric
+        self.slr_production_metrics = slr_production_metrics
 
     def change_slr_downtime_issue(
         self, slr_downtime_issue: List[SLRDowntimeIssueEntity]
@@ -53,11 +62,6 @@ class ShiftLeaderReportEntity:
         self, slr_cleaning_activity: List[SLRCleaningActivityEntity]
     ):
         self.slr_cleaning_activity = slr_cleaning_activity
-
-    def change_slr_handover_notes(
-        self, slr_handover_notes: List[SLRHandoverNotesEntity]
-    ):
-        self.slr_handover_notes = slr_handover_notes
 
     def change_slr_performance_feedback(
         self, slr_performance_feedback: List[SLRPerformanceFeedbackEntity]

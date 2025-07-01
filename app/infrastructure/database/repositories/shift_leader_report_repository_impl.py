@@ -95,14 +95,14 @@ class ShiftLeaderReportRepositoryImpl(IShiftLeaderReportRepository):
             if len(shift_leader_report_entity.slr_cleaning_activity) > 0:
                 slr_cleaning_activity_sql = """
                 INSERT INTO slr_cleaning_activity 
-                (shift_leader_report_id, task_key, is_done, comments)
+                (shift_leader_report_id, activity_key, is_done, comments)
                 VALUES %s
                 """
 
                 list_slr_cleaning_activity_args = [
                     (
                         shift_leader_report_id,
-                        row.task_key,
+                        row.activity_key,
                         row.is_done,
                         row.comments,
                     )
@@ -170,41 +170,21 @@ class ShiftLeaderReportRepositoryImpl(IShiftLeaderReportRepository):
                 if cur.rowcount < 0:
                     return False
 
-            if len(
-                shift_leader_report_entity.slr_handover_notes.slr_handover_pending_tasks
-            ):
-                sql_handover_notes_query = """
-                INSERT INTO slr_handover_notes 
-                (sop_deviations, sop_deviations_comment, machine_behavior, machine_behavior_comment)
-                VALUES (%s, %s, %s, %s)
-                RETURNING id
-                """
-
-                handover_notes_args = (
-                    shift_leader_report_entity.slr_handover_notes.sop_deviations,
-                    shift_leader_report_entity.slr_handover_notes.sop_deviations_comment,
-                    shift_leader_report_entity.slr_handover_notes.machine_behavior,
-                    shift_leader_report_entity.slr_handover_notes.machine_behavior_comment,
-                )
-
-                cur.execute(query=sql_handover_notes_query, vars=handover_notes_args)
-
-                handover_notes_id = cur.fetchone()[0]
-
-                # Create slr_handover_pending_tasks
+            if len(shift_leader_report_entity.slr_handover_pending_tasks) > 0:
                 slr_handover_pending_tasks_sql = """
                 INSERT INTO slr_handover_pending_tasks 
-                (slr_handover_notes_id, pending_task, comments)
+                (shift_leader_report_id, title, is_done, comments)
                 VALUES %s
                 """
 
                 list_slr_handover_pending_tasks_args = [
                     (
-                        handover_notes_id,
-                        row.pending_task,
+                        shift_leader_report_id,
+                        row.title,
+                        row.is_done,
                         row.comments,
                     )
-                    for row in shift_leader_report_entity.slr_handover_notes.slr_handover_pending_tasks
+                    for row in shift_leader_report_entity.slr_handover_pending_tasks
                 ]
 
                 execute_values(
@@ -213,23 +193,51 @@ class ShiftLeaderReportRepositoryImpl(IShiftLeaderReportRepository):
                     argslist=list_slr_handover_pending_tasks_args,
                 )
 
-                if cur.rowcount < 0:
-                    return False
-            else:
-                sql_handover_notes_query = """
-                INSERT INTO slr_handover_notes 
-                (sop_deviations, sop_deviations_comment, machine_behavior, machine_behavior_comment)
-                VALUES (%s, %s, %s, %s)
+            if len(shift_leader_report_entity.slr_handover_machine_behaviors) > 0:
+                slr_handover_machine_behaviors_sql = """
+                INSERT INTO slr_handover_machine_behaviors 
+                (shift_leader_report_id, machine_name, comments)
+                VALUES %s
                 """
 
-                handover_notes_args = (
-                    shift_leader_report_entity.slr_handover_notes.sop_deviations,
-                    shift_leader_report_entity.slr_handover_notes.sop_deviations_comment,
-                    shift_leader_report_entity.slr_handover_notes.machine_behavior,
-                    shift_leader_report_entity.slr_handover_notes.machine_behavior_comment,
+                list_slr_handover_machine_behaviors_args = [
+                    (
+                        shift_leader_report_id,
+                        row.machine_name,
+                        row.comments,
+                    )
+                    for row in shift_leader_report_entity.slr_handover_machine_behaviors
+                ]
+
+                execute_values(
+                    cur=cur,
+                    sql=slr_handover_machine_behaviors_sql,
+                    argslist=list_slr_handover_machine_behaviors_args,
                 )
 
-                cur.execute(query=sql_handover_notes_query, vars=handover_notes_args)
+                if cur.rowcount < 0:
+                    return False
+
+            if len(shift_leader_report_entity.slr_handover_sop_deviations) > 0:
+                slr_handover_sop_deviations_sql = """
+                INSERT INTO slr_handover_sop_deviations 
+                (shift_leader_report_id, comments)
+                VALUES %s
+                """
+
+                list_slr_handover_sop_deviations_args = [
+                    (
+                        shift_leader_report_id,
+                        row.comments,
+                    )
+                    for row in shift_leader_report_entity.slr_handover_sop_deviations
+                ]
+
+                execute_values(
+                    cur=cur,
+                    sql=slr_handover_sop_deviations_sql,
+                    argslist=list_slr_handover_sop_deviations_args,
+                )
 
                 if cur.rowcount < 0:
                     return False

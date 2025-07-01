@@ -2,8 +2,6 @@ from dataclasses import dataclass
 from datetime import time
 from typing import Optional
 
-from app.domain.entities.shift_leader_report_entity import ShiftLeaderReportEntity
-
 
 @dataclass
 class SLRDowntimeIssueEntity:
