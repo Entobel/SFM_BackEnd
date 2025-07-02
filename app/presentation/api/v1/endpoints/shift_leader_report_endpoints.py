@@ -188,6 +188,8 @@ def list_shift_leader_report(
         is_active=filter_params.is_active,
     )
 
+    logger.debug(f"result: {result["items"]}")
+
     _shift_leader_reports, [
         shift_leader_report_pending_count,
         shift_leader_report_rejected_count,

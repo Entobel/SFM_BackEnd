@@ -86,7 +86,6 @@ class CreateShiftLeaderReportSchema(BaseModel):
         List[CreateSLRHandoverMachineBehaviorSchema]
     ] = None
     handover_sop_deviations: Optional[List[CreateSLRHandoverSopDeviationSchema]] = None
-    status: Optional[int] = None
     created_by: Optional[int] = None
 
     @model_validator(mode="before")

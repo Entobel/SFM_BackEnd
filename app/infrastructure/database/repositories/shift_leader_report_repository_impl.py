@@ -1,4 +1,5 @@
 from collections import defaultdict
+from loguru import logger
 import psycopg2
 from psycopg2.extras import execute_values, RealDictCursor
 from app.domain.entities.shift_entity import ShiftEntity
