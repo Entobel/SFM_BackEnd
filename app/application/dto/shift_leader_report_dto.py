@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
 
+from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.slr_cleaning_actity_dto import SLRCleaningActivityDTO
 from app.application.dto.slr_downtime_issue_dto import SLRDowntimeIssueDTO
 from app.application.dto.slr_handover_machine_behavior import (
@@ -21,7 +22,7 @@ from app.application.dto.user_dto import UserDTO
 class ShiftLeaderReportDTO:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
-    shift_id: Optional[int] = None
+    shift: Optional[ShiftDTO] = None
     created_by: Optional[UserDTO] = None
     handover_to: Optional[UserDTO] = None
     slr_production_metrics: Optional[list[SLRProductionMetricDTO]] = None

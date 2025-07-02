@@ -5,6 +5,7 @@ from app.application.interfaces.use_cases.shift_leader_report.create_shift_leade
 )
 from app.core.constants.common_enums import FormStatusEnum
 from app.core.exception import BadRequestError
+from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.slr_cleaning_activity_entity import SLRCleaningActivityEntity
 from app.domain.entities.slr_downtime_issue_entity import SLRDowntimeIssueEntity
 from app.domain.entities.slr_handover_machine_behavior import (
@@ -46,8 +47,8 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
             shift_leader_report_dto=shift_leader_report_dto
         )
 
-        if query_entity.shift_id:
-            self.query_helper.add_table(table_name="shifts", _id=query_entity.shift_id)
+        if query_entity.shift.id:
+            self.query_helper.add_table(table_name="shifts", _id=query_entity.shift.id)
 
         if query_entity.created_by.id:
             self.query_helper.add_table(
@@ -86,7 +87,7 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
     ) -> ShiftLeaderReportEntity:
         return ShiftLeaderReportEntity(
             date_reported=shift_leader_report_dto.date_reported,
-            shift_id=shift_leader_report_dto.shift_id,
+            shift=ShiftEntity(id=shift_leader_report_dto.shift.id),
             created_by=UserEntity(id=shift_leader_report_dto.created_by.id),
             handover_to=UserEntity(id=shift_leader_report_dto.handover_to.id),
             status=FormStatusEnum.APPROVED.value,
@@ -178,6 +179,7 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
             slr_handover_sop_deviations=(
                 [
                     SLRHandoverSopDeviationsEntity(
+                        description=row.description,
                         comments=row.comments,
                     )
                     for row in shift_leader_report_dto.slr_handover_sop_deviations

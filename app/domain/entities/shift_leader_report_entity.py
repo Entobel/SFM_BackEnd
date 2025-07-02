@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
 
+from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.slr_cleaning_activity_entity import SLRCleaningActivityEntity
 from app.domain.entities.slr_downtime_issue_entity import SLRDowntimeIssueEntity
 from app.domain.entities.slr_handover_machine_behavior import (
@@ -25,7 +26,7 @@ from app.domain.entities.user_entity import UserEntity
 class ShiftLeaderReportEntity:
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
-    shift_id: Optional[int] = None
+    shift: Optional[ShiftEntity] = None
     slr_production_metrics: Optional[List[SLRProductionMetricEntity]] = None
     slr_downtime_issues: Optional[List[SLRDowntimeIssueEntity]] = None
     slr_cleaning_activities: Optional[List[SLRCleaningActivityEntity]] = None

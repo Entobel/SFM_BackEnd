@@ -1,6 +1,7 @@
 from collections import defaultdict
 import psycopg2
 from psycopg2.extras import execute_values, RealDictCursor
+from app.domain.entities.shift_entity import ShiftEntity
 from app.domain.entities.shift_leader_report_entity import ShiftLeaderReportEntity
 from app.domain.entities.slr_cleaning_activity_entity import SLRCleaningActivityEntity
 from app.domain.entities.slr_handover_machine_behavior import (
@@ -41,7 +42,7 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
 
             shift_leader_report_args = (
                 shift_leader_report_entity.date_reported,
-                shift_leader_report_entity.shift_id,
+                shift_leader_report_entity.shift.id,
                 shift_leader_report_entity.created_by.id,
                 shift_leader_report_entity.handover_to.id,
             )
@@ -246,13 +247,14 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
             if len(shift_leader_report_entity.slr_handover_sop_deviations) > 0:
                 slr_handover_sop_deviations_sql = """
                 INSERT INTO slr_handover_sop_deviations
-                (shift_leader_report_id, comments)
+                (shift_leader_report_id, description, comments)
                 VALUES %s
                 """
 
                 list_slr_handover_sop_deviations_args = [
                     (
                         shift_leader_report_id,
+                        row.description,
                         row.comments,
                     )
                     for row in shift_leader_report_entity.slr_handover_sop_deviations
@@ -312,6 +314,7 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
             slr.id AS slr_id,
             slr.date_reported AS slr_date_reported,
             slr.shift_id AS slr_shift_id,
+            s.name AS slr_shift_name,
             slr.status AS slr_status,
             slr.is_active AS slr_is_active,
             slr.created_at AS slr_created_at,
@@ -344,6 +347,7 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
             u4.email AS handover_to_email,
             u4.phone AS handover_to_phone
         FROM shift_leader_reports slr
+        JOIN shifts s ON slr.shift_id = s.id
         JOIN users u1 ON slr.created_by = u1.id
         LEFT JOIN users u2 ON slr.approved_by = u2.id
         LEFT JOIN users u3 ON slr.rejected_by = u3.id
@@ -472,6 +476,7 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
             SELECT
                 shsd.shift_leader_report_id AS slr_id,
                 shsd.id AS shsd_id,
+                shsd.description AS shsd_description,
                 shsd.comments AS shsd_comments
             FROM slr_handover_sop_deviations shsd
             WHERE shsd.shift_leader_report_id IN ({slr_ids_str})
@@ -585,7 +590,9 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
             for row in sop_deviations_data:
                 sop_deviations_by_slr[row["slr_id"]].append(
                     SLRHandoverSopDeviationsEntity(
-                        id=row["shsd_id"], comments=row["shsd_comments"]
+                        id=row["shsd_id"],
+                        description=row["shsd_description"],
+                        comments=row["shsd_comments"],
                     )
                 )
 
@@ -646,7 +653,10 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
                 shift_leader_report = ShiftLeaderReportEntity(
                     id=slr_id,
                     date_reported=row["slr_date_reported"],
-                    shift_id=row["slr_shift_id"],
+                    shift=ShiftEntity(
+                        id=row["slr_shift_id"],
+                        name=row["slr_shift_name"],
+                    ),
                     status=row["slr_status"],
                     is_active=row["slr_is_active"],
                     created_at=row["slr_created_at"],

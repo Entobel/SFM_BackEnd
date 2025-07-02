@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class CreateSLRDowntimeIssueSchema(BaseModel):
-    duration_minutes: Optional[time] = None
+    duration: Optional[time] = None
     root_cause: Optional[str] = None
     action_taken: Optional[str] = None
     preventive_measures: Optional[str] = None

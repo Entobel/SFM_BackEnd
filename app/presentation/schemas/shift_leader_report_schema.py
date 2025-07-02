@@ -4,6 +4,7 @@ from typing import List, Optional
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, model_validator
 
+from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.slr_cleaning_activities_schema import (
     CreateSLRCleaningActivitySchema,
     SLRCleaningActivityResponseSchema,
@@ -43,7 +44,7 @@ from app.presentation.schemas.user_schema import UserResponseSchema
 class ShiftLeaderReportResponseSchema(BaseModel):
     id: Optional[int] = None
     date_reported: Optional[datetime] = None
-    shift_id: Optional[int] = None
+    shift: Optional[ShiftResponseSchema] = None
     production_metrics: Optional[List[SLRProductionMetricResponseSchema]] = None
     downtime_issues: Optional[List[SLRDowntimeIssueResponseSchema]] = None
     cleaning_activities: Optional[List[SLRCleaningActivityResponseSchema]] = None

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from loguru import logger
 
+from app.application.dto.shift_dto import ShiftDTO
 from app.application.dto.shift_leader_report_dto import ShiftLeaderReportDTO
 from app.application.dto.slr_cleaning_actity_dto import SLRCleaningActivityDTO
 from app.application.dto.slr_downtime_issue_dto import SLRDowntimeIssueDTO
@@ -27,6 +28,7 @@ from app.presentation.schemas.shift_leader_report_schema import (
     CreateShiftLeaderReportSchema,
     ShiftLeaderReportResponseSchema,
 )
+from app.presentation.schemas.shift_schema import ShiftResponseSchema
 from app.presentation.schemas.slr_cleaning_activities_schema import (
     SLRCleaningActivityResponseSchema,
 )
@@ -65,7 +67,7 @@ def create_shift_leader_report(
 
     shift_leader_report_dto = ShiftLeaderReportDTO(
         date_reported=body.date_reported,
-        shift_id=body.shift_id,
+        shift=ShiftDTO(id=body.shift_id),
         created_by=UserDTO(id=body.created_by),
         handover_to=UserDTO(id=body.handover_to),
         slr_production_metrics=(
@@ -85,7 +87,7 @@ def create_shift_leader_report(
         slr_downtime_issues=(
             [
                 SLRDowntimeIssueDTO(
-                    duration_minutes=row.duration_minutes,
+                    duration_minutes=row.duration,
                     root_cause=row.root_cause,
                     action_taken=row.action_taken,
                     preventive_measures=row.preventive_measures,
@@ -156,6 +158,7 @@ def create_shift_leader_report(
         slr_handover_sop_deviations=(
             [
                 SLRHandoverSopDeviationDTO(
+                    description=row.description,
                     comments=row.comments,
                 )
                 for row in body.handover_sop_deviations
@@ -194,7 +197,14 @@ def list_shift_leader_report(
         ShiftLeaderReportResponseSchema(
             id=shift_leader_report.id,
             date_reported=shift_leader_report.date_reported,
-            shift_id=shift_leader_report.shift_id,
+            shift=ShiftResponseSchema(
+                id=shift_leader_report.shift.id,
+                name=(
+                    shift_leader_report.shift.name
+                    if shift_leader_report.shift
+                    else None
+                ),
+            ),
             handover_to=UserResponseSchema(
                 id=shift_leader_report.handover_to.id,
                 first_name=shift_leader_report.handover_to.first_name,
@@ -276,6 +286,7 @@ def list_shift_leader_report(
             handover_sop_deviations=[
                 SLRHandoverSopDeviationResponseSchema(
                     id=shsd.id,
+                    description=shsd.description,
                     comments=shsd.comments,
                 )
                 for shsd in shift_leader_report.slr_handover_sop_deviations
