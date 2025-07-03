@@ -1,7 +1,6 @@
 import logging
 from fastapi import FastAPI, status
 from starlette.middleware.cors import CORSMiddleware
-from fastapi_socketio import SocketManager
 from app.core.config import config
 from app.core.database import db
 from app.core.error import setup_error_handlers
@@ -13,8 +12,7 @@ from loguru import logger
 
 class AppCreator:
     def __init__(self):
-        logger.info(
-            f"[APP]:: Initializing application in {config.ENV} environment")
+        logger.info(f"[APP]:: Initializing application in {config.ENV} environment")
 
         self.app = FastAPI(
             title=config.PROJECT_NAME,
@@ -65,8 +63,7 @@ class AppCreator:
         if config.BACKEND_CORS_ORIGINS:
             self.app.add_middleware(
                 CORSMiddleware,
-                allow_origins=[str(origin)
-                               for origin in config.BACKEND_CORS_ORIGINS],
+                allow_origins=[str(origin) for origin in config.BACKEND_CORS_ORIGINS],
                 allow_credentials=True,
                 allow_methods=["*"],
                 allow_headers=["*"],
