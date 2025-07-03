@@ -19,6 +19,7 @@ from app.application.dto.user_dto import UserDTO
 from app.domain.entities.user_entity import UserEntity
 from app.presentation.api.v1.dependencies.shift_leader_report_dependencies import (
     CreateShiftLeaderReportUCDep,
+    DeleteShiftLeaderReportUCDep,
     ListShiftLeaderReportUCDep,
 )
 from app.presentation.api.v1.dependencies.user_dependencies import TokenVerifyDep
@@ -82,20 +83,19 @@ def create_shift_leader_report(
                 for row in body.production_metrics
             ]
             if body.production_metrics
-            else None
+            else []
         ),
         slr_downtime_issues=(
             [
                 SLRDowntimeIssueDTO(
-                    duration_minutes=row.duration,
+                    duration_minutes=row.duration_minutes,
                     root_cause=row.root_cause,
                     action_taken=row.action_taken,
-                    preventive_measures=row.preventive_measures,
                 )
                 for row in body.downtime_issues
             ]
             if body.downtime_issues
-            else None
+            else []
         ),
         slr_production_qualities=(
             [
@@ -107,7 +107,7 @@ def create_shift_leader_report(
                 for row in body.production_qualities
             ]
             if body.production_qualities
-            else None
+            else []
         ),
         slr_cleaning_activities=(
             [
@@ -119,7 +119,7 @@ def create_shift_leader_report(
                 for row in body.cleaning_activities
             ]
             if body.cleaning_activities
-            else None
+            else []
         ),
         slr_handover_machine_behaviors=(
             [
@@ -130,7 +130,7 @@ def create_shift_leader_report(
                 for row in body.handover_machine_behaviors
             ]
             if body.handover_machine_behaviors
-            else None
+            else []
         ),
         slr_handover_pending_tasks=(
             [
@@ -141,7 +141,7 @@ def create_shift_leader_report(
                 for row in body.handover_pending_tasks
             ]
             if body.handover_pending_tasks
-            else None
+            else []
         ),
         slr_performance_feedbacks=(
             [
@@ -153,7 +153,7 @@ def create_shift_leader_report(
                 for row in body.performance_feedbacks
             ]
             if body.performance_feedbacks
-            else None
+            else []
         ),
         slr_handover_sop_deviations=(
             [
@@ -164,7 +164,7 @@ def create_shift_leader_report(
                 for row in body.handover_sop_deviations
             ]
             if body.handover_sop_deviations
-            else None
+            else []
         ),
     )
 
@@ -238,7 +238,6 @@ def list_shift_leader_report(
                     duration_minutes=sdi.duration_minutes,
                     root_cause=sdi.root_cause,
                     action_taken=sdi.action_taken,
-                    preventive_measures=sdi.preventive_measures,
                 )
                 for sdi in shift_leader_report.slr_downtime_issues
             ],
@@ -343,4 +342,19 @@ def list_shift_leader_report(
                 "rejected": shift_leader_report_rejected_count,
             },
         },
+    ).get_dict()
+
+
+@router.delete("/{shift_leader_report_id}")
+def delete_shift_leader_report(
+    token_verify_dep: TokenVerifyDep,
+    shift_leader_report_id: int,
+    use_case: DeleteShiftLeaderReportUCDep,
+):
+    shift_leader_report_dto = ShiftLeaderReportDTO(id=shift_leader_report_id)
+
+    use_case.execute(shift_leader_report_dto=shift_leader_report_dto)
+
+    return Response.success_response(
+        data="Success", code="ETB_xoa_shift_leader_report_thanh_cong"
     ).get_dict()

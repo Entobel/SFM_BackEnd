@@ -3,6 +3,12 @@ from app.domain.entities.shift_leader_report_entity import ShiftLeaderReportEnti
 
 
 class IShiftLeaderReportRepository(ABC):
+
+    @abstractmethod
+    def get_shift_leader_report_by_id(
+        self, shift_leader_report_id: int
+    ) -> ShiftLeaderReportEntity | None: ...
+
     @abstractmethod
     def create_shift_leader_report(
         self, shift_leader_report_entity: ShiftLeaderReportEntity
@@ -24,3 +30,8 @@ class IShiftLeaderReportRepository(ABC):
         "page_size":int,
         "total_pages":int,
     ]: ...
+
+    @abstractmethod
+    def delete_shift_leader_report(
+        self, shift_leader_report_entity: ShiftLeaderReportEntity
+    ) -> bool: ...

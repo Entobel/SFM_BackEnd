@@ -4,6 +4,9 @@ from fastapi import Depends
 from app.application.interfaces.use_cases.shift_leader_report.create_shift_leader_report_uc import (
     ICreateShiftLeaderReportUC,
 )
+from app.application.interfaces.use_cases.shift_leader_report.delete_shift_leader_report_uc import (
+    IDeleteShiftLeaderReportUC,
+)
 from app.application.interfaces.use_cases.shift_leader_report.list_shift_leader_report_uc import (
     IListShiftLeaderReportUC,
 )
@@ -12,6 +15,9 @@ from app.application.use_cases.shift_leader_report.create_shift_leader_report_uc
 )
 
 
+from app.application.use_cases.shift_leader_report.delete_shift_leader_report_uc_impl import (
+    DeleteShiftLeaderReportUC,
+)
 from app.application.use_cases.shift_leader_report.list_shift_leader_report_uc_impl import (
     ListShiftLeaderReportUC,
 )
@@ -59,10 +65,22 @@ def get_list_shift_leader_report_uc(
     )
 
 
+def get_delete_shift_leader_report_uc(
+    shift_leader_report_repository: ShiftLeaderRepositoryDep,
+) -> IDeleteShiftLeaderReportUC:
+    return DeleteShiftLeaderReportUC(
+        shift_leader_report_repository=shift_leader_report_repository,
+    )
+
+
 CreateShiftLeaderReportUCDep = Annotated[
     ICreateShiftLeaderReportUC, Depends(get_create_shift_leader_report_uc)
 ]
 
 ListShiftLeaderReportUCDep = Annotated[
     IListShiftLeaderReportUC, Depends(get_list_shift_leader_report_uc)
+]
+
+DeleteShiftLeaderReportUCDep = Annotated[
+    IDeleteShiftLeaderReportUC, Depends(get_delete_shift_leader_report_uc)
 ]

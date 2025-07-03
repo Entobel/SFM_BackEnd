@@ -36,6 +36,106 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
         self.conn = conn
         self.query_helper = query_helper
 
+    def get_shift_leader_report_by_id(
+        self, shift_leader_report_id: int
+    ) -> ShiftLeaderReportEntity | None:
+        with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+
+            shift_leader_report_query = """
+                SELECT
+                    slr.id AS slr_id,
+                    slr.date_reported AS slr_date_reported,
+                    slr.shift_id AS slr_shift_id,
+                    s.name AS slr_shift_name,
+                    slr.status AS slr_status,
+                    slr.is_active AS slr_is_active,
+                    slr.created_at AS slr_created_at,
+                    slr.updated_at AS slr_updated_at,
+                    slr.approved_at AS slr_approved_at,
+                    slr.rejected_at AS slr_rejected_at,
+                    slr.rejected_reason AS slr_rejected_reason,
+                    -- Created by user
+                    u1.id AS created_by_id,
+                    u1.first_name AS created_by_first_name,
+                    u1.last_name AS created_by_last_name,
+                    u1.phone AS created_by_phone,
+                    u1.email AS created_by_email,
+                    -- Approved by user
+                    u2.id AS approved_by_id,
+                    u2.first_name AS approved_by_first_name,
+                    u2.last_name AS approved_by_last_name,
+                    u2.email AS approved_by_email,
+                    u2.phone AS approved_by_phone,
+                    -- Rejected by user
+                    u3.id AS rejected_by_id,
+                    u3.first_name AS rejected_by_first_name,
+                    u3.last_name AS rejected_by_last_name,
+                    u3.email AS rejected_by_email,
+                    u3.phone AS rejected_by_phone,
+                    -- Handover to user
+                    u4.id AS handover_to_id,
+                    u4.first_name AS handover_to_first_name,
+                    u4.last_name AS handover_to_last_name,
+                    u4.email AS handover_to_email,
+                    u4.phone AS handover_to_phone
+                FROM shift_leader_reports slr
+                JOIN shifts s ON slr.shift_id = s.id
+                JOIN users u1 ON slr.created_by = u1.id
+                LEFT JOIN users u2 ON slr.approved_by = u2.id
+                LEFT JOIN users u3 ON slr.rejected_by = u3.id
+                LEFT JOIN users u4 ON slr.handover_to = u4.id
+                WHERE slr.id = %s
+                """
+
+            shift_leader_report_args = (shift_leader_report_id,)
+
+            cur.execute(
+                query=shift_leader_report_query,
+                vars=shift_leader_report_args,
+            )
+
+            row = cur.fetchone()
+
+            if not row:
+                return None
+
+            return ShiftLeaderReportEntity(
+                id=row["slr_id"],
+                date_reported=row["slr_date_reported"],
+                shift=ShiftEntity(
+                    id=row["slr_shift_id"],
+                    name=row["slr_shift_name"],
+                ),
+                status=row["slr_status"],
+                is_active=row["slr_is_active"],
+                created_at=row["slr_created_at"],
+                updated_at=row["slr_updated_at"],
+                approved_at=row["slr_approved_at"],
+                rejected_at=row["slr_rejected_at"],
+                rejected_reason=row["slr_rejected_reason"],
+                created_by=UserEntity(
+                    id=row["created_by_id"],
+                    first_name=row["created_by_first_name"],
+                    last_name=row["created_by_last_name"],
+                    phone=row["created_by_phone"],
+                    email=row["created_by_email"],
+                ),
+                approved_by=UserEntity(
+                    id=row["approved_by_id"],
+                    first_name=row["approved_by_first_name"],
+                    last_name=row["approved_by_last_name"],
+                    phone=row["approved_by_phone"],
+                    email=row["approved_by_email"],
+                ),
+                rejected_by=UserEntity(
+                    id=row["rejected_by_id"],
+                    first_name=row["rejected_by_first_name"],
+                    last_name=row["rejected_by_last_name"],
+                    phone=row["rejected_by_phone"],
+                    email=row["rejected_by_email"],
+                ),
+            )
+
     def create_shift_leader_report(
         self, shift_leader_report_entity: ShiftLeaderReportEntity
     ) -> bool:
@@ -91,7 +191,7 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
             if len(shift_leader_report_entity.slr_downtime_issues) > 0:
                 slr_downtime_issue_sql = """
                 INSERT INTO slr_downtime_issues
-                (shift_leader_report_id, duration_minutes, root_cause, action_taken, preventive_measures)
+                (shift_leader_report_id, duration_minutes, root_cause, action_taken)
                 VALUES %s
                 """
 
@@ -101,7 +201,6 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
                         row.duration_minutes,
                         row.root_cause,
                         row.action_taken,
-                        row.preventive_measures,
                     )
                     for row in shift_leader_report_entity.slr_downtime_issues
                 ]
@@ -408,8 +507,7 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
                 sdi.id AS sdi_id,
                 sdi.duration_minutes AS sdi_duration_minutes,
                 sdi.root_cause AS sdi_root_cause,
-                sdi.action_taken AS sdi_action_taken,
-                sdi.preventive_measures AS sdi_preventive_measures
+                sdi.action_taken AS sdi_action_taken
             FROM slr_downtime_issues sdi
             WHERE sdi.shift_leader_report_id IN ({slr_ids_str})
             """
@@ -530,7 +628,6 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
                         duration_minutes=row["sdi_duration_minutes"],
                         root_cause=row["sdi_root_cause"],
                         action_taken=row["sdi_action_taken"],
-                        preventive_measures=row["sdi_preventive_measures"],
                     )
                 )
 
@@ -715,3 +812,23 @@ class ShiftLeaderReportRepository(IShiftLeaderReportRepository):
                 "page_size": page_size,
                 "total_pages": sql_helper.total_pages(total=total, page_size=page_size),
             }
+
+    def delete_shift_leader_report(
+        self, shift_leader_report_entity: ShiftLeaderReportEntity
+    ) -> bool:
+        with self.conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE shift_leader_reports
+                SET is_active = %s
+                WHERE id = %s
+                """,
+                (shift_leader_report_entity.is_active, shift_leader_report_entity.id),
+            )
+
+            if cur.rowcount < 0:
+                self.conn.rollback()
+                return False
+            else:
+                self.conn.commit()
+                return True

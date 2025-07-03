@@ -102,8 +102,6 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
                     )
                     for row in shift_leader_report_dto.slr_production_metrics
                 ]
-                if shift_leader_report_dto.slr_production_metrics
-                else None
             ),
             slr_downtime_issues=(
                 [
@@ -111,12 +109,9 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
                         duration_minutes=row.duration_minutes,
                         root_cause=row.root_cause,
                         action_taken=row.action_taken,
-                        preventive_measures=row.preventive_measures,
                     )
                     for row in shift_leader_report_dto.slr_downtime_issues
                 ]
-                if shift_leader_report_dto.slr_downtime_issues
-                else None
             ),
             slr_cleaning_activities=(
                 [
@@ -127,8 +122,6 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
                     )
                     for row in shift_leader_report_dto.slr_cleaning_activities
                 ]
-                if shift_leader_report_dto.slr_cleaning_activities
-                else None
             ),
             slr_performance_feedbacks=(
                 [
@@ -139,8 +132,6 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
                     )
                     for row in shift_leader_report_dto.slr_performance_feedbacks
                 ]
-                if shift_leader_report_dto.slr_performance_feedbacks
-                else None
             ),
             slr_production_qualities=(
                 [
@@ -151,8 +142,6 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
                     )
                     for row in shift_leader_report_dto.slr_production_qualities
                 ]
-                if shift_leader_report_dto.slr_production_qualities
-                else None
             ),
             slr_handover_pending_tasks=(
                 [
@@ -162,8 +151,6 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
                     )
                     for row in shift_leader_report_dto.slr_handover_pending_tasks
                 ]
-                if shift_leader_report_dto.slr_handover_pending_tasks
-                else None
             ),
             slr_handover_machine_behaviors=(
                 [
@@ -173,8 +160,6 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
                     )
                     for row in shift_leader_report_dto.slr_handover_machine_behaviors
                 ]
-                if shift_leader_report_dto.slr_handover_machine_behaviors
-                else None
             ),
             slr_handover_sop_deviations=(
                 [
@@ -184,7 +169,5 @@ class CreateShiftLeaderReportUC(ICreateShiftLeaderReportUC):
                     )
                     for row in shift_leader_report_dto.slr_handover_sop_deviations
                 ]
-                if shift_leader_report_dto.slr_handover_sop_deviations
-                else None
             ),
         )

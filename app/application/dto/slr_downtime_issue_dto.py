@@ -9,4 +9,3 @@ class SLRDowntimeIssueDTO:
     duration_minutes: Optional[int] = None
     root_cause: Optional[str] = None
     action_taken: Optional[str] = None
-    preventive_measures: Optional[str] = None
