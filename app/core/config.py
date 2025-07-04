@@ -1,5 +1,6 @@
 import logging
 from typing import Dict, List, Optional
+import os
 
 from dotenv import load_dotenv
 from pydantic import Field, field_validator
@@ -8,6 +9,9 @@ from loguru import logger
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Server config
+PORT = int(os.getenv("PORT", 4567))
 
 
 class DatabaseConfig(BaseSettings):
