@@ -1,10 +1,10 @@
-import logging
 from fastapi import FastAPI, status
 from starlette.middleware.cors import CORSMiddleware
 from app.core.config import config
 from app.core.database import db
 from app.core.error import setup_error_handlers
 from app.presentation.api.v1.routes import routers as v1_routers
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Configure logging
 from loguru import logger
@@ -86,9 +86,12 @@ class AppCreator:
         setup_error_handlers(self.app)
         logger.success("[APP]:: Centralized error handlers configured")
 
+        # Configure Prometheus metrics
+
 
 app_creator = AppCreator()
 app = app_creator.app
+Instrumentator().instrument(app).expose(app)
 
 
 # Log application startup
